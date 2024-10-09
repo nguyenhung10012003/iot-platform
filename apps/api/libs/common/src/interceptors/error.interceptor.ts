@@ -41,7 +41,7 @@ class PrismaErrorHandler implements ErrorHandler {
           return throwError(
             () =>
               new ConflictException({
-                error: ErrorType.DUPPLICATE,
+                error: ErrorType.DUPLICATE,
                 message: 'Duplicate entry',
               }),
           );

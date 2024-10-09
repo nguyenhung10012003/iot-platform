@@ -1,4 +1,4 @@
-import { Token } from '@app/common/types';
+import { Token, TokenPayload } from '@app/common/types';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import ms from 'ms';
@@ -31,7 +31,11 @@ export class AuthService {
     });
     const isValidPassword = await comparePassword(password, user.password);
     if (isValidPassword) {
-      const payload = { sub: user.id, username: user.username };
+      const payload: TokenPayload = {
+        sub: user.id,
+        username: user.username,
+        role: user.role,
+      };
       return this.createAuthResponse(user, payload);
     } else {
       throw new UnauthorizedException('Invalid password');
@@ -39,7 +43,7 @@ export class AuthService {
   }
 
   async createToken(
-    payload: any,
+    payload: TokenPayload,
     secretkey: string,
     expiresIn: string,
   ): Promise<string> {
@@ -52,19 +56,21 @@ export class AuthService {
    * @returns a Token model
    */
   async validateRefreshToken(token: string): Promise<Token> {
-    const { sub, username } = await this.jwtService.verifyAsync(token, {
-      secret: process.env.JWT_REFRESH_TOKEN_SECRET,
-    });
+    const { sub, username, role } =
+      await this.jwtService.verifyAsync<TokenPayload>(token, {
+        secret: process.env.JWT_REFRESH_TOKEN_SECRET,
+      });
     return {
       userId: sub,
       token: await this.createToken(
-        { sub, username },
+        { sub, username, role },
         process.env.JWT_ACCESS_TOKEN_SECRET || '',
         process.env.JWT_ACCESS_TOKEN_EXPIRE || '',
       ),
+      role,
       type: 'Bearer',
       refreshToken: await this.createToken(
-        { sub, username },
+        { sub, username, role },
         process.env.JWT_REFRESH_TOKEN_SECRET || '',
         process.env.JWT_REFRESH_TOKEN_EXPIRE || '',
       ),
@@ -81,10 +87,7 @@ export class AuthService {
    * @param payload payload object
    * @returns a Token model
    */
-  async createAuthResponse(
-    user: any,
-    payload: { sub: string; username: string },
-  ) {
+  async createAuthResponse(user: any, payload: TokenPayload): Promise<Token> {
     return {
       userId: user.id,
       token: await this.createToken(
@@ -93,6 +96,7 @@ export class AuthService {
         process.env.JWT_ACCESS_TOKEN_EXPIRE || '',
       ),
       type: 'Bearer',
+      role: user.role,
       refreshToken: await this.createToken(
         payload,
         process.env.JWT_REFRESH_TOKEN_SECRET || '',
