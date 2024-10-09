@@ -1,24 +1,32 @@
 {
   "$schema": "https://turbo.build/schema.json",
-  "globalDependencies": [
-    "**/.env.*local"
-  ],
+  "globalDependencies": ["**/.env.*local", "**/.env"],
   "tasks": {
     "dev": {
       "cache": false,
       "persistent": true
     },
     "build": {
-      "dependsOn": [
-        "^build"
+      "inputs": ["$TURBO_DEFAULT", "**/.env*"],
+      "env": [
+        "NODE_ENV",
+        "JWT_ACCESS_TOKEN_SECRET",
+        "JWT_REFRESH_TOKEN_SECRET",
+        "JWT_ACCESS_TOKEN_EXPIRE",
+        "JWT_REFRESH_TOKEN_EXPIRE",
+        "ADMIN_USERNAME",
+        "ADMIN_PASSWORD",
+        "MONGO_URI",
+        "NEXT_PUBLIC_API_URL"
       ],
-      "outputs": [
-        ".next/**",
-        "!.next/cache/**"
-      ]
+      "dependsOn": ["^build"],
+      "outputs": [".next/**", "!.next/cache/**"]
     },
     "lint": {},
     "test": {},
-    "test:e2e": {}
+    "test:e2e": {},
+    "prisma:generate": {
+      "dependsOn": ["^prisma:generate"]
+    }
   }
 }

@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import RootPage from '../app/page';
+import RootPage from '../app/(dashboard)/page';
 
 window.fetch = jest.fn().mockImplementation(() =>
   Promise.resolve({
@@ -10,9 +10,7 @@ window.fetch = jest.fn().mockImplementation(() =>
 );
 
 describe('Root page', () => {
-  const { container, unmount } = render(
-    <RootPage params={{ forTest: true }} />,
-  );
+  const { container, unmount } = render(<RootPage />);
 
   it('should have the correct tree parent', () => {
     expect(container).toBeInstanceOf(HTMLDivElement);
