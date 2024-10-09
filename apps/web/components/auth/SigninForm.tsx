@@ -2,7 +2,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/components/ui/button';
 import {
-  Card,
   CardContent,
   CardFooter,
   CardHeader,
@@ -94,7 +93,7 @@ export default function SigninForm() {
     },
   ];
   return (
-    <Card className="max-w-md w-full shadow-lg">
+    <>
       <CardHeader className="">
         <CardTitle className="text-2xl font-bold text-center">
           Sign in
@@ -163,6 +162,6 @@ export default function SigninForm() {
           </Link>
         </p>
       </CardFooter>
-    </Card>
+    </>
   );
 }
