@@ -5,6 +5,7 @@ import { PropsWithChildren } from 'react';
 import { Toaster } from '@repo/ui/components/ui/sonner';
 import '@repo/ui/globals.css';
 import dynamic from 'next/dynamic';
+import { UserProvider } from '../components/contexts/UserContext';
 import { ThemeProvider } from '../components/providers/ThemeProviders';
 const ThemeToggle = dynamic(() => import('../components/ThemeToggle'), {
   ssr: false,
@@ -20,15 +21,14 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
   return (
     <html suppressHydrationWarning>
-      <body className={inter.className}>
+      <body className={`${inter.className}`}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
         >
-          <ThemeToggle />
-          {children}
+          <UserProvider>{children}</UserProvider>
           <Toaster />
         </ThemeProvider>
       </body>

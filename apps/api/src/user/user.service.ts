@@ -33,4 +33,10 @@ export class UserService {
       });
     }
   }
+
+  async findById(id: string) {
+    return this.prisma.user.findUniqueOrThrow({
+      where: { id },
+    });
+  }
 }
