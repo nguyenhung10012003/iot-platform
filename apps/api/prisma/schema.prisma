@@ -14,16 +14,86 @@ datasource db {
 }
 
 model User {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  username    String   @unique
-  password    String
-  role        Role     @default(USER)
-  employerIds String[] @db.ObjectId
-  employeeIds String[] @db.ObjectId
-  employers   User[]   @relation("Employer", fields: [employerIds], references: [id])
-  employess   User[]   @relation("Employer", fields: [employeeIds], references: [id])
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  username      String         @unique
+  password      String
+  role          Role           @default(USER)
+  employerIds   String[]       @db.ObjectId
+  employeeIds   String[]       @db.ObjectId
+  employers     User[]         @relation("Employer", fields: [employerIds], references: [id])
+  employess     User[]         @relation("Employer", fields: [employeeIds], references: [id])
+  locations     Location[]
+  userLocations UserLocation[]
 }
 
+model Location {
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  name          String
+  address       String
+  image         String?
+  ownerId       String         @db.ObjectId
+  owner         User           @relation(fields: [ownerId], references: [id])
+  areas         Area[]
+  userLocations UserLocation[]
+
+  @@index([ownerId], name: "ownerId")
+}
+
+model UserLocation {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId     String   @db.ObjectId
+  user       User     @relation(fields: [userId], references: [id])
+  locationId String   @db.ObjectId
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+
+  @@index([userId], name: "userId")
+  @@index([locationId], name: "locationId")
+}
+
+model Area {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  name       String
+  locationId String   @db.ObjectId
+  location   Location @relation(fields: [locationId], references: [id])
+  devices    Device[]
+
+  @@index([locationId], name: "locationId")
+}
+
+model DeviceTemplate {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  model       String
+  year        Int
+  image       String?
+  description String?
+  deviceType  DeviceType
+  Device      Device[]
+}
+
+model Device {
+  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+  name             String
+  serialNumber     String         @unique
+  areaId           String         @db.ObjectId
+  area             Area           @relation(fields: [areaId], references: [id])
+  deviceType       DeviceType
+  templateId       String         @db.ObjectId
+  template         DeviceTemplate @relation(fields: [templateId], references: [id])
+  gatewayId        String?        @db.ObjectId
+  gateway          Device?        @relation("Gateway", fields: [gatewayId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  devicesConnected Device[]       @relation("Gateway")
+
+  @@index([areaId], name: "areaId")
+  @@index([gatewayId], name: "gatewayId")
+}
+
+enum DeviceType {
+  GATEWAY
+  SENSOR
+  LIGHT_BULB
+  DOME
+  VALVE
+}
 
 enum Role {
   ADMIN

@@ -16,7 +16,7 @@
         "JWT_REFRESH_TOKEN_EXPIRE",
         "ADMIN_USERNAME",
         "ADMIN_PASSWORD",
-        "MONGO_URI",
+        "MONGODB_URI",
         "NEXT_PUBLIC_API_URL"
       ],
       "dependsOn": ["^build"],
@@ -27,6 +27,10 @@
     "test:e2e": {},
     "prisma:generate": {
       "dependsOn": ["^prisma:generate"]
+    },
+    "db:push": {
+      "cache": false,
+      "dependsOn": ["^db:push"]
     }
   }
 }

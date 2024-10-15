@@ -1,13 +1,41 @@
+import { match } from '@formatjs/intl-localematcher';
+import Negotiator from 'negotiator';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 
+const supportedLocales = ['vi', 'en'];
+const defaultLocale = 'vi';
+
+const getLocale = (request: NextRequest) => {
+  const headers = Object.fromEntries(request.headers.entries());
+  const languages = new Negotiator({ headers }).languages();
+
+  return match(supportedLocales, languages, defaultLocale);
+};
+
 export function middleware(request: NextRequest) {
+  let url = request.nextUrl;
+  let needRedirect = false;
   const userId = request.cookies.get('userId');
   const token = request.cookies.get('token');
   const refreshToken = request.cookies.get('refreshToken');
 
-  if (!refreshToken || !token || !userId) {
+  // Redirect if user is not logged in
+  const checkPath = /sign(in|up)/;
+  if (!checkPath.test(request.nextUrl.pathname) && (!userId || !token)) {
     return NextResponse.redirect(new URL('/signin', request.url));
+  }
+
+  const pathnameHasLocale = supportedLocales.some(
+    (locale) =>
+      url.pathname.startsWith(`/${locale}/`) || url.pathname === `/${locale}`,
+  );
+
+  // Redirect if there is no locale
+  if (!pathnameHasLocale) {
+    const locale = getLocale(request);
+    url.pathname = `/${locale}${url.pathname}`;
+    return NextResponse.redirect(url);
   }
 
   return NextResponse.next();
@@ -21,9 +49,7 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - signin (signin page)
-     * - signup (signup page)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico|signin|signup).*)',
+    '/((?!api|_next/static|_next/image|image|favicon.ico).*)',
   ],
 };

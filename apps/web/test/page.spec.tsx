@@ -1,6 +1,6 @@
 import { render } from '@testing-library/react';
 
-import RootPage from '../app/(dashboard)/page';
+import RootPage from '../app/[lang]/(dashboard)/page';
 
 window.fetch = jest.fn().mockImplementation(() =>
   Promise.resolve({

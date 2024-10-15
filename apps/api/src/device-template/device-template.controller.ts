@@ -1,0 +1,66 @@
+import { HasAnyRole } from '@app/common/decorators/has-role.decorator';
+import { AccessTokenGuard } from '@app/common/guards';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Query,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { AwsS3Service } from 'src/s3/aws-s3.service';
+import { DeviceTemplateService } from './device-template.service';
+import { createDeviceTemplateDto } from './types/create-device-teamplate.dto';
+import { GetDeviceTemplateQuery } from './types/get-device-template.query';
+
+@Controller('device-template')
+@HasAnyRole('ADMIN')
+@UseGuards(AccessTokenGuard)
+export class DeviceTemplateController {
+  constructor(
+    private readonly deviceTemplateService: DeviceTemplateService,
+    private readonly aws3: AwsS3Service,
+  ) {}
+
+  @Post()
+  @UseInterceptors(
+    FileInterceptor('image', {
+      fileFilter: (req, file, cb) => {
+        if (!file) {
+          return cb(null, true);
+        }
+        if (!file.mimetype.match(/image/)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async createDeviceTemplate(
+    @Body() data: createDeviceTemplateDto,
+    @UploadedFile() image?: Express.Multer.File,
+  ) {
+    const imageUrl = await this.aws3.uploadFile(image);
+    return this.deviceTemplateService.createDeviceTemplate({
+      ...data,
+      image: imageUrl?.url,
+    });
+  }
+
+  @Get()
+  async getDeviceTemplates(@Query() query: GetDeviceTemplateQuery) {
+    return this.deviceTemplateService.getDeviceTemplates({
+      where: {
+        model: {
+          contains: query.q,
+        },
+        deviceType: {
+          in: query.deviceType,
+        },
+      },
+    });
+  }
+}

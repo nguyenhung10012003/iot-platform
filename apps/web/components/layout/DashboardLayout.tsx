@@ -16,7 +16,7 @@ export default function DashboardLayout({
   return (
     <div className="flex h-screen overflow-hidden">
       <DashboardSidebar role={role} />
-      <ScrollArea className="py-4 px-4 h-full w-full md:px-8 sm:px-6">
+      <ScrollArea className="pt-4 px-4 h-full w-full md:px-8 sm:px-6">
         <DashboardHeader />
         <DashboardContent>{children}</DashboardContent>
       </ScrollArea>

@@ -71,7 +71,7 @@ export default function DashboardSidebar({ role }: { role: Role }) {
   ];
 
   const pathname = usePathname();
-  const path = useMemo(() => pathname.split('/')[1] || '/', [pathname]);
+  const path = useMemo(() => `/${pathname.split('/')[2] || ''}`, [pathname]);
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   return (

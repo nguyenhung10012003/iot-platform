@@ -1,4 +1,4 @@
-import { metadata } from '../app/layout';
+import { metadata } from '../app/[lang]/layout';
 
 describe('Root layout', () => {
   describe('metadata', () => {

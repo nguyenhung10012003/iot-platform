@@ -1,7 +1,7 @@
 import { cookies } from 'next/headers';
 import { ReactNode } from 'react';
-import DashboardLayout from '../../components/layout/DashboardLayout';
-import { Role } from '../../types/role';
+import DashboardLayout from '../../../components/layout/DashboardLayout';
+import { Role } from '../../../types/role';
 
 export default function DashboardLayoutPage({
   children,

@@ -1,3 +1,4 @@
+import { Card } from '@repo/ui/components/ui/card';
 import { ReactNode } from 'react';
 
 export default function DashboardContent({
@@ -5,5 +6,5 @@ export default function DashboardContent({
 }: {
   children: ReactNode;
 }) {
-  return <div>{children}</div>;
+  return <Card className="h-full mt-4">{children}</Card>;
 }

@@ -1,15 +1,10 @@
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import { PropsWithChildren } from 'react';
 
 import { Toaster } from '@repo/ui/components/ui/sonner';
 import '@repo/ui/globals.css';
-import dynamic from 'next/dynamic';
-import { UserProvider } from '../components/contexts/UserContext';
-import { ThemeProvider } from '../components/providers/ThemeProviders';
-const ThemeToggle = dynamic(() => import('../components/ThemeToggle'), {
-  ssr: false,
-});
+import { UserProvider } from '../../components/contexts/UserContext';
+import { ThemeProvider } from '../../components/providers/ThemeProviders';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,9 +13,19 @@ export const metadata: Metadata = {
   description: 'Some thing about the platform',
 };
 
-export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
+export async function generateStaticParams() {
+  return [{ lang: 'vi' }, { lang: 'en' }];
+}
+
+export default function RootLayout({
+  children,
+  params,
+}: {
+  children: React.ReactNode;
+  params: { lang: string };
+}) {
   return (
-    <html suppressHydrationWarning>
+    <html suppressHydrationWarning lang={params.lang}>
       <body className={`${inter.className}`}>
         <ThemeProvider
           attribute="class"
