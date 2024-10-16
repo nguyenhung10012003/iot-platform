@@ -3,7 +3,9 @@ import { AccessTokenGuard } from '@app/common/guards';
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   Query,
   UploadedFile,
@@ -17,7 +19,6 @@ import { createDeviceTemplateDto } from './types/create-device-teamplate.dto';
 import { GetDeviceTemplateQuery } from './types/get-device-template.query';
 
 @Controller('device-template')
-@HasAnyRole('ADMIN')
 @UseGuards(AccessTokenGuard)
 export class DeviceTemplateController {
   constructor(
@@ -26,6 +27,7 @@ export class DeviceTemplateController {
   ) {}
 
   @Post()
+  @HasAnyRole('ADMIN')
   @UseInterceptors(
     FileInterceptor('image', {
       fileFilter: (req, file, cb) => {
@@ -62,5 +64,11 @@ export class DeviceTemplateController {
         },
       },
     });
+  }
+
+  @Delete(':id')
+  @HasAnyRole('ADMIN')
+  async deleteDeviceTemplate(@Param('id') id: string) {
+    return this.deviceTemplateService.deleteDeviceTemplate(id);
   }
 }

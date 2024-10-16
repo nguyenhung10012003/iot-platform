@@ -6,7 +6,7 @@ export type DeviceTemplate = {
   image?: File;
 };
 
-export interface DeviceTemplateResponse {
+export interface DeviceTemplateModel {
   id: string;
   model: string;
   description?: string;

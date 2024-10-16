@@ -10,7 +10,7 @@ const getLocale = (request: NextRequest) => {
   const headers = Object.fromEntries(request.headers.entries());
   const languages = new Negotiator({ headers }).languages();
 
-  return match(supportedLocales, languages, defaultLocale);
+  return match(languages, supportedLocales, defaultLocale);
 };
 
 export function middleware(request: NextRequest) {

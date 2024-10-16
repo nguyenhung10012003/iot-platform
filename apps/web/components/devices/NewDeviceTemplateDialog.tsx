@@ -17,7 +17,7 @@ import { z } from 'zod';
 import api from '../../config/api';
 import {
   DeviceTemplate,
-  DeviceTemplateResponse,
+  DeviceTemplateModel,
 } from '../../types/device-template';
 import NewDeviceTemplateForm from './NewDeviceTemplateForm';
 
@@ -46,7 +46,7 @@ export default function NewDeviceTemplateDialog() {
     }
 
     try {
-      await api.post<DeviceTemplateResponse>('/device-template', formData, {
+      await api.post<DeviceTemplateModel>('/device-template', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },

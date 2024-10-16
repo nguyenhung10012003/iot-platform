@@ -17,6 +17,10 @@
         "ADMIN_USERNAME",
         "ADMIN_PASSWORD",
         "MONGODB_URI",
+        "AWS_ACCESS_KEY_ID",
+        "AWS_SECRET_ACCESS_KEY",
+        "AWS_REGION",
+        "AWS_BUCKET_NAME",
         "NEXT_PUBLIC_API_URL"
       ],
       "dependsOn": ["^build"],

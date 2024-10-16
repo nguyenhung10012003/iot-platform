@@ -45,7 +45,14 @@ export default function DashboardSidebar({ role }: { role: Role }) {
       label: 'Devices',
       href: '/devices',
       icon: Icons.device,
-      role: ['USER', 'ADMIN'],
+      role: ['USER'],
+    },
+    {
+      id: 'device-templates',
+      label: 'Device templates',
+      href: '/device-templates',
+      icon: Icons.device,
+      role: ['ADMIN'],
     },
     {
       id: 'locations',

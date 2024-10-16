@@ -45,4 +45,8 @@ function createApi() {
 }
 
 const api = createApi();
+const fetcher = (url: string) => api.get(url).then((res) => res);
+const fetchers = (urls: string[]) => Promise.all(urls.map(fetcher));
+
+export { fetcher, fetchers };
 export default api;

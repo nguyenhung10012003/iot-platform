@@ -9,39 +9,23 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import { Input } from '@repo/ui/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@repo/ui/components/ui/select';
-import { Textarea } from '@repo/ui/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
 import { useDragDrop } from '../../../../packages/ui/src/hooks/use-drag-drop';
-import { DeviceTemplate, deviceTypes } from '../../types/device-template';
+import { Location } from '../../types/location';
 
-type NewDeviceTemplateFormProps = {
-  onSubmit: (data: DeviceTemplate) => void;
-  form: UseFormReturn<DeviceTemplate>;
+type CreateLocationFormProps = {
+  onSubmit: (data: Location) => void;
+  form: UseFormReturn<Location>;
 };
 
-export default function NewDeviceTemplateForm({
+export default function CreateLocationForm({
   form,
   onSubmit,
-}: NewDeviceTemplateFormProps) {
-  const currentYear = new Date().getFullYear();
-  const years = Array.from(
-    { length: currentYear - 1970 },
-    (_, i) => currentYear - i,
-  );
-
+}: CreateLocationFormProps) {
   const onDrop = (file: File) => {
     form.setValue('image', file);
   };
-
   const [{ dragActive }, { handleDrag, handleDrop }] = useDragDrop(onDrop);
-
   return (
     <Form {...form}>
       <form
@@ -51,17 +35,12 @@ export default function NewDeviceTemplateForm({
       >
         <FormField
           control={form.control}
-          name="model"
+          name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="model">Model name</FormLabel>
+              <FormLabel htmlFor="name">Location name</FormLabel>
               <FormControl>
-                <Input
-                  {...field}
-                  placeholder="Enter model name"
-                  id="model"
-                  autoComplete={'false'}
-                />
+                <Input {...field} placeholder="Enter location name" id="name" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -69,14 +48,14 @@ export default function NewDeviceTemplateForm({
         />
         <FormField
           control={form.control}
-          name="description"
+          name="address"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="description">Description</FormLabel>
+              <FormLabel htmlFor="address">Address</FormLabel>
               <FormControl>
-                <Textarea
-                  id="description"
-                  placeholder="Enter model description"
+                <Input
+                  id="address"
+                  placeholder="Enter location address"
                   className="resize-none"
                   {...field}
                 />
@@ -85,62 +64,6 @@ export default function NewDeviceTemplateForm({
             </FormItem>
           )}
         />
-        <div className="flex gap-4">
-          <FormField
-            control={form.control}
-            name="year"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Year</FormLabel>
-                <Select
-                  onValueChange={(value) => field.onChange(+value)}
-                  defaultValue={field.value?.toString()}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a year" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {years.map((year) => (
-                      <SelectItem key={year} value={year.toString()}>
-                        {year}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="deviceType"
-            render={({ field }) => (
-              <FormItem className="w-full">
-                <FormLabel>Device Type</FormLabel>
-                <Select
-                  onValueChange={field.onChange}
-                  defaultValue={field.value}
-                >
-                  <FormControl>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Type of the device" />
-                    </SelectTrigger>
-                  </FormControl>
-                  <SelectContent>
-                    {deviceTypes.map((deviceType) => (
-                      <SelectItem key={deviceType} value={deviceType}>
-                        {deviceType}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
         <FormField
           control={form.control}
           name="image"
@@ -194,9 +117,9 @@ export default function NewDeviceTemplateForm({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full">
-          Save
-        </Button>
+        <div className="w-full flex justify-end">
+          <Button type="submit">Create</Button>
+        </div>
       </form>
     </Form>
   );

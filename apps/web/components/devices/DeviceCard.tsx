@@ -8,8 +8,14 @@ import {
 } from '@repo/ui/components/ui/card';
 import Image from 'next/image';
 import { useState } from 'react';
+import { DeviceTemplateModel } from '../../types/device-template';
+import NewDeviceDialog from './NewDeviceDialog';
 
-export default function DeviceCard() {
+type DeviceCardProps = {
+  deviceTemplate: DeviceTemplateModel;
+};
+
+export default function DeviceCard({ deviceTemplate }: DeviceCardProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -20,7 +26,7 @@ export default function DeviceCard() {
     >
       <div className="relative">
         <Image
-          src="/image/device.svg"
+          src={deviceTemplate.image || '/image/device.svg'}
           alt="Card image"
           className="w-full h-[200px] object-cover"
           width={300}
@@ -31,12 +37,12 @@ export default function DeviceCard() {
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <Button variant="secondary">Add device</Button>
+          <NewDeviceDialog template={deviceTemplate}/>
         </div>
       </div>
       <CardHeader>
-        <CardTitle>Hub Title</CardTitle>
-        <CardDescription>Some description about the hub.</CardDescription>
+        <CardTitle>{deviceTemplate.model}</CardTitle>
+        <CardDescription>{deviceTemplate.description}</CardDescription>
       </CardHeader>
     </Card>
   );
