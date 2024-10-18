@@ -13,10 +13,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@repo/ui/components/ui/dialog';
+import { toast } from '@repo/ui/components/ui/sonner';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import api from '../../config/api';
 import { GatewayForm } from '../../types/gateway';
+import revalidate from '../../utils/action';
 import NewGatewayForm from './NewGatewayForm';
 
 export default function NewGatewayDialog() {
@@ -34,8 +37,21 @@ export default function NewGatewayDialog() {
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: GatewayForm) => {
-    console.log(data);
+  const onSubmit = async (data: GatewayForm) => {
+    try {
+      await api.post('/gateway', data);
+      toast.success('Gateway created successfully');
+      setOpen(false);
+      await revalidate('gateways');
+    } catch (error: any) {
+      switch (error.error) {
+        case 'DUPLICATE':
+          toast.error('Gateway already connected to other location');
+          break;
+        default:
+          toast.error('Error creating gateway');
+      }
+    }
   };
 
   const [open, setOpen] = useState(false);

@@ -44,7 +44,7 @@ export class GatewayService {
   }
 
   async getGatewaysForUser(userId: string) {
-    const location =  await this.prisma.area.findMany({
+    const location = await this.prisma.area.findMany({
       where: {
         location: {
           ownerId: userId,
@@ -55,5 +55,13 @@ export class GatewayService {
       },
     });
     return location.map((area) => area.gateways).flat();
+  }
+
+  async deleteGateway(gatewayId: string) {
+    await this.prisma.gateway.delete({
+      where: { id: gatewayId },
+    });
+    await this.mqttService.disconnect(gatewayId);
+    return { success: true };
   }
 }

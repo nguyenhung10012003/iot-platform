@@ -60,40 +60,38 @@ export default function NewDeviceForm({ form }: NewDeviceFormProps) {
           )}
         />
         <div className="flex gap-4">
-          <FormItem className="w-full flex flex-col">
+          <FormItem className="w-1/2 flex flex-col">
             <FormLabel htmlFor="locationId" className="mb-2 mt-1">
               Location
             </FormLabel>
             <SelectLocation onSelect={setLocation} />
           </FormItem>
 
-          {location && (
-            <FormField
-              control={form.control}
-              name="areaId"
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormLabel htmlFor="areaId">Area</FormLabel>
-                  <Select onValueChange={field.onChange}>
-                    <SelectTrigger>
-                      <FormControl>
-                        <SelectValue placeholder="Choose area" />
-                      </FormControl>
-                    </SelectTrigger>
-                    <SelectContent>
-                      {location.areas?.map((area) => (
-                        <SelectItem key={area.id} value={area.id}>
-                          {area.name}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+          <FormField
+            control={form.control}
+            name="areaId"
+            render={({ field }) => (
+              <FormItem className="w-1/2">
+                <FormLabel htmlFor="areaId">Area</FormLabel>
+                <Select onValueChange={field.onChange} disabled={!location}>
+                  <SelectTrigger>
+                    <FormControl>
+                      <SelectValue placeholder="Choose area" />
+                    </FormControl>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {location?.areas?.map((area) => (
+                      <SelectItem key={area.id} value={area.id}>
+                        {area.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
 
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-          )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
       </form>
     </Form>
