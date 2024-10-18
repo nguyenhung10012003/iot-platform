@@ -7,17 +7,24 @@ export class MqttService {
   private client: Map<string, MqttClient> = new Map();
   constructor(private readonly prisma: PrismaService) {
     try {
-      const gateways = prisma.gateway.findMany();
+      const gateways = prisma.gateway.findMany({
+        include: {
+          devicesConnected: true,
+        },
+      });
       gateways.then(async (gateways) => {
         await Promise.all(
-          gateways.map((gateway) =>
-            this.createClient(gateway.id, {
+          gateways.map(async (gateway) => {
+            const client = await this.createClient(gateway.id, {
               username: gateway.auth?.username,
               password: gateway.auth?.password,
               port: gateway.port,
               host: gateway.host,
-            }),
-          ),
+            });
+            gateway.devicesConnected.forEach((device) => {
+              this.subscribe(gateway.id, device.topic);
+            });
+          }),
         );
       });
     } catch (e) {
