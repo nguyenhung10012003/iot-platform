@@ -1,7 +1,10 @@
-import { DeviceType } from '@prisma/client';
+import { DeviceType, Prisma } from '@prisma/client';
 import { IsOptional, IsString } from 'class-validator';
 
 export class CreateDeviceDto {
+  @IsString()
+  @IsOptional()
+  topic?: string;
   @IsString()
   name: string;
   @IsString()
@@ -13,6 +16,8 @@ export class CreateDeviceDto {
   @IsString()
   templateId: string;
   @IsString()
+  gatewayId: string;
+  @IsString()
   @IsOptional()
-  gatewayId?: string;
+  description?: string;
 }

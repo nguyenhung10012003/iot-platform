@@ -20,6 +20,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       return await api.get<any, User>(`/user/me`);
     } catch (error) {
+      signout();
       return null;
     }
   }, []);

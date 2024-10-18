@@ -8,6 +8,7 @@
     },
     "build": {
       "inputs": ["$TURBO_DEFAULT", "**/.env*"],
+      "cache": false,
       "env": [
         "NODE_ENV",
         "JWT_ACCESS_TOKEN_SECRET",

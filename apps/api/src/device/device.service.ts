@@ -22,7 +22,12 @@ export class DeviceService {
   }
 
   async createDevice(data: CreateDeviceDto) {
-    return this.prisma.device.create({ data });
+    return this.prisma.device.create({
+      data: {
+        ...data,
+        topic: data.topic || `device/${data.serialNumber}`,
+      },
+    });
   }
 
   async updateDevice(id: string, data: Prisma.DeviceUpdateInput) {

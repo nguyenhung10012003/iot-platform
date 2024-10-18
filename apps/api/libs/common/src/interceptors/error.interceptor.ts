@@ -6,6 +6,7 @@ import {
   ExecutionContext,
   HttpException,
   Injectable,
+  Logger,
   NestInterceptor,
   NotFoundException,
 } from '@nestjs/common';
@@ -97,7 +98,7 @@ class DefaultErrorHandler implements ErrorHandler {
  */
 class ErrorHandlerFactory {
   static getHandler(error: Error) {
-    console.log(error);
+    Logger.error(error, 'ErrorHandlerFactory');
     if (error instanceof HttpException) {
       return new HttpErrorHandler();
     } else if (

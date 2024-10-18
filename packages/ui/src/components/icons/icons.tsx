@@ -2,24 +2,26 @@ import {
   ArrowUpTrayIcon as ArrowUpTrayIconOutline,
   BellIcon as BellIconOutline,
   BoltIcon as BoltIconOutline,
+  CheckIcon as CheckIconOutline,
   CogIcon as CogIconOutline,
+  CpuChipIcon as CpuChipIconOutline,
   HomeIcon as HomeIconOutline,
   MagnifyingGlassIcon as MagnifyingGlassIconOutline,
   MapPinIcon as MapPinIconOutline,
   PlusIcon as PlusIconOutline,
   UserIcon as UserIconOutline,
-  CheckIcon as CheckIconOutline,
 } from '@heroicons/react/24/outline';
 import {
   ArrowUpTrayIcon,
   BellIcon,
   BoltIcon,
+  CheckIcon,
   CogIcon,
+  CpuChipIcon,
   HomeIcon,
   MapPinIcon,
   PlusIcon,
   UserIcon,
-  CheckIcon,
 } from '@heroicons/react/24/solid';
 
 import { ArrowLeftFromLineIcon, ArrowRightFromLineIcon } from 'lucide-react';
@@ -69,6 +71,13 @@ export const Icons = {
       <BoltIcon {...props} />
     ) : (
       <BoltIconOutline {...props} />
+    ),
+
+  cpu: (props: IconProps) =>
+    props.variant === 'solid' ? (
+      <CpuChipIcon {...props} />
+    ) : (
+      <CpuChipIconOutline {...props} />
     ),
 
   cog: (props: IconProps) =>

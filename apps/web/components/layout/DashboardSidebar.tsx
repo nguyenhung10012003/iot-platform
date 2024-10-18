@@ -41,6 +41,13 @@ export default function DashboardSidebar({ role }: { role: Role }) {
       role: ['USER', 'ADMIN'],
     },
     {
+      id: 'gateway',
+      label: 'Gateways',
+      href: '/gateways',
+      icon: Icons.cpu,
+      role: ['USER'],
+    },
+    {
       id: 'devices',
       label: 'Devices',
       href: '/devices',

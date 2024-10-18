@@ -15,10 +15,9 @@ export interface DeviceTemplateModel {
   image?: string;
 }
 
-export type DeviceType = 'GATEWAY' | 'SENSOR' | 'LIGHT_BULB' | 'DOME' | 'VALVE';
+export type DeviceType = 'SENSOR' | 'LIGHT_BULB' | 'DOME' | 'VALVE';
 
 export const deviceTypes: DeviceType[] = [
-  'GATEWAY',
   'SENSOR',
   'LIGHT_BULB',
   'DOME',

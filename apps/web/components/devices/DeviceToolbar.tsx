@@ -1,13 +1,20 @@
 'use client';
 
-import { useState } from 'react';
+import { useFilter } from '../../hooks/useFilter';
 import FacetedFilter from '../FacetedFilter';
 import Searchbox from '../Searchbox';
-import { useFilter } from '../../hooks/useFilter';
 
-export default function DeviceToolbar() {
+type DevicetoolbarProps = {
+  filter?: boolean;
+};
+
+export default function DeviceToolbar({ filter = true }: DevicetoolbarProps) {
+  if (!filter) {
+    return (
+      <Searchbox boxClassName="bg-popover border shadow-sm shadow-primary/20 rounded-md" />
+    );
+  }
   const options = [
-    { label: 'Gateway', value: 'GATEWAY' },
     { label: 'Sensor', value: 'SENSOR' },
     { label: 'Light bulb', value: 'LIGHT_BULB' },
     { label: 'Dome', value: 'DOME' },

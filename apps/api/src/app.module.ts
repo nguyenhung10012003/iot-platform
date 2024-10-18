@@ -11,9 +11,11 @@ import { UserModule } from './user/user.module';
 import { DeviceTemplateModule } from './device-template/device-template.module';
 import { DeviceModule } from './device/device.module';
 import { LocationModule } from './location/location.module';
+import { GatewayModule } from './gateway/gateway.module';
+import { MqttModule } from './mqtt/mqtt.module';
 
 @Module({
-  imports: [CommonModule, UserModule, AuthModule, DeviceTemplateModule, DeviceModule, LocationModule],
+  imports: [CommonModule, UserModule, AuthModule, DeviceTemplateModule, DeviceModule, LocationModule, GatewayModule, MqttModule],
   controllers: [AppController],
   providers: [AppService, AccessTokenStrategy, RefreshTokenStrategy],
 })

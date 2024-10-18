@@ -12,6 +12,6 @@ export class createDeviceTemplateDto {
   @IsOptional()
   description?: string;
   @IsString()
-  @IsIn(['GATEWAY', 'SENSOR', 'LIGHT_BULB', 'DOME', 'VALVE'])
+  @IsIn(['SENSOR', 'LIGHT_BULB', 'DOME', 'VALVE'])
   deviceType: DeviceType;
 }

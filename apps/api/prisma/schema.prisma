@@ -51,11 +51,12 @@ model UserLocation {
 }
 
 model Area {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
   name       String
-  locationId String   @db.ObjectId
-  location   Location @relation(fields: [locationId], references: [id])
+  locationId String    @db.ObjectId
+  location   Location  @relation(fields: [locationId], references: [id])
   devices    Device[]
+  gateways   Gateway[]
 
   @@index([locationId], name: "locationId")
 }
@@ -70,25 +71,46 @@ model DeviceTemplate {
   Device      Device[]
 }
 
-model Device {
-  id               String         @id @default(auto()) @map("_id") @db.ObjectId
+model Gateway {
+  id               String       @id @default(auto()) @map("_id") @db.ObjectId
   name             String
-  serialNumber     String         @unique
-  areaId           String         @db.ObjectId
-  area             Area           @relation(fields: [areaId], references: [id])
-  deviceType       DeviceType
-  templateId       String         @db.ObjectId
-  template         DeviceTemplate @relation(fields: [templateId], references: [id])
-  gatewayId        String?        @db.ObjectId
-  gateway          Device?        @relation("Gateway", fields: [gatewayId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  devicesConnected Device[]       @relation("Gateway")
+  host             String       @unique
+  port             Int
+  description      String?
+  connectionStatus Boolean?
+  auth             GatewayAuth?
+  areaId           String       @db.ObjectId
+  area             Area         @relation(fields: [areaId], references: [id])
+  devicesConnected Device[]
+
+  @@index([areaId], name: "areaId")
+}
+
+model Device {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  description  String?
+  serialNumber String         @unique
+  topic        String
+  areaId       String         @db.ObjectId
+  area         Area           @relation(fields: [areaId], references: [id])
+  deviceType   DeviceType
+  templateId   String         @db.ObjectId
+  template     DeviceTemplate @relation(fields: [templateId], references: [id])
+  gatewayId    String?        @db.ObjectId
+  gateway      Gateway?       @relation(fields: [gatewayId], references: [id])
 
   @@index([areaId], name: "areaId")
   @@index([gatewayId], name: "gatewayId")
 }
 
+type GatewayAuth {
+  token    String?
+  username String?
+  password String?
+}
+
 enum DeviceType {
-  GATEWAY
   SENSOR
   LIGHT_BULB
   DOME
