@@ -66,14 +66,14 @@ export default function DashboardSidebar({ role }: { role: Role }) {
       label: 'Locations',
       href: '/locations',
       icon: Icons.mappin,
-      role: ['USER', 'ADMIN'],
+      role: ['USER'],
     },
     {
       id: 'executive',
       label: 'Executive structure',
       href: '/executive',
       icon: Icons.cog,
-      role: ['ADMIN'],
+      role: ['USER'],
     },
     {
       id: 'users',

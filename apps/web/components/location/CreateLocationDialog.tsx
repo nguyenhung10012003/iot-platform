@@ -15,6 +15,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import api from '../../config/api';
 import { Location, LocationModel } from '../../types/location';
+import revalidate from '../../utils/action';
 import CreateLocationForm from './CreateLocationForm';
 
 type CreateLocationDialogProps = {
@@ -23,7 +24,8 @@ type CreateLocationDialogProps = {
 };
 
 export default function CreateLocationDialog({
-  triggerBtn, onCreate
+  triggerBtn,
+  onCreate,
 }: CreateLocationDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const formSchema = z.object({
@@ -51,6 +53,7 @@ export default function CreateLocationDialog({
         },
       });
       onCreate && onCreate(res);
+      await revalidate('locations');
       toast.success('Location created successfully');
       setOpen(false);
     } catch (e) {

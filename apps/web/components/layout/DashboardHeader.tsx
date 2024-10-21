@@ -19,7 +19,7 @@ import { useUser } from '../../hooks/useUser';
 import ThemeToggle from '../ThemeToggle';
 
 export default function DashboardHeader() {
-  const { signout } = useUser();
+  const { signout, user } = useUser();
   return (
     <div className="flex justify-end">
       <Card className="rounded-full shadow-md">
@@ -42,7 +42,7 @@ export default function DashboardHeader() {
                 <div className="flex flex-col space-y-1">
                   <p className="text-sm font-medium leading-none">name</p>
                   <p className="text-xs leading-none text-muted-foreground">
-                    USER
+                    {user?.role || 'USER'}
                   </p>
                 </div>
               </DropdownMenuLabel>
