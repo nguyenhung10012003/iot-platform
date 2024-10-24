@@ -1,8 +1,10 @@
-import { DeviceTemplateModel, DeviceType } from "./device-template";
+import { DeviceTemplateModel, DeviceType } from './device-template';
 
 export type Device = {
   name: string;
   serialNumber: string;
+  templateId: string;
+  deviceType: DeviceType;
   areaId: string;
 };
 
@@ -15,5 +17,4 @@ export interface DeviceModel {
   gatewayId?: string;
   areaId: string;
   deviceType: DeviceType;
-
 }

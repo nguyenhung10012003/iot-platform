@@ -15,8 +15,10 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AwsS3Service } from 'src/s3/aws-s3.service';
 import { LocationService } from './location.service';
+import { AddUserToLocationDto } from './types/add-user-location.dto';
 import { CreateLocationDto } from './types/create-location.dto';
 import { LocationQuery } from './types/location.query';
+import { RemoveUserFromLocationDto } from './types/remove-user-location.dto';
 
 @Controller('location')
 @UseGuards(AccessTokenGuard)
@@ -70,6 +72,41 @@ export class LocationController {
       },
       include: {
         areas: query.includeArea,
+      },
+    });
+  }
+
+  @Post('user')
+  async addUserToLocation(@Body() data: AddUserToLocationDto) {
+    return this.locationService.addUserToLocation({
+      role: data.role,
+      locationId: data.locationId,
+      username: data.username,
+    });
+  }
+
+  @Get('user')
+  async getUserLocations(
+    @Req() req: AuthenticatedRequest,
+    @Query('locationId') locationId: string,
+  ) {
+    return this.locationService.getUserLocations({
+      where: {
+        locationId: locationId,
+      },
+      select: {
+        user: true,
+        role: true,
+      },
+    });
+  }
+
+  @Delete('user')
+  async removeUserFromLocation(@Body() query: RemoveUserFromLocationDto) {
+    return this.locationService.removeUserFromLocation({
+      userId_locationId: {
+        locationId: query.locationId,
+        userId: query.userId,
       },
     });
   }

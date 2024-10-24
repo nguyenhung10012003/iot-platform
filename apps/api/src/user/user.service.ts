@@ -20,6 +20,16 @@ export class UserService {
     });
   }
 
+  async search(query: string) {
+    return this.prisma.user.findMany({
+      where: {
+        username: {
+          contains: query,
+        },
+      },
+    });
+  }
+
   async findOne(username: string, options?: FindOneOptions) {
     if (options?.throwIfNotFound) {
       return this.prisma.user.findUniqueOrThrow({

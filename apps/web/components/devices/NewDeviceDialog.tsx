@@ -19,17 +19,26 @@ import { Device } from '../../types/device';
 import { DeviceTemplateModel } from '../../types/device-template';
 import Stepper from '../Stepper';
 import NewDeviceForm from './NewDeviceForm';
+import SelectTemplate from './SelectTemplate';
 
 type NewDeviceDialogProps = {
   // isOpen: boolean;
   // onClose: () => void;
   // onCreate: () => void;
-  template: DeviceTemplateModel;
+  triggerBtn?: React.ReactNode;
+  template?: DeviceTemplateModel;
 };
 
-export default function NewDeviceDialog({ template }: NewDeviceDialogProps) {
+export default function NewDeviceDialog({
+  template,
+  triggerBtn,
+}: NewDeviceDialogProps) {
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const [templateChoosen, setTemplateChoosen] = useState<
+    DeviceTemplateModel | undefined
+  >(template);
   const [open, setOpen] = useState<boolean>(false);
+  const [disabledNext, setDisabledNext] = useState<boolean>(true);
   const totalSteps = 4;
 
   const formSchema = z.object({
@@ -46,8 +55,8 @@ export default function NewDeviceDialog({ template }: NewDeviceDialogProps) {
     try {
       const res = await api.post('/device', {
         ...formData,
-        templateId: template.id,
-        deviceType: template.deviceType,
+        templateId: templateChoosen?.id,
+        deviceType: templateChoosen?.deviceType,
       });
     } catch (e) {
       toast.error('Failed to create device');
@@ -57,21 +66,34 @@ export default function NewDeviceDialog({ template }: NewDeviceDialogProps) {
   const steps = [
     {
       component: (
-        <div className="flex py-2">
-          <div className="w-full flex flex-col">
-            <h2 className="font-semibold text-lg">{`Model name: ${template.model}`}</h2>
-            <span className="">{`Description: ${template.description || 'No description for this!'}`}</span>
-            <span>{`Device Type: ${template.deviceType}`}</span>
-            <span>{`Year of manufacture: ${template.year}`}</span>
+        <>
+          <div>
+            <h1 className="text-lg font-semibold mb-2">Choose a template</h1>
+            <SelectTemplate
+              chooseTemplate={templateChoosen}
+              onSelect={(template) => {
+                setTemplateChoosen(template), setDisabledNext(false);
+              }}
+            />
           </div>
-          <Image
-            src={template.image || '/image/device.svg'}
-            alt="image"
-            className="w-[100px] h-[100px] object-cover"
-            width={300}
-            height={300}
-          />
-        </div>
+          {templateChoosen && (
+            <div className="flex py-2">
+              <div className="w-full flex flex-col">
+                <h2 className="font-semibold text-lg">{`Model name: ${templateChoosen.model}`}</h2>
+                <span className="">{`Description: ${templateChoosen.description || 'No description for this!'}`}</span>
+                <span>{`Device Type: ${templateChoosen.deviceType}`}</span>
+                <span>{`Year of manufacture: ${templateChoosen.year}`}</span>
+              </div>
+              <Image
+                src={templateChoosen.image || '/image/device.svg'}
+                alt="image"
+                className="w-[100px] h-[100px] object-cover"
+                width={300}
+                height={300}
+              />
+            </div>
+          )}
+        </>
       ),
       next: () => {},
     },
@@ -105,6 +127,8 @@ export default function NewDeviceDialog({ template }: NewDeviceDialogProps) {
     setOpen(isOpen);
     if (!isOpen) {
       setCurrentStep(1);
+      setTemplateChoosen(undefined);
+      setDisabledNext(true);
       form.reset();
     }
   }, []);
@@ -112,7 +136,7 @@ export default function NewDeviceDialog({ template }: NewDeviceDialogProps) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="secondary">Add device</Button>
+        {triggerBtn || <Button variant="secondary">Add device</Button>}
       </DialogTrigger>
       <DialogContent
         includeX={false}
@@ -134,7 +158,7 @@ export default function NewDeviceDialog({ template }: NewDeviceDialogProps) {
           >
             Back
           </Button>
-          <Button onClick={handleNext}>
+          <Button onClick={handleNext} disabled={disabledNext}>
             {currentStep === totalSteps ? 'Done' : 'Next'}
           </Button>
         </DialogFooter>

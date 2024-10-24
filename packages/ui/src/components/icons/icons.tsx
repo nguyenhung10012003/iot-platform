@@ -24,7 +24,7 @@ import {
   UserIcon,
 } from '@heroicons/react/24/solid';
 
-import { ArrowLeftFromLineIcon, ArrowRightFromLineIcon } from 'lucide-react';
+import { ArrowLeftFromLineIcon, ArrowRightFromLineIcon, MoreHorizontal, ArrowUpDown } from 'lucide-react';
 
 export type IconProps = React.HTMLAttributes<SVGElement> & {
   variant?: 'outline' | 'solid';
@@ -111,4 +111,8 @@ export const Icons = {
     ) : (
       <CheckIconOutline {...props} />
     ),
+
+  more: (props: IconProps) => <MoreHorizontal {...props} />,
+
+  sort: (props: IconProps) => <ArrowUpDown {...props} />,
 };

@@ -10,10 +10,44 @@ export class LocationService {
     return this.prisma.location.findMany(args);
   }
 
-  async createLocation(
-    data: Prisma.LocationCreateInput | Prisma.LocationUncheckedCreateInput,
-  ) {
-    return this.prisma.location.create({ data, include: { areas: true } });
+  async createLocation(data: Prisma.LocationUncheckedCreateInput) {
+    return this.prisma.location.create({
+      data: {
+        ...data,
+        userLocations: {
+          create: {
+            role: 'EMPLOYER',
+            userId: data.ownerId,
+          },
+        },
+      },
+      include: { areas: true },
+    });
+  }
+
+  async addUserToLocation(data: {
+    role: 'EMPLOYEE' | 'EMPLOYER';
+    locationId: string;
+    username: string;
+  }) {
+    const userToadd = await this.prisma.user.findUniqueOrThrow({
+      where: { username: data.username },
+    });
+    return this.prisma.userLocation.create({
+      data: {
+        role: data.role,
+        userId: userToadd.id,
+        locationId: data.locationId,
+      },
+    });
+  }
+
+  async getUserLocations(args: Prisma.UserLocationFindManyArgs) {
+    return this.prisma.userLocation.findMany(args);
+  }
+
+  async removeUserFromLocation(where: Prisma.UserLocationWhereUniqueInput) {
+    return this.prisma.userLocation.delete({ where });
   }
 
   async deleteLocation(where: Prisma.LocationWhereUniqueInput) {

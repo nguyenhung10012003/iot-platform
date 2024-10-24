@@ -5,3 +5,11 @@ export type User = {
   username: string,
   role: Role,
 }
+
+export type UserLocation = {
+  location: Location,
+  user: User,
+  role: UserLocationRole,
+}
+
+type UserLocationRole = "EMPLOYEE" | "EMPLOYER";
