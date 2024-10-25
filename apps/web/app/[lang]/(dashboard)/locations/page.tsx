@@ -8,7 +8,7 @@ const getUserLocations = async () => {
   try {
     const token = cookies().get('token')?.value;
     const res = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/location`,
+      `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000'}/location/join`,
       {
         method: 'GET',
         headers: {
@@ -29,6 +29,7 @@ export const dynamic = 'force-dynamic';
 
 export default async function LocationsPage() {
   const data = await getUserLocations();
+  const role = cookies().get('role')?.value;
 
   if (!data || data.length === 0) {
     return (
@@ -43,7 +44,7 @@ export default async function LocationsPage() {
     <div className="flex flex-col gap-4 p-4 md:p-6">
       <div className="flex justify-between">
         <Searchbox boxClassName="bg-popover border shadow-sm shadow-primary/20 rounded-md" />
-        <CreateLocationDialog />
+        {role === 'USER' && <CreateLocationDialog />}
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {data?.map((location) => (

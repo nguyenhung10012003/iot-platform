@@ -24,6 +24,7 @@ model User {
   employess     User[]         @relation("Employer", fields: [employeeIds], references: [id])
   locations     Location[]
   userLocations UserLocation[]
+  Job           Job[]
 }
 
 model Location {
@@ -35,8 +36,23 @@ model Location {
   owner         User           @relation(fields: [ownerId], references: [id])
   areas         Area[]
   userLocations UserLocation[]
+  Job           Job[]
 
   @@index([ownerId], name: "ownerId")
+}
+
+model Job {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  title       String
+  description String?
+  status      JobStatus @default(PENDING)
+  report      String?
+  locationId  String    @db.ObjectId
+  asigneeId   String?   @db.ObjectId
+  asignee     User?     @relation(fields: [asigneeId], references: [id], onDelete: Cascade)
+  location    Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 }
 
 model UserLocation {
@@ -120,9 +136,16 @@ enum DeviceType {
 enum Role {
   ADMIN
   USER
+  EMPLOYEE
 }
 
 enum UserLocationRole {
   EMPLOYEE
   EMPLOYER
+}
+
+enum JobStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
 }

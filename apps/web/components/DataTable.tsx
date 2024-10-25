@@ -1,15 +1,21 @@
-import { Button } from "@repo/ui/components/ui/button";
-import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@repo/ui/components/ui/table";
-import { flexRender } from "@tanstack/react-table";
-import { columns } from "../devices/DeviceTable";
-import { User, UserLocation } from "../../types/user";
-import { Table as TableCore } from "@tanstack/table-core";
+import { Button } from '@repo/ui/components/ui/button';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@repo/ui/components/ui/table';
+import { flexRender } from '@tanstack/react-table';
+import { ColumnDef, Table as TableCore } from '@tanstack/table-core';
 
-type UserTableProps = {
-  table: TableCore<UserLocation>;
+type DataTableProps<T = any> = {
+  table: TableCore<T>;
+  columns: ColumnDef<T>[];
 };
 
-export default function UserTable({ table }: UserTableProps) {
+export default function DataTable({ table, columns }: DataTableProps) {
   return (
     <>
       <div className="rounded-md border">

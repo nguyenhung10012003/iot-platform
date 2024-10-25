@@ -1,5 +1,6 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   Dialog,
@@ -12,8 +13,10 @@ import {
 } from '@repo/ui/components/ui/dialog';
 import { toast } from '@repo/ui/components/ui/sonner';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import api from '../../config/api';
-import SearchUserInput from './SearchUserInput';
+import AddUserForm from './AddUserForm';
 
 export default function AddUserLocationDialog({
   locationId,
@@ -22,16 +25,17 @@ export default function AddUserLocationDialog({
   locationId: string;
   onAddUser: () => void;
 }) {
-  const [searchValue, setSearchValue] = useState('');
   const [open, setOpen] = useState(false);
 
-  const handleAddUser = async () => {
+  const handleAddUser = async (data: {
+    username: string;
+    password: string;
+  }) => {
     try {
-      if (!searchValue) return;
       await api.post('location/user', {
-        role: 'EMPLOYEE',
         locationId: locationId,
-        username: searchValue,
+        username: data.username,
+        password: data.password,
       });
       onAddUser();
       toast.success('User added successfully');
@@ -39,7 +43,7 @@ export default function AddUserLocationDialog({
     } catch (error: any) {
       switch (error.error) {
         case 'DUPLICATE':
-          toast.error('Failed to add user. User already exists in location');
+          toast.error('Failed to add user. Username already exists');
           break;
         case 'NOT_FOUND':
           toast.error('Failed to add user. User not found');
@@ -53,8 +57,23 @@ export default function AddUserLocationDialog({
 
   const handleOpenChange = (value: boolean) => {
     setOpen(value);
-    setSearchValue('');
+    form.reset();
   };
+
+  const formSchema = z.object({
+    username: z
+      .string()
+      .min(4, { message: 'User name must have more than 4 characters' })
+      .max(48, { message: 'User name must have less than 48 characters' }),
+    password: z
+      .string()
+      .min(6, { message: 'Password must have more than 6 characters' })
+      .max(32, { message: 'Password must have less than 32 characters' }),
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  });
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
@@ -68,16 +87,9 @@ export default function AddUserLocationDialog({
             Find and add user to your location
           </DialogDescription>
         </DialogHeader>
-        <div>
-          <SearchUserInput
-            searchValue={searchValue}
-            setSearchValue={setSearchValue}
-          />
-        </div>
+        <AddUserForm form={form} onSubmit={handleAddUser} />
         <DialogFooter>
-          <Button onClick={() => handleAddUser()} disabled={!searchValue}>
-            Add
-          </Button>
+          <Button onClick={form.handleSubmit(handleAddUser)}>Add</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

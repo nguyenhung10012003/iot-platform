@@ -38,7 +38,7 @@ export default function DashboardSidebar({ role }: { role: Role }) {
       label: 'Home',
       href: '/',
       icon: Icons.home,
-      role: ['USER', 'ADMIN'],
+      role: ['USER', 'ADMIN', 'EMPLOYEE'],
     },
     {
       id: 'gateway',
@@ -66,7 +66,7 @@ export default function DashboardSidebar({ role }: { role: Role }) {
       label: 'Locations',
       href: '/locations',
       icon: Icons.mappin,
-      role: ['USER'],
+      role: ['USER', 'EMPLOYEE'],
     },
     {
       id: 'executive',

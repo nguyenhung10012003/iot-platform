@@ -13,9 +13,10 @@ import { DeviceModule } from './device/device.module';
 import { LocationModule } from './location/location.module';
 import { GatewayModule } from './gateway/gateway.module';
 import { MqttModule } from './mqtt/mqtt.module';
+import { JobModule } from './job/job.module';
 
 @Module({
-  imports: [CommonModule, UserModule, AuthModule, DeviceTemplateModule, DeviceModule, LocationModule, GatewayModule, MqttModule],
+  imports: [CommonModule, UserModule, AuthModule, DeviceTemplateModule, DeviceModule, LocationModule, GatewayModule, MqttModule, JobModule],
   controllers: [AppController],
   providers: [AppService, AccessTokenStrategy, RefreshTokenStrategy],
 })

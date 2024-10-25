@@ -16,6 +16,7 @@ export class UserService {
       data: {
         username: data.username,
         password: await hashPassword(data.password),
+        role: data.role || 'USER',
       },
     });
   }

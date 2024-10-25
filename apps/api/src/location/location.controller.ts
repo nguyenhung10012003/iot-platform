@@ -76,23 +76,26 @@ export class LocationController {
     });
   }
 
+  @Get('join')
+  async getJoinLocations(@Req() req: AuthenticatedRequest) {
+    return this.locationService.getJoinedLocations(req.user.userId);
+  }
+
   @Post('user')
   async addUserToLocation(@Body() data: AddUserToLocationDto) {
-    return this.locationService.addUserToLocation({
-      role: data.role,
-      locationId: data.locationId,
-      username: data.username,
-    });
+    return this.locationService.addUserToLocation(data);
   }
 
   @Get('user')
   async getUserLocations(
     @Req() req: AuthenticatedRequest,
     @Query('locationId') locationId: string,
+    @Query('role') role?: 'EMPLOYEE' | 'EMPLOYER',
   ) {
     return this.locationService.getUserLocations({
       where: {
         locationId: locationId,
+        role: role,
       },
       select: {
         user: true,
@@ -102,13 +105,8 @@ export class LocationController {
   }
 
   @Delete('user')
-  async removeUserFromLocation(@Body() query: RemoveUserFromLocationDto) {
-    return this.locationService.removeUserFromLocation({
-      userId_locationId: {
-        locationId: query.locationId,
-        userId: query.userId,
-      },
-    });
+  async removeUserFromLocation(@Body() data: RemoveUserFromLocationDto) {
+    return this.locationService.removeUserFromLocation(data);
   }
 
   @Delete(':id')

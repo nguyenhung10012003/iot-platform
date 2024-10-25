@@ -4,10 +4,11 @@ import {
   TabsList,
   TabsTrigger,
 } from '@repo/ui/components/ui/tabs';
-import { DeviceTable } from '../../../../../components/devices/DeviceTable';
-import UserLocationTable from '../../../../../components/location/UserLocationTable';
+import { DeviceTable } from '../../../../../../components/devices/DeviceTable';
+import JobTable from '../../../../../../components/location/JobTable';
+import UserLocationTable from '../../../../../../components/location/UserLocationTable';
 
-export default function LocationPage({
+export default function UserLocationPage({
   params,
 }: {
   params: {
@@ -29,6 +30,12 @@ export default function LocationPage({
         >
           Users
         </TabsTrigger>
+        <TabsTrigger
+          value="jobs"
+          className="text-lg max-w-[100px] hover:text-primary/70"
+        >
+          Jobs
+        </TabsTrigger>
         {/* <TabsTrigger
           value="areas"
           className="text-lg max-w-[100px] hover:text-primary/70"
@@ -44,6 +51,9 @@ export default function LocationPage({
       </TabsContent>
       <TabsContent value="users">
         <UserLocationTable locationId={params.id} />
+      </TabsContent>
+      <TabsContent value="jobs">
+        <JobTable locationId={params.id} />
       </TabsContent>
     </Tabs>
   );

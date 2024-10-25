@@ -28,7 +28,7 @@ import useSWR from 'swr';
 import api from '../../config/api';
 import { UserLocation } from '../../types/user';
 import AddUserLocationDialog from '../user/AddUserLocationDialog';
-import UserTable from '../user/UserTable';
+import UserTable from '../DataTable';
 
 const fetcher = async (url: string) =>
   api.get<any, UserLocation[]>(url).then((res) => res);
@@ -192,7 +192,7 @@ export default function UserLocationTable({
           onAddUser={() => mutate()}
         />
       </div>
-      <UserTable table={table} />
+      <UserTable table={table} columns={columns} />
     </div>
   );
 }
