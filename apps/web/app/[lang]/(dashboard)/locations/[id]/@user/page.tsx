@@ -5,8 +5,8 @@ import {
   TabsTrigger,
 } from '@repo/ui/components/ui/tabs';
 import { DeviceTable } from '../../../../../../components/devices/DeviceTable';
-import JobTable from '../../../../../../components/location/JobTable';
 import UserLocationTable from '../../../../../../components/location/UserLocationTable';
+import JobTable from './JobTable';
 
 export default function UserLocationPage({
   params,

@@ -14,4 +14,7 @@ export class UpdateJobDto {
   @IsOptional()
   @IsIn(['PENDING', 'IN_PROGRESS', 'COMPLETED'])
   status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+  @IsString()
+  @IsOptional()
+  report?: string;
 }

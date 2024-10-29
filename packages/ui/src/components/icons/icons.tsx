@@ -10,6 +10,7 @@ import {
   MapPinIcon as MapPinIconOutline,
   PlusIcon as PlusIconOutline,
   UserIcon as UserIconOutline,
+  PencilIcon as PencilIconOutline,
 } from '@heroicons/react/24/outline';
 import {
   ArrowUpTrayIcon,
@@ -22,6 +23,7 @@ import {
   MapPinIcon,
   PlusIcon,
   UserIcon,
+  PencilIcon,
 } from '@heroicons/react/24/solid';
 
 import { ArrowLeftFromLineIcon, ArrowRightFromLineIcon, MoreHorizontal, ArrowUpDown } from 'lucide-react';
@@ -115,4 +117,11 @@ export const Icons = {
   more: (props: IconProps) => <MoreHorizontal {...props} />,
 
   sort: (props: IconProps) => <ArrowUpDown {...props} />,
+
+  edit: (props: IconProps) =>
+    props.variant === 'solid' ? (
+      <PencilIcon {...props} />
+    ) : (
+      <PencilIconOutline {...props} />
+    ),
 };
