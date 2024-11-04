@@ -7,6 +7,9 @@ import {
 import { DeviceTable } from '../../../../../../components/devices/DeviceTable';
 import UserLocationTable from '../../../../../../components/location/UserLocationTable';
 import JobTable from './JobTable';
+import HumidityChart from '../../../../../../components/charts/HumidityChart';
+import WaterAmountChart from '../../../../../../components/charts/WaterAmountChart';
+import ProductivityChart from '../../../../../../components/charts/ProductivityChart';
 
 export default function UserLocationPage({
   params,
@@ -36,6 +39,12 @@ export default function UserLocationPage({
         >
           Jobs
         </TabsTrigger>
+        <TabsTrigger
+          value="charts"
+          className="text-lg max-w-[100px] hover:text-primary/70"
+        >
+          Charts
+        </TabsTrigger>
         {/* <TabsTrigger
           value="areas"
           className="text-lg max-w-[100px] hover:text-primary/70"
@@ -54,6 +63,11 @@ export default function UserLocationPage({
       </TabsContent>
       <TabsContent value="jobs">
         <JobTable locationId={params.id} />
+      </TabsContent>
+      <TabsContent value="charts">
+        <HumidityChart />
+        <WaterAmountChart />
+        <ProductivityChart />
       </TabsContent>
     </Tabs>
   );
