@@ -112,7 +112,6 @@ export class LocationController {
   @Delete(':id')
   async deleteLocation(@Req() req: AuthenticatedRequest) {
     return this.locationService.deleteLocation({
-      ownerId: req.user.userId,
       id: req.params.id,
     });
   }

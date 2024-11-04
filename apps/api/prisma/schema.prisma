@@ -70,7 +70,7 @@ model Area {
   id         String    @id @default(auto()) @map("_id") @db.ObjectId
   name       String
   locationId String    @db.ObjectId
-  location   Location  @relation(fields: [locationId], references: [id])
+  location   Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
   devices    Device[]
   gateways   Gateway[]
 
@@ -96,7 +96,7 @@ model Gateway {
   connectionStatus Boolean?
   auth             GatewayAuth?
   areaId           String       @db.ObjectId
-  area             Area         @relation(fields: [areaId], references: [id])
+  area             Area         @relation(fields: [areaId], references: [id], onDelete: Cascade)
   devicesConnected Device[]
 
   @@index([areaId], name: "areaId")

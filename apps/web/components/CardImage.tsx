@@ -17,7 +17,13 @@ type CardImageProps = {
   component?: React.ReactNode;
 };
 
-const Base = ({ title, description, image, component }: CardImageProps) => {
+const Base = ({
+  title,
+  description,
+  image,
+  component,
+  href,
+}: CardImageProps) => {
   const [isHovered, setIsHovered] = useState(false);
   return (
     <Card
@@ -44,20 +50,15 @@ const Base = ({ title, description, image, component }: CardImageProps) => {
         )}
       </div>
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <Link href={href || ''} prefetch={false}>
+          <CardTitle>{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </Link>
       </CardHeader>
     </Card>
   );
 };
 
 export default function CardImage(props: CardImageProps) {
-  if (props.href) {
-    return (
-      <Link href={props.href} prefetch={false}>
-        <Base {...props} />
-      </Link>
-    );
-  }
   return <Base {...props} />;
 }

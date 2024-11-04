@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import CardImage from '../../../../components/CardImage';
 import CreateLocationDialog from '../../../../components/location/CreateLocationDialog';
+import DeleteLocation from '../../../../components/location/DeleteLocationDIalog';
 import Searchbox from '../../../../components/Searchbox';
 import { LocationModel } from '../../../../types/location';
 
@@ -54,6 +55,9 @@ export default async function LocationsPage() {
             description={location.address}
             image={location.image}
             href={`/locations/${location.id}`}
+            component={
+              role === 'USER' ? <DeleteLocation location={location} /> : null
+            }
           />
         ))}
       </div>

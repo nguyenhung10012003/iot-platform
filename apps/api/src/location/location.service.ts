@@ -74,9 +74,6 @@ export class LocationService {
   }
 
   async deleteLocation(where: Prisma.LocationWhereUniqueInput) {
-    return this.prisma.$transaction([
-      this.prisma.area.deleteMany({ where: { locationId: where.id } }),
-      this.prisma.location.delete({ where }),
-    ]);
+    return this.prisma.location.delete({ where });
   }
 }
