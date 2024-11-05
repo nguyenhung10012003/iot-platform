@@ -39,6 +39,13 @@ export class LocationService {
     });
   }
 
+  async updateLocation(id: string, data: Prisma.LocationUncheckedUpdateInput) {
+    return this.prisma.location.update({
+      where: { id },
+      data,
+    });
+  }
+
   async addUserToLocation(data: AddUserToLocationDto) {
     return this.prisma.$transaction(async (prisma) => {
       const user = await this.userService.createUser({

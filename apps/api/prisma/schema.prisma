@@ -28,12 +28,13 @@ model User {
 }
 
 model Location {
-  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  id            String           @id @default(auto()) @map("_id") @db.ObjectId
   name          String
   address       String
   image         String?
-  ownerId       String         @db.ObjectId
-  owner         User           @relation(fields: [ownerId], references: [id])
+  ownerId       String           @db.ObjectId
+  setting       LocationSetting?
+  owner         User             @relation(fields: [ownerId], references: [id])
   areas         Area[]
   userLocations UserLocation[]
   Job           Job[]
@@ -124,6 +125,17 @@ type GatewayAuth {
   token    String?
   username String?
   password String?
+}
+
+type LocationSetting {
+  capacity        Int
+  area            Int
+  disPerRow       Int
+  disPerHole      Int
+  fertilizerLevel Int
+  totalHole       Int
+  dripRatePerHole Int
+  wateringMode    Boolean
 }
 
 enum DeviceType {

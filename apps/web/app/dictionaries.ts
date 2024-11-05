@@ -7,4 +7,6 @@ const dictionaries = {
 
 type Locale = keyof typeof dictionaries;
 
-export const getDictionary = async (locale: Locale) => dictionaries[locale]()
+export const getDictionary = async (locale: string) =>
+  dictionaries[locale as Locale]();
+

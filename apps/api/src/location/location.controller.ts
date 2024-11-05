@@ -5,6 +5,7 @@ import {
   Controller,
   Delete,
   Get,
+  Patch,
   Post,
   Query,
   Req,
@@ -53,11 +54,40 @@ export class LocationController {
       address: data.address,
       ownerId: req.user.userId,
       image: imageUrl?.url,
+      setting: data.setting,
       areas: {
         create: {
           name: data.areaName || data.name,
         },
       },
+    });
+  }
+
+  @Patch(':id')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      fileFilter: (req, file, cb) => {
+        if (!file) {
+          return cb(null, true);
+        }
+        if (!file.mimetype.match(/image/)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async updateLocation(
+    @Req() req: AuthenticatedRequest,
+    @Body() data: CreateLocationDto,
+    @UploadedFile() image?: Express.Multer.File,
+  ) {
+    const imageUrl = await this.awsS3.uploadFile(image);
+    return this.locationService.updateLocation(req.params.id, {
+      name: data.name,
+      address: data.address,
+      image: imageUrl?.url,
+      setting: data.setting,
     });
   }
 

@@ -98,7 +98,7 @@ class DefaultErrorHandler implements ErrorHandler {
  */
 class ErrorHandlerFactory {
   static getHandler(error: Error) {
-    Logger.error(error, 'ErrorHandlerFactory');
+    Logger.error(error, error.stack, 'ErrorHandlerFactory');
     if (error instanceof HttpException) {
       return new HttpErrorHandler();
     } else if (

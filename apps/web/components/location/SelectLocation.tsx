@@ -11,7 +11,7 @@ import {
 import useSWR from 'swr';
 import api from '../../config/api';
 import { LocationModel } from '../../types/location';
-import CreateLocationDialog from './CreateLocationDialog';
+import CreateLocationDialog from './LocationDialog';
 
 type SelectLocationProps = {
   onSelect: (location: LocationModel) => void;

@@ -1,1 +1,22 @@
-{}
+{
+  "sensor": "Cảm biến",
+  "sensorType": "Loại cảm biến",
+  "noLocationFound": "Không tìm thấy địa điểm nào",
+  "filedIsRequired": "Trường này là bắt buộc",
+  "editLocation": "Sửa địa điểm",
+  "deleteLocation": "Xóa địa điểm",
+  "createLocation": "Tạo địa điểm",
+  "editLocationDetails": "Sửa thông tin địa điểm",
+  "fillInLocationDetails": "Nhập thông tin địa điểm",
+  "cancel": "Hủy",
+  "save": "Lưu",
+  "locationSaveSuccessfully": "Đã lưu thông tin địa điểm thành công",
+  "locationSaveFailed": "Lưu thông tin địa điểm thất bại",
+  "details": "Chi tiết",
+  "delete": "Xóa",
+  "confirm": "Xác nhận",
+  "areYouSureToDelete": "Bạn có chắc chắn muốn xóa không?",
+  "thisActionCannotBeUndone": "Hành động này không thể hoàn tác, dữ liệu sẽ bị xoá sẽ biến mất vĩnh viễn",
+  "locationDeleteSuccessfully": "Đã xóa địa điểm thành công",
+  "locationDeleteFailed": "Xóa địa điểm thất bại"
+}

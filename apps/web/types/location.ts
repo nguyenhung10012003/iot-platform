@@ -1,6 +1,14 @@
 export type Location = {
   name: string;
   address: string;
+  capacity: number;
+  area: number;
+  disPerRow: number;
+  disPerHole: number;
+  fertilizerLevel: number;
+  totalHole: number;
+  dripRatePerHole: number;
+  wateringMode: boolean;
   image: File;
 };
 
@@ -16,4 +24,14 @@ export type LocationModel = {
   address: string;
   image: string;
   areas?: AreaModel[];
+  setting: {
+    capacity: number;
+    area: number;
+    disPerRow: number;
+    disPerHole: number;
+    fertilizerLevel: number;
+    totalHole: number;
+    dripRatePerHole: number;
+    wateringMode: boolean;
+  };
 };

@@ -13,43 +13,42 @@ import {
 import { Button } from '@repo/ui/components/ui/button';
 import { toast } from '@repo/ui/components/ui/sonner';
 import api from '../../config/api';
+import { DictionaryProps } from '../../types/dictionary';
 import { LocationModel } from '../../types/location';
 import revalidate from '../../utils/action';
 
-export default function DeleteLocation({
+export default function DeleteLocationDialog({
   location,
+  dictionary,
 }: {
   location: LocationModel;
-}) {
+} & DictionaryProps) {
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <Button variant="secondary">Delete</Button>
+        <Button variant="secondary">{dictionary.delete}</Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            Are you sure you want to delete this location?
-          </AlertDialogTitle>
+          <AlertDialogTitle>{dictionary.areYouSureToDelete}</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            {dictionary.thisActionCannotBeUndone}
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogCancel>{dictionary.cancel}</AlertDialogCancel>
           <AlertDialogAction
             onClick={async () => {
               try {
                 await api.delete(`location/${location.id}`);
                 revalidate('locations');
-                toast.success('Location deleted successfully');
+                toast.success(dictionary.locationDeleteSuccessfully);
               } catch (error) {
-                toast.error('Failed to delete location');
+                toast.error(dictionary.locationDeleteFailed);
               }
             }}
           >
-            Continue
+            {dictionary.confirm}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
