@@ -25,13 +25,14 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import api from '../../config/api';
+import { DictionaryProps } from '../../types/dictionary';
 import { Token } from '../../types/token';
 import { setTokenCookies } from './cookies';
 
-export default function SigninForm() {
+export default function SigninForm({ dictionary }: DictionaryProps) {
   const formSchema = z.object({
-    username: z.string(),
-    password: z.string(),
+    username: z.string({ message: dictionary.filedIsRequired }),
+    password: z.string({ message: dictionary.filedIsRequired }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,8 +46,8 @@ export default function SigninForm() {
       setTokenCookies(data);
       router.push('/');
       router.refresh();
-      toast.success('Welcome back!', {
-        description: 'You have successfully signed in',
+      toast.success(`${dictionary.welcomeBack}!`, {
+        description: dictionary.youHaveSuccessfullySignin,
         closeButton: true,
         position: 'top-right',
       });
@@ -55,13 +56,13 @@ export default function SigninForm() {
         case 'NOTFOUND':
           form.setError('username', {
             type: 'manual',
-            message: 'User not found',
+            message: dictionary.userNotFound,
           });
           break;
         case 'Unauthorized': {
           form.setError('password', {
             type: 'manual',
-            message: 'Password is incorrect',
+            message: dictionary.wrongPassword,
           });
           break;
         }
@@ -75,8 +76,8 @@ export default function SigninForm() {
   const fields = [
     {
       name: 'username',
-      label: 'User name',
-      placeholder: 'Enter your username',
+      label: dictionary.username,
+      placeholder: dictionary.enterUsername,
       type: 'text',
       icon: (
         <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -84,8 +85,8 @@ export default function SigninForm() {
     },
     {
       name: 'password',
-      label: 'Password',
-      placeholder: 'Enter your password',
+      label: dictionary.password,
+      placeholder: dictionary.enterPassword,
       type: 'password',
       icon: (
         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -96,7 +97,7 @@ export default function SigninForm() {
     <>
       <CardHeader className="">
         <CardTitle className="text-2xl font-bold text-center">
-          Sign in
+          {dictionary.signin}
         </CardTitle>
       </CardHeader>
       <CardContent className="flex flex-col gap-4 pb-0">
@@ -135,30 +136,30 @@ export default function SigninForm() {
               <div className="flex items-center space-x-2">
                 <Checkbox id="remember" />
                 <Label htmlFor="remember" className="text-sm font-normal">
-                  Remember me
+                  {dictionary.rememberMe}
                 </Label>
               </div>
               <Link
                 href="/forgot-password"
                 className="text-sm text-blue-600 hover:underline"
               >
-                Forgot your password?
+                {dictionary.forgotPassword}
               </Link>
             </div>
             <Button
               type="submit"
               className="w-full bg-primary hover:bg-primary/85 "
             >
-              Sign in
+              {dictionary.signin}
             </Button>
           </form>
         </Form>
       </CardContent>
       <CardFooter className="flex flex-col pt-2 pb-4">
         <p className="text-sm text-center">
-          Don't have an account?{' '}
+          {dictionary.dontHaveAnAccount}{'? '}
           <Link href="/signup" className="text-blue-600 hover:underline">
-            Register here
+            {dictionary.registerHere}
           </Link>
         </p>
       </CardFooter>

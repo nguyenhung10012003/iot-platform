@@ -4,6 +4,7 @@ import { ScrollArea } from '@repo/ui/components/ui/scroll-area';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useMemo, useState } from 'react';
+import { DictionaryProps } from '../../types/dictionary';
 import { Role } from '../../types/role';
 
 type SidebarItemProps = {
@@ -31,53 +32,56 @@ const SidebarItem = ({
   );
 };
 
-export default function DashboardSidebar({ role }: { role: Role }) {
+export default function DashboardSidebar({
+  role,
+  dictionary,
+}: { role: Role } & DictionaryProps) {
   const items = [
     {
       id: 'home',
-      label: 'Home',
+      label: dictionary.home,
       href: '/',
       icon: Icons.home,
       role: ['USER', 'ADMIN', 'EMPLOYEE'],
     },
     {
       id: 'gateway',
-      label: 'Gateways',
+      label: dictionary.gateways,
       href: '/gateways',
       icon: Icons.cpu,
       role: ['USER'],
     },
     {
       id: 'devices',
-      label: 'Devices',
+      label: dictionary.devices,
       href: '/devices',
       icon: Icons.device,
       role: ['USER'],
     },
     {
       id: 'device-templates',
-      label: 'Device templates',
+      label: dictionary.deviceTemplates,
       href: '/device-templates',
       icon: Icons.device,
       role: ['ADMIN'],
     },
     {
       id: 'locations',
-      label: 'Locations',
+      label: dictionary.locations,
       href: '/locations',
       icon: Icons.mappin,
       role: ['USER', 'EMPLOYEE'],
     },
-    {
-      id: 'executive',
-      label: 'Executive structure',
-      href: '/executive',
-      icon: Icons.cog,
-      role: ['USER'],
-    },
+    // {
+    //   id: 'executive',
+    //   label: 'Executive structure',
+    //   href: '/executive',
+    //   icon: Icons.cog,
+    //   role: ['USER'],
+    // },
     {
       id: 'users',
-      label: 'Users',
+      label: dictionary.users,
       href: '/users',
       icon: Icons.user,
       role: ['ADMIN'],
@@ -117,7 +121,7 @@ export default function DashboardSidebar({ role }: { role: Role }) {
           ) : (
             <>
               <Icons.collapse className="w-5 h-5" />
-              <span>Hide menu</span>
+              <span>{dictionary.hideMenu}</span>
             </>
           )}
         </button>

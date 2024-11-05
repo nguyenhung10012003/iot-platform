@@ -17,8 +17,10 @@ import {
 } from '@repo/ui/components/ui/dropdown-menu';
 import { useUser } from '../../hooks/useUser';
 import ThemeToggle from '../ThemeToggle';
+import Link from 'next/link';
+import { DictionaryProps } from '../../types/dictionary';
 
-export default function DashboardHeader() {
+export default function DashboardHeader({ dictionary }: DictionaryProps) {
   const { signout, user } = useUser();
   return (
     <div className="flex justify-end">
@@ -32,7 +34,7 @@ export default function DashboardHeader() {
             <DropdownMenuTrigger asChild>
               <Button variant="ghost" className="relative  rounded-full p-0">
                 <Avatar className="h-9 w-9">
-                  <AvatarImage src="" alt="@shadcn" />
+                  <AvatarImage src="" alt="AD" />
                   <AvatarFallback>AD</AvatarFallback>
                 </Avatar>
               </Button>
@@ -40,7 +42,7 @@ export default function DashboardHeader() {
             <DropdownMenuContent className="w-56" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">name</p>
+                  <p className="text-sm font-medium leading-none">@1234</p>
                   <p className="text-xs leading-none text-muted-foreground">
                     {user?.role || 'USER'}
                   </p>
@@ -48,14 +50,13 @@ export default function DashboardHeader() {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Billing</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
-                <DropdownMenuItem>New Location</DropdownMenuItem>
+                <DropdownMenuItem>{dictionary.profile}</DropdownMenuItem>
+                <DropdownMenuItem><Link href="/setting" >{dictionary.settings}</Link></DropdownMenuItem>
+                <DropdownMenuItem>{dictionary.newLocation}</DropdownMenuItem>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => signout()}>
-                Sign out
+                {dictionary.signout}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>

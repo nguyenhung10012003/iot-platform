@@ -2,7 +2,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@repo/ui/components/ui/button';
 import {
-  Card,
   CardContent,
   CardFooter,
   CardHeader,
@@ -24,30 +23,31 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import api from '../../config/api';
+import { DictionaryProps } from '../../types/dictionary';
 import { Token } from '../../types/token';
 import { setTokenCookies } from './cookies';
-export default function SignupForm() {
+export default function SignupForm({ dictionary }: DictionaryProps) {
   const formSchema = z
     .object({
       username: z
-        .string()
-        .min(4, { message: 'User name must have more than 4 characters' })
-        .max(48, { message: 'User name must have less than 48 characters' }),
+        .string({ message: dictionary.filedIsRequired })
+        .min(4, { message: dictionary.usernameMustBeAtLeast4Characters })
+        .max(48, { message: dictionary.usernameMustBeAtMost48Characters }),
       password: z
-        .string()
-        .min(6, { message: 'Password must have more than 6 characters' })
-        .max(32, { message: 'Password must have less than 32 characters' }),
+        .string({ message: dictionary.filedIsRequired })
+        .min(6, { message: dictionary.passwordMustBeAtLeast6Characters })
+        .max(32, { message: dictionary.passwordMustBeAtMost32Characters }),
       confirmPassword: z
-        .string()
+        .string({ message: dictionary.filedIsRequired })
         .min(6, {
-          message: 'Confirm Password must have more than 6 characters',
+          message: dictionary.confirmPasswordMustBeAtLeast6Characters,
         })
         .max(32, {
-          message: 'Confirm Password must have less than 32 characters',
+          message: dictionary.confirmPasswordMustBeAtMost32Characters,
         }),
     })
     .refine((data) => data.password === data.confirmPassword, {
-      message: 'Passwords do not match',
+      message: dictionary.passwordsDoNotMatch,
       path: ['confirmPassword'],
     });
 
@@ -70,12 +70,12 @@ export default function SignupForm() {
         case 'DUPLICATE':
           form.setError('username', {
             type: 'manual',
-            message: 'Username already exists',
+            message: dictionary.usernameAlreadyExists,
           });
           break;
         default:
-          toast.error('An error occurred', {
-            description: 'Something went wrong, please try again later',
+          toast.error(dictionary.anErrorOccurred, {
+            description: `${dictionary.somethingWentWrong}, ${dictionary.pleaseTryAgainLater}`,
             closeButton: true,
             position: 'top-right',
           });
@@ -87,8 +87,8 @@ export default function SignupForm() {
   const fields = [
     {
       name: 'username',
-      label: 'User name',
-      placeholder: 'Enter your username',
+      label: dictionary.username,
+      placeholder: dictionary.enterUsername,
       type: 'text',
       icon: (
         <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -96,8 +96,8 @@ export default function SignupForm() {
     },
     {
       name: 'password',
-      label: 'Password',
-      placeholder: 'Enter your password',
+      label: dictionary.password,
+      placeholder: dictionary.enterPassword,
       type: 'password',
       icon: (
         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -105,8 +105,8 @@ export default function SignupForm() {
     },
     {
       name: 'confirmPassword',
-      label: 'Confirm Password',
-      placeholder: 'Confirm your password',
+      label: dictionary.confirmPassword,
+      placeholder: dictionary.enterConfirmPassword,
       type: 'password',
       icon: (
         <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
@@ -155,16 +155,16 @@ export default function SignupForm() {
               type="submit"
               className="w-full bg-primary hover:bg-primary/85 "
             >
-              Sign up
+              {dictionary.signup}
             </Button>
           </form>
         </Form>
       </CardContent>
       <CardFooter className="flex flex-col pt-2 pb-4">
         <p className="text-sm text-center">
-          Already have an account?{' '}
+          {`${dictionary.alreadyHaveAnAccount}? `}
           <Link href="/signin" className="text-blue-600 hover:underline">
-            Sign in
+            {dictionary.signin}
           </Link>
         </p>
       </CardFooter>

@@ -1,5 +1,7 @@
 import SignupForm from '../../../../components/auth/SignupForm';
+import { getDictionary } from '../../../dictionaries';
 
-export default function SignupPage() {
-  return <SignupForm />;
+export default async function SignupPage({params} : {params: {lang: string}}) {
+  const dictionary = await getDictionary(params.lang);
+  return <SignupForm dictionary={dictionary}/>;
 }
