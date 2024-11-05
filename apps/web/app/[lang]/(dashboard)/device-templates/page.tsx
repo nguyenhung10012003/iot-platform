@@ -16,7 +16,6 @@ export default async function DeviceTemplatesPage({
   };
 }) {
   const dictionary = await getDictionary(params.lang);
-  console.log(dictionary);
   try {
     const data = await api.get<any, DeviceTemplateModel[]>('device-template');
     return (
@@ -25,7 +24,7 @@ export default async function DeviceTemplatesPage({
           <DeviceToolbar />
           <NewDeviceTemplateDialog />
         </div>
-        <DeviceSection deviceTemplates={data} />
+        <DeviceSection deviceTemplates={data} dictionary={dictionary} />
       </div>
     );
   } catch (error) {}

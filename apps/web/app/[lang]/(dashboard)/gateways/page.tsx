@@ -3,6 +3,7 @@ import DeviceToolbar from '../../../../components/devices/DeviceToolbar';
 import GatewayCard from '../../../../components/gateway/GatewayCard';
 import NewGatewayDialog from '../../../../components/gateway/NewGatewayDialog';
 import { GatewayModel } from '../../../../types/gateway';
+import { getDictionary } from '../../../dictionaries';
 
 export const dynamic = 'force-dynamic';
 
@@ -27,8 +28,15 @@ const getUserGateways = async () => {
   }
 };
 
-export default async function GatewaysPage() {
-  const data = await getUserGateways();
+export default async function GatewaysPage({
+  params,
+}: {
+  params: { lang: string };
+}) {
+  const [dictionary, data] = await Promise.all([
+    getDictionary(params.lang),
+    getUserGateways(),
+  ]);
   if (!data || data.length === 0) {
     return (
       <div className="flex flex-col gap-4 p-4 md:p-6 h-full">
@@ -39,7 +47,7 @@ export default async function GatewaysPage() {
           <h1 className="text-md text-gray-500">
             No gateways found. Create new one
           </h1>
-          <NewGatewayDialog />
+          <NewGatewayDialog dictionary={dictionary} />
         </div>
       </div>
     );
@@ -49,7 +57,7 @@ export default async function GatewaysPage() {
     <div className="flex flex-col gap-4 p-4 md:p-6">
       <div className="flex justify-between">
         <DeviceToolbar filter={false} />
-        <NewGatewayDialog />
+        <NewGatewayDialog dictionary={dictionary} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {data.map((gateway) => (

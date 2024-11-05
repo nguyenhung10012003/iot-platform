@@ -20,6 +20,7 @@ import { DeviceTemplateModel } from '../../types/device-template';
 import Stepper from '../Stepper';
 import NewDeviceForm from './NewDeviceForm';
 import SelectTemplate from './SelectTemplate';
+import { DictionaryProps } from '../../types/dictionary';
 
 type NewDeviceDialogProps = {
   // isOpen: boolean;
@@ -32,7 +33,8 @@ type NewDeviceDialogProps = {
 export default function NewDeviceDialog({
   template,
   triggerBtn,
-}: NewDeviceDialogProps) {
+  dictionary,
+}: NewDeviceDialogProps & DictionaryProps) {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [templateChoosen, setTemplateChoosen] = useState<
     DeviceTemplateModel | undefined
@@ -106,7 +108,7 @@ export default function NewDeviceDialog({
       next: () => {},
     },
     {
-      component: <NewDeviceForm form={form} />,
+      component: <NewDeviceForm form={form} dictionary={dictionary}/>,
     },
   ];
 

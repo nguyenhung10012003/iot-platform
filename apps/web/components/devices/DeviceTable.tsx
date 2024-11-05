@@ -34,6 +34,7 @@ import {
   TableRow,
 } from '@repo/ui/components/ui/table';
 import { DeviceModel } from '../../types/device';
+import { DictionaryProps } from '../../types/dictionary';
 import NewDeviceDialog from './NewDeviceDialog';
 
 const data: DeviceModel[] = [];
@@ -115,7 +116,7 @@ export const columns: ColumnDef<DeviceModel>[] = [
   },
 ];
 
-export function DeviceTable() {
+export function DeviceTable({ dictionary }: DictionaryProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -154,7 +155,10 @@ export function DeviceTable() {
           }
           className="max-w-sm"
         />
-        <NewDeviceDialog triggerBtn={<Button>Add Device</Button>} />
+        <NewDeviceDialog
+          triggerBtn={<Button>Add Device</Button>}
+          dictionary={dictionary}
+        />
       </div>
       <div className="rounded-md border">
         <Table>

@@ -12,6 +12,7 @@ import useSWR from 'swr';
 import api from '../../config/api';
 import { LocationModel } from '../../types/location';
 import CreateLocationDialog from './LocationDialog';
+import { DictionaryProps } from '../../types/dictionary';
 
 type SelectLocationProps = {
   onSelect: (location: LocationModel) => void;
@@ -19,7 +20,7 @@ type SelectLocationProps = {
 
 const fetcher = (url: string) =>
   api.get<any, LocationModel[]>(url).then((res) => res);
-export default function SelectLocation({ onSelect }: SelectLocationProps) {
+export default function SelectLocation({ onSelect, dictionary }: SelectLocationProps & DictionaryProps) {
   const { data, error, isLoading, mutate } = useSWR(
     '/location?includeArea=true',
     fetcher,
@@ -45,7 +46,8 @@ export default function SelectLocation({ onSelect }: SelectLocationProps) {
         ))}
         <SelectSeparator />
         <CreateLocationDialog
-          onCreate={(location) => {
+          dictionary={dictionary}
+          onSave={(location) => {
             onSelect(location);
             mutate();
           }}

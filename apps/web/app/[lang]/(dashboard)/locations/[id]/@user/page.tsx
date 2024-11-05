@@ -10,14 +10,17 @@ import JobTable from './JobTable';
 import HumidityChart from '../../../../../../components/charts/HumidityChart';
 import WaterAmountChart from '../../../../../../components/charts/WaterAmountChart';
 import ProductivityChart from '../../../../../../components/charts/ProductivityChart';
+import { getDictionary } from '../../../../../dictionaries';
 
-export default function UserLocationPage({
+export default async function UserLocationPage({
   params,
 }: {
   params: {
+    lang: string;
     id: string;
   };
 }) {
+  const dictionary = await getDictionary(params.lang);
   return (
     <Tabs className="flex flex-col gap-4 p-4 md:p-6" defaultValue="devices">
       <TabsList className="w-full border-b">
@@ -53,10 +56,10 @@ export default function UserLocationPage({
         </TabsTrigger> */}
       </TabsList>
       <TabsContent value="areas">
-        <DeviceTable />
+        <DeviceTable dictionary={dictionary}/>
       </TabsContent>
       <TabsContent value="devices">
-        <DeviceTable />
+        <DeviceTable dictionary={dictionary}/>
       </TabsContent>
       <TabsContent value="users">
         <UserLocationTable locationId={params.id} />

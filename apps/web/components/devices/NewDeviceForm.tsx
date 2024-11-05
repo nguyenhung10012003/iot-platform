@@ -19,12 +19,13 @@ import { UseFormReturn } from 'react-hook-form';
 import { Device } from '../../types/device';
 import { LocationModel } from '../../types/location';
 import SelectLocation from '../location/SelectLocation';
+import { DictionaryProps } from '../../types/dictionary';
 
 type NewDeviceFormProps = {
   form: UseFormReturn<Device>;
 };
 
-export default function NewDeviceForm({ form }: NewDeviceFormProps) {
+export default function NewDeviceForm({ form, dictionary }: NewDeviceFormProps & DictionaryProps) {
   const [location, setLocation] = useState<LocationModel | undefined>();
   return (
     <Form {...form}>
@@ -64,7 +65,7 @@ export default function NewDeviceForm({ form }: NewDeviceFormProps) {
             <FormLabel htmlFor="locationId" className="mb-2 mt-1">
               Location
             </FormLabel>
-            <SelectLocation onSelect={setLocation} />
+            <SelectLocation onSelect={setLocation} dictionary={dictionary}/>
           </FormItem>
 
           <FormField

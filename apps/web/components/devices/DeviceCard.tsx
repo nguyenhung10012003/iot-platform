@@ -10,12 +10,13 @@ import Image from 'next/image';
 import { useState } from 'react';
 import { DeviceTemplateModel } from '../../types/device-template';
 import NewDeviceDialog from './NewDeviceDialog';
+import { DictionaryProps } from '../../types/dictionary';
 
 type DeviceCardProps = {
   deviceTemplate: DeviceTemplateModel;
 };
 
-export default function DeviceCard({ deviceTemplate }: DeviceCardProps) {
+export default function DeviceCard({ deviceTemplate, dictionary }: DeviceCardProps & DictionaryProps) {
   const [isHovered, setIsHovered] = useState(false);
 
   return (
@@ -37,7 +38,7 @@ export default function DeviceCard({ deviceTemplate }: DeviceCardProps) {
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <NewDeviceDialog template={deviceTemplate}/>
+          <NewDeviceDialog template={deviceTemplate} dictionary={dictionary}/>
         </div>
       </div>
       <CardHeader>

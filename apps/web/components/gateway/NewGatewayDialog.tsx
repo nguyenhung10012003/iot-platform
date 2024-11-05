@@ -21,8 +21,9 @@ import api from '../../config/api';
 import { GatewayForm } from '../../types/gateway';
 import revalidate from '../../utils/action';
 import NewGatewayForm from './NewGatewayForm';
+import { DictionaryProps } from '../../types/dictionary';
 
-export default function NewGatewayDialog() {
+export default function NewGatewayDialog({ dictionary }: DictionaryProps) {
   const formSchema = z.object({
     name: z.string(),
     host: z.string(),
@@ -78,7 +79,7 @@ export default function NewGatewayDialog() {
           </DialogDescription>
         </DialogHeader>
 
-        <NewGatewayForm form={form} />
+        <NewGatewayForm form={form} dictionary={dictionary}/>
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="secondary">Cancel</Button>

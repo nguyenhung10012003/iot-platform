@@ -20,12 +20,13 @@ import { UseFormReturn } from 'react-hook-form';
 import { GatewayForm } from '../../types/gateway';
 import { LocationModel } from '../../types/location';
 import SelectLocation from '../location/SelectLocation';
+import { DictionaryProps } from '../../types/dictionary';
 
 type NewGatewayFormProps = {
   form: UseFormReturn<GatewayForm>;
 };
 
-export default function NewGatewayForm({ form }: NewGatewayFormProps) {
+export default function NewGatewayForm({ form, dictionary }: NewGatewayFormProps & DictionaryProps) {
   const [location, setLocation] = useState<LocationModel | undefined>();
   return (
     <Form {...form}>
@@ -142,7 +143,7 @@ export default function NewGatewayForm({ form }: NewGatewayFormProps) {
             <FormLabel htmlFor="locationId" className="mb-2 mt-1">
               Location
             </FormLabel>
-            <SelectLocation onSelect={setLocation} />
+            <SelectLocation onSelect={setLocation} dictionary={dictionary}/>
           </FormItem>
 
           <FormField
