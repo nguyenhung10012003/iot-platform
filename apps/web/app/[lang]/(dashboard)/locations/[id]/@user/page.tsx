@@ -28,25 +28,25 @@ export default async function UserLocationPage({
           value="devices"
           className="text-lg max-w-[100px] hover:text-primary/70"
         >
-          Devices
+          {dictionary.devices}
         </TabsTrigger>
         <TabsTrigger
           value="users"
           className="text-lg max-w-[100px] hover:text-primary/70"
         >
-          Users
+          {dictionary.users}
         </TabsTrigger>
         <TabsTrigger
           value="jobs"
           className="text-lg max-w-[100px] hover:text-primary/70"
         >
-          Jobs
+          {dictionary.jobs}
         </TabsTrigger>
         <TabsTrigger
           value="charts"
           className="text-lg max-w-[100px] hover:text-primary/70"
         >
-          Charts
+          {dictionary.charts}
         </TabsTrigger>
         {/* <TabsTrigger
           value="areas"
@@ -62,10 +62,10 @@ export default async function UserLocationPage({
         <DeviceTable dictionary={dictionary}/>
       </TabsContent>
       <TabsContent value="users">
-        <UserLocationTable locationId={params.id} />
+        <UserLocationTable locationId={params.id} dictionary={dictionary}/>
       </TabsContent>
       <TabsContent value="jobs">
-        <JobTable locationId={params.id} />
+        <JobTable locationId={params.id} dictionary={dictionary}/>
       </TabsContent>
       <TabsContent value="charts">
         <HumidityChart />

@@ -17,10 +17,10 @@ import { z } from 'zod';
 import api from '../../config/api';
 import { Device } from '../../types/device';
 import { DeviceTemplateModel } from '../../types/device-template';
+import { DictionaryProps } from '../../types/dictionary';
 import Stepper from '../Stepper';
 import NewDeviceForm from './NewDeviceForm';
 import SelectTemplate from './SelectTemplate';
-import { DictionaryProps } from '../../types/dictionary';
 
 type NewDeviceDialogProps = {
   // isOpen: boolean;
@@ -44,9 +44,9 @@ export default function NewDeviceDialog({
   const totalSteps = 4;
 
   const formSchema = z.object({
-    name: z.string(),
-    serialNumber: z.string(),
-    areaId: z.string(),
+    name: z.string({ message: dictionary.fieldIsRequired }),
+    serialNumber: z.string({ message: dictionary.fieldIsRequired }),
+    areaId: z.string({ message: dictionary.fieldIsRequired }),
   });
 
   const form = useForm<Device>({
@@ -60,8 +60,9 @@ export default function NewDeviceDialog({
         templateId: templateChoosen?.id,
         deviceType: templateChoosen?.deviceType,
       });
+      toast.success(dictionary.deviceCreatedSuccessfully);
     } catch (e) {
-      toast.error('Failed to create device');
+      toast.error(dictionary.failedToCreateDevice);
     }
   };
 
@@ -70,7 +71,9 @@ export default function NewDeviceDialog({
       component: (
         <>
           <div>
-            <h1 className="text-lg font-semibold mb-2">Choose a template</h1>
+            <h1 className="text-lg font-semibold mb-2">
+              {dictionary.chooseATemplate}
+            </h1>
             <SelectTemplate
               chooseTemplate={templateChoosen}
               onSelect={(template) => {
@@ -81,10 +84,10 @@ export default function NewDeviceDialog({
           {templateChoosen && (
             <div className="flex py-2">
               <div className="w-full flex flex-col">
-                <h2 className="font-semibold text-lg">{`Model name: ${templateChoosen.model}`}</h2>
-                <span className="">{`Description: ${templateChoosen.description || 'No description for this!'}`}</span>
-                <span>{`Device Type: ${templateChoosen.deviceType}`}</span>
-                <span>{`Year of manufacture: ${templateChoosen.year}`}</span>
+                <h2 className="font-semibold text-lg">{`${dictionary.modelName}: ${templateChoosen.model}`}</h2>
+                <span className="">{`Description: ${templateChoosen.description || dictionary.noDescriptionForThis}`}</span>
+                <span>{`${dictionary.deviceType}: ${templateChoosen.deviceType}`}</span>
+                <span>{`${dictionary.yearOfManufacture}: ${templateChoosen.year}`}</span>
               </div>
               <Image
                 src={templateChoosen.image || '/image/device.svg'}
@@ -108,7 +111,7 @@ export default function NewDeviceDialog({
       next: () => {},
     },
     {
-      component: <NewDeviceForm form={form} dictionary={dictionary}/>,
+      component: <NewDeviceForm form={form} dictionary={dictionary} />,
     },
   ];
 
@@ -138,7 +141,9 @@ export default function NewDeviceDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        {triggerBtn || <Button variant="secondary">Add device</Button>}
+        {triggerBtn || (
+          <Button variant="secondary">{dictionary.addDevice}</Button>
+        )}
       </DialogTrigger>
       <DialogContent
         includeX={false}
@@ -158,10 +163,10 @@ export default function NewDeviceDialog({
             disabled={currentStep === 1}
             className="bg-muted hover:bg-muted/90"
           >
-            Back
+            {dictionary.back}
           </Button>
           <Button onClick={handleNext} disabled={disabledNext}>
-            {currentStep === totalSteps ? 'Done' : 'Next'}
+            {currentStep === totalSteps ? dictionary.done : dictionary.next}
           </Button>
         </DialogFooter>
       </DialogContent>

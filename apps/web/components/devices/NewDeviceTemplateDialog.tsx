@@ -19,15 +19,18 @@ import {
   DeviceTemplate,
   DeviceTemplateModel,
 } from '../../types/device-template';
+import { DictionaryProps } from '../../types/dictionary';
 import NewDeviceTemplateForm from './NewDeviceTemplateForm';
 
-export default function NewDeviceTemplateDialog() {
+export default function NewDeviceTemplateDialog({
+  dictionary,
+}: DictionaryProps) {
   const [open, setOpen] = useState(false);
   const formSchema = z.object({
-    model: z.string().min(1),
+    model: z.string({ message: dictionary.fieldIsRequired }),
     description: z.string().optional(),
-    year: z.number(),
-    deviceType: z.string(),
+    year: z.number({ message: dictionary.fieldIsRequired }),
+    deviceType: z.string({ message: dictionary.fieldIsRequired }),
     image: z.instanceof(File).optional(),
   });
 
@@ -51,9 +54,9 @@ export default function NewDeviceTemplateDialog() {
           'Content-Type': 'multipart/form-data',
         },
       });
-      toast.success('Device template created successfully');
+      toast.success(dictionary.deviceTemplateCreatedSuccessfully);
     } catch (e) {
-      toast.error('Failed to create device template');
+      toast.error(dictionary.failedToCreateDeviceTemplate);
     }
   };
 
@@ -70,7 +73,7 @@ export default function NewDeviceTemplateDialog() {
       <DialogTrigger asChild>
         <Button>
           <Icons.plus className="mr-2 h-5 w-5 max-w-[100px]" />
-          New Template
+          {dictionary.newDeviceTemplate}
         </Button>
       </DialogTrigger>
       <DialogContent
@@ -78,9 +81,11 @@ export default function NewDeviceTemplateDialog() {
           event.preventDefault();
         }}
       >
-        <DialogTitle>New Device Template</DialogTitle>
-        <DialogDescription>Create new device template</DialogDescription>
-        <NewDeviceTemplateForm form={form} onSubmit={onSubmit} />
+        <DialogTitle>{dictionary.newDeviceTemplate}</DialogTitle>
+        <DialogDescription>
+          {dictionary.createNewDeviceTemplate}
+        </DialogDescription>
+        <NewDeviceTemplateForm form={form} onSubmit={onSubmit} dictionary={dictionary}/>
       </DialogContent>
     </Dialog>
   );

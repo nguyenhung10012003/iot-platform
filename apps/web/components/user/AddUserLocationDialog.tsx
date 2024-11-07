@@ -16,15 +16,17 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import api from '../../config/api';
+import { DictionaryProps } from '../../types/dictionary';
 import AddUserForm from './AddUserForm';
 
 export default function AddUserLocationDialog({
   locationId,
   onAddUser,
+  dictionary,
 }: {
   locationId: string;
   onAddUser: () => void;
-}) {
+} & DictionaryProps) {
   const [open, setOpen] = useState(false);
 
   const handleAddUser = async (data: {
@@ -38,18 +40,17 @@ export default function AddUserLocationDialog({
         password: data.password,
       });
       onAddUser();
-      toast.success('User added successfully');
+      toast.success(dictionary.userAddedToLocation);
       setOpen(false);
     } catch (error: any) {
       switch (error.error) {
         case 'DUPLICATE':
-          toast.error('Failed to add user. Username already exists');
-          break;
-        case 'NOT_FOUND':
-          toast.error('Failed to add user. User not found');
+          toast.error(
+            `${dictionary.failedToAddUser}. ${dictionary.usernameAlreadyExists}`,
+          );
           break;
         default:
-          toast.error('Failed to add user');
+          toast.error(dictionary.failedToAddUser);
           break;
       }
     }
@@ -62,13 +63,13 @@ export default function AddUserLocationDialog({
 
   const formSchema = z.object({
     username: z
-      .string()
-      .min(4, { message: 'User name must have more than 4 characters' })
-      .max(48, { message: 'User name must have less than 48 characters' }),
+      .string({ message: dictionary.filedIsRequired })
+      .min(4, { message: dictionary.usernameMustBeAtLeast4Characters })
+      .max(48, { message: dictionary.usernameMustBeAtMost48Characters }),
     password: z
-      .string()
-      .min(6, { message: 'Password must have more than 6 characters' })
-      .max(32, { message: 'Password must have less than 32 characters' }),
+      .string({ message: dictionary.filedIsRequired })
+      .min(6, { message: dictionary.passwordMustBeAtLeast6Characters })
+      .max(32, { message: dictionary.passwordMustBeAtMost32Characters }),
   });
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -78,18 +79,18 @@ export default function AddUserLocationDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button>Add user</Button>
+        <Button>{dictionary.addUser}</Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add new user</DialogTitle>
+          <DialogTitle>{dictionary.addNewUser}</DialogTitle>
           <DialogDescription>
-            Find and add user to your location
+            {dictionary.createNewUserForLocation}
           </DialogDescription>
         </DialogHeader>
-        <AddUserForm form={form} onSubmit={handleAddUser} />
+        <AddUserForm form={form} onSubmit={handleAddUser} dictionary={dictionary}/>
         <DialogFooter>
-          <Button onClick={form.handleSubmit(handleAddUser)}>Add</Button>
+          <Button onClick={form.handleSubmit(handleAddUser)}>{dictionary.add}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

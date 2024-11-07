@@ -20,6 +20,7 @@ import { Textarea } from '@repo/ui/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
 import { useDragDrop } from '../../../../packages/ui/src/hooks/use-drag-drop';
 import { DeviceTemplate, deviceTypes } from '../../types/device-template';
+import { DictionaryProps } from '../../types/dictionary';
 
 type NewDeviceTemplateFormProps = {
   onSubmit: (data: DeviceTemplate) => void;
@@ -29,7 +30,8 @@ type NewDeviceTemplateFormProps = {
 export default function NewDeviceTemplateForm({
   form,
   onSubmit,
-}: NewDeviceTemplateFormProps) {
+  dictionary
+}: NewDeviceTemplateFormProps & DictionaryProps) {
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1970 },
@@ -54,11 +56,11 @@ export default function NewDeviceTemplateForm({
           name="model"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="model">Model name</FormLabel>
+              <FormLabel htmlFor="model">{dictionary.modelName}</FormLabel>
               <FormControl>
                 <Input
                   {...field}
-                  placeholder="Enter model name"
+                  placeholder={dictionary.enterModelName}
                   id="model"
                   autoComplete={'false'}
                 />
@@ -72,11 +74,11 @@ export default function NewDeviceTemplateForm({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="description">Description</FormLabel>
+              <FormLabel htmlFor="description">{dictionary.description}</FormLabel>
               <FormControl>
                 <Textarea
                   id="description"
-                  placeholder="Enter model description"
+                  placeholder={dictionary.enterModelDescription}
                   className="resize-none"
                   {...field}
                 />
@@ -91,14 +93,14 @@ export default function NewDeviceTemplateForm({
             name="year"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Year</FormLabel>
+                <FormLabel>{dictionary.year}</FormLabel>
                 <Select
                   onValueChange={(value) => field.onChange(+value)}
                   defaultValue={field.value?.toString()}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Select a year" />
+                      <SelectValue placeholder={dictionary.selectYear} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -118,14 +120,14 @@ export default function NewDeviceTemplateForm({
             name="deviceType"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel>Device Type</FormLabel>
+                <FormLabel>{dictionary.deviceType}</FormLabel>
                 <Select
                   onValueChange={field.onChange}
                   defaultValue={field.value}
                 >
                   <FormControl>
                     <SelectTrigger>
-                      <SelectValue placeholder="Type of the device" />
+                      <SelectValue placeholder={dictionary.typeOfTheDevice} />
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
@@ -165,8 +167,8 @@ export default function NewDeviceTemplateForm({
                         aria-hidden="true"
                       />
                       <p className="mb-2 text-sm text-gray-500">
-                        <span className="font-semibold">Click to upload</span>{' '}
-                        or drag and drop
+                        <span className="font-semibold">{dictionary.clickToUpload}</span>{' '}
+                        {dictionary.orDragAndDrop}
                       </p>
                     </div>
                     <Input
@@ -195,7 +197,7 @@ export default function NewDeviceTemplateForm({
           )}
         />
         <Button type="submit" className="w-full">
-          Save
+          {dictionary.save}
         </Button>
       </form>
     </Form>

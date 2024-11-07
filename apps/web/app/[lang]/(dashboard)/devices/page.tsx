@@ -27,7 +27,7 @@ export default async function DevicesPage({
   ]);
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
-      <DeviceToolbar />
+      <DeviceToolbar dictionary={dictionary}/>
       <DeviceSection deviceTemplates={data} dictionary={dictionary} />
     </div>
   );

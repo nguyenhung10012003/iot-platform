@@ -36,7 +36,7 @@ export default function SelectLocation({ onSelect, dictionary }: SelectLocationP
   return (
     <Select onValueChange={onValueChange}>
       <SelectTrigger className="w-full">
-        <SelectValue placeholder="Choose location" />
+        <SelectValue placeholder={dictionary.chooseLocation} />
       </SelectTrigger>
       <SelectContent>
         {data?.map((location) => (
@@ -57,7 +57,7 @@ export default function SelectLocation({ onSelect, dictionary }: SelectLocationP
               className="w-full h-auto min-h-0 p-0 bg-transparent justify-start px-1"
             >
               <Icons.plus className="w-4 h-4 mr-2" />
-              Create locations
+              {dictionary.createLocation}
             </Button>
           }
         />

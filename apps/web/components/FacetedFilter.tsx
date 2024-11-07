@@ -17,6 +17,7 @@ import {
 } from '@repo/ui/components/ui/popover';
 import { Separator } from '@repo/ui/components/ui/separator';
 import { cn } from '@repo/ui/lib/utils';
+import { DictionaryProps } from '../types/dictionary';
 
 type FacetedFilterProps = {
   title: string;
@@ -30,7 +31,8 @@ export default function FacetedFilter({
   options,
   selectedValues,
   onSelect,
-}: FacetedFilterProps) {
+  dictionary,
+}: FacetedFilterProps & DictionaryProps) {
   const selections = new Set(selectedValues);
   return (
     <Popover>
@@ -53,7 +55,7 @@ export default function FacetedFilter({
                     variant="secondary"
                     className="rounded-sm px-1 font-normal"
                   >
-                    {selections.size} selected
+                    {selections.size} {dictionary.selected}
                   </Badge>
                 ) : (
                   options
@@ -77,7 +79,7 @@ export default function FacetedFilter({
         <Command>
           <CommandInput placeholder={title} />
           <CommandList>
-            <CommandEmpty>No results found.</CommandEmpty>
+            <CommandEmpty>{dictionary.noResultsFound}.</CommandEmpty>
             <CommandGroup>
               {options.map((option) => {
                 const isSelected = selections.has(option.value);
@@ -119,7 +121,7 @@ export default function FacetedFilter({
                     onSelect={() => onSelect(undefined)}
                     className="justify-center text-center"
                   >
-                    Clear filters
+                    {dictionary.clearFilters}
                   </CommandItem>
                 </CommandGroup>
               </>

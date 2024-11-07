@@ -17,16 +17,19 @@ import {
 import { Textarea } from '@repo/ui/components/ui/textarea';
 import { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import { DictionaryProps } from '../../types/dictionary';
 import { GatewayForm } from '../../types/gateway';
 import { LocationModel } from '../../types/location';
 import SelectLocation from '../location/SelectLocation';
-import { DictionaryProps } from '../../types/dictionary';
 
 type NewGatewayFormProps = {
   form: UseFormReturn<GatewayForm>;
 };
 
-export default function NewGatewayForm({ form, dictionary }: NewGatewayFormProps & DictionaryProps) {
+export default function NewGatewayForm({
+  form,
+  dictionary,
+}: NewGatewayFormProps & DictionaryProps) {
   const [location, setLocation] = useState<LocationModel | undefined>();
   return (
     <Form {...form}>
@@ -36,9 +39,13 @@ export default function NewGatewayForm({ form, dictionary }: NewGatewayFormProps
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="name">Gateway name</FormLabel>
+              <FormLabel htmlFor="name">{dictionary.gatewayName}</FormLabel>
               <FormControl>
-                <Input {...field} placeholder="Enter gateway name" id="name" />
+                <Input
+                  {...field}
+                  placeholder={dictionary.enterGatewayName}
+                  id="name"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -49,11 +56,13 @@ export default function NewGatewayForm({ form, dictionary }: NewGatewayFormProps
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="description">Description</FormLabel>
+              <FormLabel htmlFor="description">
+                {dictionary.description}
+              </FormLabel>
               <FormControl>
                 <Textarea
                   id="description"
-                  placeholder="Enter gateway description"
+                  placeholder={dictionary.enterGatewayDescription}
                   className="resize-none"
                   {...field}
                 />
@@ -68,11 +77,11 @@ export default function NewGatewayForm({ form, dictionary }: NewGatewayFormProps
             name="host"
             render={({ field }) => (
               <FormItem className="w-3/4">
-                <FormLabel htmlFor="host">Host</FormLabel>
+                <FormLabel htmlFor="host">{dictionary.host}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="Enter your gateway host"
+                    placeholder={dictionary.enterGatewayHost}
                     id="host"
                   />
                 </FormControl>
@@ -85,7 +94,7 @@ export default function NewGatewayForm({ form, dictionary }: NewGatewayFormProps
             name="port"
             render={({ field }) => (
               <FormItem className="w-1/4">
-                <FormLabel htmlFor="port">Port</FormLabel>
+                <FormLabel htmlFor="port">{dictionary.port}</FormLabel>
                 <FormControl>
                   <Input
                     {...field}
@@ -105,11 +114,13 @@ export default function NewGatewayForm({ form, dictionary }: NewGatewayFormProps
             name="username"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel htmlFor="username">Username</FormLabel>
+                <FormLabel htmlFor="username">
+                  {dictionary.gatewayUsername}
+                </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
-                    placeholder="Enter your gateway username"
+                    placeholder={dictionary.enterGatewayUsername}
                     id="username"
                     autoComplete="off"
                   />
@@ -123,12 +134,14 @@ export default function NewGatewayForm({ form, dictionary }: NewGatewayFormProps
             name="password"
             render={({ field }) => (
               <FormItem className="w-full">
-                <FormLabel htmlFor="port">Password</FormLabel>
+                <FormLabel htmlFor="port">
+                  {dictionary.gatewayPassword}
+                </FormLabel>
                 <FormControl>
                   <Input
                     {...field}
                     type="password"
-                    placeholder="Gateway password"
+                    placeholder={dictionary.enterGatewayPassword}
                     id="password"
                     autoComplete="off"
                   />
@@ -141,9 +154,9 @@ export default function NewGatewayForm({ form, dictionary }: NewGatewayFormProps
         <div className="flex gap-4">
           <FormItem className="w-1/2 flex flex-col">
             <FormLabel htmlFor="locationId" className="mb-2 mt-1">
-              Location
+              {dictionary.locations}
             </FormLabel>
-            <SelectLocation onSelect={setLocation} dictionary={dictionary}/>
+            <SelectLocation onSelect={setLocation} dictionary={dictionary} />
           </FormItem>
 
           <FormField
@@ -151,11 +164,11 @@ export default function NewGatewayForm({ form, dictionary }: NewGatewayFormProps
             name="areaId"
             render={({ field }) => (
               <FormItem className="w-1/2">
-                <FormLabel htmlFor="areaId">Area</FormLabel>
+                <FormLabel htmlFor="areaId">{dictionary.area}</FormLabel>
                 <Select onValueChange={field.onChange} disabled={!location}>
                   <SelectTrigger>
                     <FormControl>
-                      <SelectValue placeholder="Choose area" />
+                      <SelectValue placeholder={dictionary.selectArea} />
                     </FormControl>
                   </SelectTrigger>
                   <SelectContent>

@@ -8,6 +8,7 @@ import {
 } from '@repo/ui/components/ui/form';
 import { Input } from '@repo/ui/components/ui/input';
 import { UseFormReturn } from 'react-hook-form';
+import { DictionaryProps } from '../../types/dictionary';
 
 type AddUserForm = {
   username: string;
@@ -17,10 +18,11 @@ type AddUserForm = {
 export default function AddUserForm({
   form,
   onSubmit,
+  dictionary
 }: {
   form: UseFormReturn<AddUserForm>;
   onSubmit: (values: AddUserForm) => void;
-}) {
+} & DictionaryProps) {
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -29,7 +31,7 @@ export default function AddUserForm({
           name="username"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="username">Username</FormLabel>
+              <FormLabel htmlFor="username">{dictionary.username}</FormLabel>
               <FormControl>
                 <Input {...field} id="username" />
               </FormControl>
@@ -42,7 +44,7 @@ export default function AddUserForm({
           name="password"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="password">Password</FormLabel>
+              <FormLabel htmlFor="password">{dictionary.password}</FormLabel>
               <FormControl>
                 <Input {...field} id="password" type="password" />
               </FormControl>

@@ -24,7 +24,7 @@ export default function DeviceSection({ deviceTemplates, dictionary }: DeviceSec
           <h2 className="font-bold text-2xl mb-4 border-b">{deviceType}</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {templates.map((template) => (
-              <DeviceCard key={template.id} deviceTemplate={template}dictionary={dictionary} />
+              <DeviceCard key={template.id} deviceTemplate={template} dictionary={dictionary} />
             ))}
           </div>
         </div>

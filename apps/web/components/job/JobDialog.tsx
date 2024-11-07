@@ -14,6 +14,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { Job, JobCreated, JobForm as JobFormType } from '../../types/job';
 import JobForm from './JobForm';
+import { DictionaryProps } from '../../types/dictionary';
 
 type JobDialogProps = {
   job?: Job;
@@ -27,11 +28,12 @@ export default function JobDialog({
   onSave,
   locationId,
   trigger,
-}: JobDialogProps) {
+  dictionary,
+}: JobDialogProps & DictionaryProps) {
   const formSchema = z.object({
-    title: z.string().min(1, 'Title is required'),
+    title: z.string({message: dictionary.fieldIsRequired}),
     description: z.string().optional(),
-    asigneeId: z.string(),
+    asigneeId: z.string({message: dictionary.fieldIsRequired}),
   });
 
   const form = useForm<JobFormType>({
@@ -71,21 +73,21 @@ export default function JobDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpen}>
       <DialogTrigger asChild>
-        {trigger || <Button>Add Job</Button>}
+        {trigger || <Button>{dictionary.createJob}</Button>}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{job ? 'Edit Job' : 'Create Job'}</DialogTitle>
+          <DialogTitle>{job ? dictionary.editJob : dictionary.createJob}</DialogTitle>
           <DialogDescription>
-            {job ? 'Edit the job details' : 'Fill in the job details'}
+            {dictionary.fillInJobDetails}
           </DialogDescription>
         </DialogHeader>
-        <JobForm form={form} locationId={locationId} />
+        <JobForm form={form} locationId={locationId} dictionary={dictionary} />
         <DialogFooter>
           <Button variant="secondary" onClick={() => handleOpen(false)}>
-            Cancel
+            {dictionary.cancel}
           </Button>
-          <Button onClick={form.handleSubmit(onSubmit)}>Save</Button>
+          <Button onClick={form.handleSubmit(onSubmit)}>{dictionary.save}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

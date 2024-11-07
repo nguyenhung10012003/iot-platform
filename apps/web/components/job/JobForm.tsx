@@ -20,6 +20,7 @@ import useSWR from 'swr';
 import api from '../../config/api';
 import { JobForm as JobFormType } from '../../types/job';
 import { UserLocation } from '../../types/user';
+import { DictionaryProps } from '../../types/dictionary';
 
 type JobFormProps = {
   locationId: string;
@@ -28,7 +29,7 @@ type JobFormProps = {
 
 const fetcher = async (url: string) =>
   api.get<any, UserLocation[]>(url).then((res) => res);
-export default function JobForm({ form, locationId }: JobFormProps) {
+export default function JobForm({ form, locationId, dictionary }: JobFormProps & DictionaryProps) {
   const { data, isLoading } = useSWR(
     `location/user?locationId=${locationId}&role=EMPLOYEE`,
     fetcher,
@@ -44,7 +45,7 @@ export default function JobForm({ form, locationId }: JobFormProps) {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>{dictionary.title}</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -57,7 +58,7 @@ export default function JobForm({ form, locationId }: JobFormProps) {
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>{dictionary.description}</FormLabel>
               <FormControl>
                 <Textarea {...field} />
               </FormControl>
@@ -70,12 +71,12 @@ export default function JobForm({ form, locationId }: JobFormProps) {
           render={({ field }) => {
             return (
               <FormItem>
-                <FormLabel>Assignee</FormLabel>
+                <FormLabel>{dictionary.assignee}</FormLabel>
                 <Select onValueChange={field.onChange}>
                   <SelectTrigger>
                     <FormControl>
                       <SelectValue
-                        placeholder={'Assign to user'}
+                        placeholder={dictionary.enterUsernameAssignee}
                         defaultValue={field.value}
                       ></SelectValue>
                     </FormControl>

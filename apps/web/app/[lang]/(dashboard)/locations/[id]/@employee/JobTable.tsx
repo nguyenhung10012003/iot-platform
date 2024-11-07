@@ -25,15 +25,19 @@ import React from 'react';
 import useSWR from 'swr';
 import DataTable from '../../../../../../components/DataTable';
 import JobStatusBadge from '../../../../../../components/job/JobStatusBadge';
+import StatusJobPopover from '../../../../../../components/job/StatusJobPopover';
 import UploadReportDialog from '../../../../../../components/job/UploadReportDialog';
 import api from '../../../../../../config/api';
-import { Job, JobCreated } from '../../../../../../types/job';
-import StatusJobPopover from '../../../../../../components/job/StatusJobPopover';
+import { DictionaryProps } from '../../../../../../types/dictionary';
+import { Job } from '../../../../../../types/job';
 
 const fetcher = async (url: string) =>
   api.get<any, Job[]>(url).then((res) => res);
 
-export default function JobTable({ locationId }: { locationId: string }) {
+export default function JobTable({
+  locationId,
+  dictionary,
+}: { locationId: string } & DictionaryProps) {
   const userId = getCookie('userId');
   const { data, isLoading, error, mutate } = useSWR(
     `job?locationId=${locationId}&asigneeId=${userId}`,
@@ -76,7 +80,7 @@ export default function JobTable({ locationId }: { locationId: string }) {
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             className="p-0 hover:bg-none"
           >
-            Title
+            {dictionary.title}
             <Icons.sort className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -97,7 +101,7 @@ export default function JobTable({ locationId }: { locationId: string }) {
     },
     {
       accessorKey: 'status',
-      header: 'Status',
+      header: dictionary.status,
       cell: ({ row }) => {
         const job = row.original;
         return (
@@ -110,10 +114,10 @@ export default function JobTable({ locationId }: { locationId: string }) {
                   .patch(`job/${job.id}`, { status })
                   .then(() => {
                     mutate();
-                    toast.success('Status updated successfully');
+                    toast.success(dictionary.statusUpdatedSuccessfully);
                   })
                   .catch(() => {
-                    toast.error('Failed to update status');
+                    toast.error(dictionary.failedToUpdateStatus);
                   });
               }}
             />
@@ -139,7 +143,7 @@ export default function JobTable({ locationId }: { locationId: string }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuLabel>{dictionary.actions}</DropdownMenuLabel>
               <UploadReportDialog job={job} />
             </DropdownMenuContent>
           </DropdownMenu>
@@ -164,17 +168,6 @@ export default function JobTable({ locationId }: { locationId: string }) {
     },
   });
 
-  const handleOnSaveJob = async (data: JobCreated) => {
-    try {
-      await api.post('job', data);
-      mutate();
-      toast.success('Job created successfully');
-    } catch (error) {
-      toast.error('Failed to create job');
-      throw error;
-    }
-  };
-
   return (
     <div className="w-full">
       <div className="flex items-center py-4 justify-between">
@@ -187,7 +180,7 @@ export default function JobTable({ locationId }: { locationId: string }) {
           }}
         />
       </div>
-      <DataTable table={table} columns={columns} />
+      <DataTable table={table} columns={columns} dictionary={dictionary} />
     </div>
   );
 }

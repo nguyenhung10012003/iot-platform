@@ -27,11 +27,12 @@ import DataTable from '../../../../../../components/DataTable';
 import JobDialog from '../../../../../../components/job/JobDialog';
 import api from '../../../../../../config/api';
 import { Job, JobCreated } from '../../../../../../types/job';
+import { DictionaryProps } from '../../../../../../types/dictionary';
 
 const fetcher = async (url: string) =>
   api.get<any, Job[]>(url).then((res) => res);
 
-export default function JobTable({ locationId }: { locationId: string }) {
+export default function JobTable({ locationId, dictionary }: { locationId: string } & DictionaryProps) {
   const { data, isLoading, error, mutate } = useSWR(
     `job?locationId=${locationId}`,
     fetcher,
@@ -73,7 +74,7 @@ export default function JobTable({ locationId }: { locationId: string }) {
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             className="p-0 hover:bg-none"
           >
-            Title
+            {dictionary.title}
             <Icons.sort className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -94,7 +95,7 @@ export default function JobTable({ locationId }: { locationId: string }) {
     },
     {
       accessorKey: 'status',
-      header: 'Status',
+      header: dictionary.status,
       cell: ({ row }) => {
         const job = row.original;
         return <Badge>{job.status}</Badge>;
@@ -113,7 +114,7 @@ export default function JobTable({ locationId }: { locationId: string }) {
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             className="p-0 hover:bg-none"
           >
-            Assign to
+            {dictionary.asignee}
             <Icons.sort className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -144,7 +145,7 @@ export default function JobTable({ locationId }: { locationId: string }) {
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Action</DropdownMenuLabel>
+              <DropdownMenuLabel>{dictionary.actions}</DropdownMenuLabel>
 
               <JobDialog
                 trigger={
@@ -152,7 +153,7 @@ export default function JobTable({ locationId }: { locationId: string }) {
                     variant="ghost"
                     className="w-full h-auto justify-start"
                   >
-                    Edit
+                    {dictionary.edit}
                   </Button>
                 }
                 job={job}
@@ -160,13 +161,14 @@ export default function JobTable({ locationId }: { locationId: string }) {
                   try {
                     await api.put(`job/${job.id}`, data);
                     mutate();
-                    toast.success('Job updated successfully');
+                    toast.success(dictionary.jobUpdatedSuccessfully);
                   } catch (error) {
-                    toast.error('Failed to update job');
+                    toast.error(dictionary.failedToUpdateJob);
                     throw error;
                   }
                 }}
                 locationId={locationId}
+                dictionary={dictionary}
               />
 
               {job.report && (
@@ -184,7 +186,7 @@ export default function JobTable({ locationId }: { locationId: string }) {
                     URL.revokeObjectURL(a.href);
                   }}
                 >
-                  Download Report
+                  {dictionary.downloadReport}
                 </Button>
               )}
 
@@ -195,13 +197,13 @@ export default function JobTable({ locationId }: { locationId: string }) {
                   try {
                     await api.delete(`job/${job.id}`);
                     mutate();
-                    toast.success('Job deleted successfully');
+                    toast.success(dictionary.jobDeletedSuccessfully);
                   } catch (error) {
-                    toast.error('Failed to delete job');
+                    toast.error(dictionary.failedToDeleteJob);
                   }
                 }}
               >
-                Delete
+                {dictionary.delete}
               </Button>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -230,9 +232,9 @@ export default function JobTable({ locationId }: { locationId: string }) {
     try {
       await api.post('job', data);
       mutate();
-      toast.success('Job created successfully');
+      toast.success(dictionary.jobCreatedSuccessfully);
     } catch (error) {
-      toast.error('Failed to create job');
+      toast.error(dictionary.failedToCreateJob);
       throw error;
     }
   };
@@ -241,16 +243,16 @@ export default function JobTable({ locationId }: { locationId: string }) {
     <div className="w-full">
       <div className="flex items-center py-4 justify-between">
         <Input
-          placeholder="Filter job..."
+          placeholder={`${dictionary.filterJobs}...`}
           className="max-w-sm"
           value={(table.getColumn('title')?.getFilterValue() as string) || ''}
           onChange={(event) => {
             table.getColumn('title')?.setFilterValue(event.target.value);
           }}
         />
-        <JobDialog locationId={locationId} onSave={handleOnSaveJob} />
+        <JobDialog locationId={locationId} onSave={handleOnSaveJob} dictionary={dictionary}/>
       </div>
-      <DataTable table={table} columns={columns} />
+      <DataTable table={table} columns={columns} dictionary={dictionary}/>
     </div>
   );
 }

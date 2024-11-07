@@ -39,84 +39,83 @@ import NewDeviceDialog from './NewDeviceDialog';
 
 const data: DeviceModel[] = [];
 
-export const columns: ColumnDef<DeviceModel>[] = [
-  {
-    id: 'select',
-    header: ({ table }) => (
-      <Checkbox
-        checked={
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && 'indeterminate')
-        }
-        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-        aria-label="Select all"
-      />
-    ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => row.toggleSelected(!!value)}
-        aria-label="Select row"
-      />
-    ),
-    enableSorting: false,
-    enableHiding: false,
-  },
-  {
-    accessorKey: 'name',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Device Name
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-    cell: ({ row }) => <div className="lowercase">{row.getValue('name')}</div>,
-  },
-  {
-    accessorKey: 'deviceType',
-    header: 'Device Type',
-    cell: ({ row }) => <div className="capitalize">{row.getValue('name')}</div>,
-  },
-  {
-    accessorKey: 'Info',
-    header: () => <div className="text-right">Info</div>,
-    cell: ({ row }) => {
-      return (
-        <div className="text-right font-medium">{row.getValue('area')}</div>
-      );
-    },
-  },
-  {
-    id: 'actions',
-    enableHiding: false,
-    cell: ({ row }) => {
-      const payment = row.original;
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Delete</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      );
-    },
-  },
-];
-
 export function DeviceTable({ dictionary }: DictionaryProps) {
+  const columns: ColumnDef<DeviceModel>[] = [
+    {
+      id: 'select',
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && 'indeterminate')
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: 'name',
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="ghost"
+            onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+          >
+            {dictionary.deviceName}
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        );
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue('name')}</div>,
+    },
+    {
+      accessorKey: 'deviceType',
+      header: dictionary.deviceType,
+      cell: ({ row }) => <div className="capitalize">{row.getValue('name')}</div>,
+    },
+    {
+      accessorKey: 'Info',
+      header: () => <div className="text-right">{dictionary.information}</div>,
+      cell: ({ row }) => {
+        return (
+          <div className="text-right font-medium">{row.getValue('area')}</div>
+        );
+      },
+    },
+    {
+      id: 'actions',
+      enableHiding: false,
+      cell: ({ row }) => {
+        const payment = row.original;
+  
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-8 w-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>{dictionary.actions}</DropdownMenuLabel>
+              <DropdownMenuItem>{dictionary.edit}</DropdownMenuItem>
+              <DropdownMenuItem>{dictionary.delete}</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
+  ];
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     [],
@@ -148,7 +147,7 @@ export function DeviceTable({ dictionary }: DictionaryProps) {
     <div className="w-full">
       <div className="flex items-center py-4 justify-between">
         <Input
-          placeholder="Filter name..."
+          placeholder={`${dictionary.filterName}...`}
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
@@ -156,7 +155,7 @@ export function DeviceTable({ dictionary }: DictionaryProps) {
           className="max-w-sm"
         />
         <NewDeviceDialog
-          triggerBtn={<Button>Add Device</Button>}
+          triggerBtn={<Button>{dictionary.addDevice}</Button>}
           dictionary={dictionary}
         />
       </div>
@@ -222,7 +221,7 @@ export function DeviceTable({ dictionary }: DictionaryProps) {
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            Previous
+            {dictionary.previous}
           </Button>
           <Button
             variant="outline"
@@ -230,7 +229,7 @@ export function DeviceTable({ dictionary }: DictionaryProps) {
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            Next
+            {dictionary.next}
           </Button>
         </div>
       </div>

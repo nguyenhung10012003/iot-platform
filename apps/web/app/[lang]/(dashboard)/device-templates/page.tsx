@@ -21,8 +21,8 @@ export default async function DeviceTemplatesPage({
     return (
       <div className="flex flex-col w-full gap-4 p-4 md:p-6">
         <div className="flex w-full justify-between">
-          <DeviceToolbar />
-          <NewDeviceTemplateDialog />
+          <DeviceToolbar dictionary={dictionary}/>
+          <NewDeviceTemplateDialog dictionary={dictionary}/>
         </div>
         <DeviceSection deviceTemplates={data} dictionary={dictionary} />
       </div>
