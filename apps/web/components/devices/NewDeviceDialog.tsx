@@ -14,13 +14,12 @@ import Image from 'next/image';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
-import api from '../../config/api';
 import { Device } from '../../types/device';
 import { DeviceTemplateModel } from '../../types/device-template';
 import { DictionaryProps } from '../../types/dictionary';
+import { GatewayModel } from '../../types/gateway';
 import Stepper from '../Stepper';
 import NewDeviceForm from './NewDeviceForm';
-import SelectTemplate from './SelectTemplate';
 
 type NewDeviceDialogProps = {
   // isOpen: boolean;
@@ -28,25 +27,33 @@ type NewDeviceDialogProps = {
   // onCreate: () => void;
   triggerBtn?: React.ReactNode;
   template?: DeviceTemplateModel;
+  gateway?: GatewayModel;
 };
 
 export default function NewDeviceDialog({
   template,
   triggerBtn,
   dictionary,
+  gateway,
 }: NewDeviceDialogProps & DictionaryProps) {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [templateChoosen, setTemplateChoosen] = useState<
     DeviceTemplateModel | undefined
   >(template);
+  const [gatewayChoosen, setGatewayChoosen] = useState<
+    GatewayModel | undefined
+  >();
   const [open, setOpen] = useState<boolean>(false);
-  const [disabledNext, setDisabledNext] = useState<boolean>(true);
-  const totalSteps = 4;
+  const [disabledNext, setDisabledNext] = useState<boolean>(
+    templateChoosen === undefined,
+  );
 
   const formSchema = z.object({
     name: z.string({ message: dictionary.fieldIsRequired }),
     serialNumber: z.string({ message: dictionary.fieldIsRequired }),
     areaId: z.string({ message: dictionary.fieldIsRequired }),
+    topic: z.string({ message: dictionary.fieldIsRequired }),
+    gatewayId: z.string({ message: dictionary.fieldIsRequired }),
   });
 
   const form = useForm<Device>({
@@ -55,11 +62,12 @@ export default function NewDeviceDialog({
 
   const onSubmit = async (formData: Device) => {
     try {
-      const res = await api.post('/device', {
-        ...formData,
-        templateId: templateChoosen?.id,
-        deviceType: templateChoosen?.deviceType,
-      });
+      // const res = await api.post('/device', {
+      //   ...formData,
+      //   templateId: templateChoosen?.id,
+      //   deviceType: templateChoosen?.deviceType,
+      // });
+      console.log(formData);
       toast.success(dictionary.deviceCreatedSuccessfully);
     } catch (e) {
       toast.error(dictionary.failedToCreateDevice);
@@ -68,18 +76,12 @@ export default function NewDeviceDialog({
 
   const steps = [
     {
-      component: (
+      component: () => (
         <>
           <div>
             <h1 className="text-lg font-semibold mb-2">
               {dictionary.chooseATemplate}
             </h1>
-            <SelectTemplate
-              chooseTemplate={templateChoosen}
-              onSelect={(template) => {
-                setTemplateChoosen(template), setDisabledNext(false);
-              }}
-            />
           </div>
           {templateChoosen && (
             <div className="flex py-2">
@@ -100,29 +102,21 @@ export default function NewDeviceDialog({
           )}
         </>
       ),
-      next: () => {},
     },
     {
-      component: <div>Step 2</div>,
-      next: () => {},
-    },
-    {
-      component: <div>Step 3</div>,
-      next: () => {},
-    },
-    {
-      component: <NewDeviceForm form={form} dictionary={dictionary} />,
+      component: () => <NewDeviceForm form={form} dictionary={dictionary} />,
     },
   ];
+  const totalSteps = steps.length;
 
   const handleNext = () => {
     const step = steps[currentStep - 1];
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     }
-    if (step && step.next) {
-      step.next();
-    }
+    // if (step && step.next) {
+    //   step.next();
+    // }
     if (currentStep === totalSteps) {
       form.handleSubmit(onSubmit)();
     }
@@ -132,8 +126,6 @@ export default function NewDeviceDialog({
     setOpen(isOpen);
     if (!isOpen) {
       setCurrentStep(1);
-      setTemplateChoosen(undefined);
-      setDisabledNext(true);
       form.reset();
     }
   }, []);
@@ -155,7 +147,7 @@ export default function NewDeviceDialog({
             <Stepper totalSteps={totalSteps} currentStep={currentStep} />
           </DialogDescription>
         </DialogHeader>
-        {steps[currentStep - 1] && steps[currentStep - 1]?.component}
+        {steps[currentStep - 1] && steps[currentStep - 1]?.component()}
         <DialogFooter>
           <Button
             variant="secondary"

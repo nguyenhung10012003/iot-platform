@@ -17,6 +17,7 @@ model User {
   id            String         @id @default(auto()) @map("_id") @db.ObjectId
   username      String         @unique
   password      String
+  name          String?
   role          Role           @default(USER)
   employerIds   String[]       @db.ObjectId
   employeeIds   String[]       @db.ObjectId
@@ -115,7 +116,7 @@ model Device {
   templateId   String         @db.ObjectId
   template     DeviceTemplate @relation(fields: [templateId], references: [id])
   gatewayId    String?        @db.ObjectId
-  gateway      Gateway?       @relation(fields: [gatewayId], references: [id])
+  gateway      Gateway?       @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
 
   @@index([areaId], name: "areaId")
   @@index([gatewayId], name: "gatewayId")

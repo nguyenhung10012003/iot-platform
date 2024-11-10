@@ -1,3 +1,5 @@
+import { Icons } from '@repo/ui/components/icons/icons';
+import { Button } from '@repo/ui/components/ui/button';
 import {
   Form,
   FormControl,
@@ -11,22 +13,36 @@ import {
   Select,
   SelectContent,
   SelectItem,
+  SelectSeparator,
   SelectTrigger,
   SelectValue,
 } from '@repo/ui/components/ui/select';
 import { useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import useSWR from 'swr';
+import api from '../../config/api';
 import { Device } from '../../types/device';
-import { LocationModel } from '../../types/location';
-import SelectLocation from '../location/SelectLocation';
 import { DictionaryProps } from '../../types/dictionary';
+import { GatewayModel } from '../../types/gateway';
+import { LocationModel } from '../../types/location';
+import NewGatewayDialog from '../gateway/NewGatewayDialog';
+import SelectLocation from '../location/SelectLocation';
 
 type NewDeviceFormProps = {
   form: UseFormReturn<Device>;
 };
 
-export default function NewDeviceForm({ form, dictionary }: NewDeviceFormProps & DictionaryProps) {
+const fetcher = (url: string) =>
+  api.get<any, GatewayModel[]>(url).then((res) => res);
+export default function NewDeviceForm({
+  form,
+  dictionary,
+}: NewDeviceFormProps & DictionaryProps) {
   const [location, setLocation] = useState<LocationModel | undefined>();
+  const { data, isLoading } = useSWR(
+    location ? `/gateway?locationId=${location?.id}` : `/gateway`,
+    fetcher,
+  );
   return (
     <Form {...form}>
       <form className="space-y-3" autoComplete="off">
@@ -65,7 +81,12 @@ export default function NewDeviceForm({ form, dictionary }: NewDeviceFormProps &
             <FormLabel htmlFor="locationId" className="mb-2 mt-1">
               Location
             </FormLabel>
-            <SelectLocation onSelect={setLocation} dictionary={dictionary}/>
+            <SelectLocation
+              onSelect={(location) => {
+                setLocation(location);
+              }}
+              dictionary={dictionary}
+            />
           </FormItem>
 
           <FormField
@@ -89,6 +110,58 @@ export default function NewDeviceForm({ form, dictionary }: NewDeviceFormProps &
                   </SelectContent>
                 </Select>
 
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <div className="flex gap-4">
+          <FormField
+            control={form.control}
+            name="gatewayId"
+            render={({ field }) => (
+              <FormItem className="w-1/2">
+                <FormLabel htmlFor="gatewayId">Gateway</FormLabel>
+                <Select onValueChange={field.onChange}>
+                  <SelectTrigger disabled={!location}>
+                    <FormControl>
+                      <SelectValue placeholder="Choose gateway" />
+                    </FormControl>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {data?.map((gateway) => (
+                      <SelectItem key={gateway.id} value={gateway.id}>
+                        {gateway.name}
+                      </SelectItem>
+                    ))}
+                    <SelectSeparator />
+                    <NewGatewayDialog
+                      dictionary={dictionary}
+                      triggerBtn={
+                        <Button
+                          variant={'secondary'}
+                          className="w-full h-auto min-h-0 p-0 bg-transparent justify-start px-1"
+                        >
+                          <Icons.plus className="w-4 h-4 mr-2" />
+                          New gateway
+                        </Button>
+                      }
+                    />
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="topic"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel htmlFor="topic">Topic</FormLabel>
+                <FormControl>
+                  <Input {...field} placeholder="Enter topic" id="topic" />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}

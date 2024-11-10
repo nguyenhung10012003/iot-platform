@@ -101,6 +101,7 @@ export default function NewGatewayForm({
                     placeholder="1883"
                     id="port"
                     defaultValue={1883}
+                    onChange={(e) => field.onChange(+e.target.value)}
                   />
                 </FormControl>
                 <FormMessage />

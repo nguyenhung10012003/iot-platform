@@ -1,8 +1,18 @@
 import { AccessTokenGuard } from '@app/common/guards';
-import { Body, Controller, Delete, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import { AuthenticatedRequest } from '@app/common/types';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { GatewayService } from './gateway.service';
 import { GatewayCreateDto } from './types/gateway-create.dto';
-import { AuthenticatedRequest } from '@app/common/types';
 
 @Controller('gateway')
 @UseGuards(AccessTokenGuard)
@@ -15,8 +25,14 @@ export class GatewayController {
   }
 
   @Get()
-  async getGateways(@Req() req: AuthenticatedRequest) {
-    return this.gatewayService.getGatewaysForUser(req.user.userId);
+  async getGateways(
+    @Req() req: AuthenticatedRequest,
+    @Query('locationId') locationId?: string,
+  ) {
+    return this.gatewayService.getGatewaysForUser({
+      userId: req.user.userId,
+      locationId,
+    });
   }
 
   @Delete(':id')

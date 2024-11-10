@@ -18,20 +18,23 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import api from '../../config/api';
+import { DictionaryProps } from '../../types/dictionary';
 import { GatewayForm } from '../../types/gateway';
 import revalidate from '../../utils/action';
 import NewGatewayForm from './NewGatewayForm';
-import { DictionaryProps } from '../../types/dictionary';
 
-export default function NewGatewayDialog({ dictionary }: DictionaryProps) {
+export default function NewGatewayDialog({
+  dictionary,
+  triggerBtn,
+}: DictionaryProps & { triggerBtn?: React.ReactNode }) {
   const formSchema = z.object({
-    name: z.string({message: dictionary.fieldIsRequired}),
-    host: z.string({message: dictionary.fieldIsRequired}),
-    port: z.number({message: dictionary.fieldIsRequired}).int().default(1883),
+    name: z.string({ message: dictionary.fieldIsRequired }),
+    host: z.string({ message: dictionary.fieldIsRequired }),
+    port: z.number({ message: dictionary.fieldIsRequired }).int().default(1883),
     description: z.string().optional(),
     username: z.string().optional(),
     password: z.string().optional(),
-    areaId: z.string({message: dictionary.fieldIsRequired}),
+    areaId: z.string({ message: dictionary.fieldIsRequired }),
   });
 
   const form = useForm<GatewayForm>({
@@ -40,9 +43,13 @@ export default function NewGatewayDialog({ dictionary }: DictionaryProps) {
 
   const onSubmit = async (data: GatewayForm) => {
     try {
-      await api.post('/gateway', data);
-      toast.success(dictionary.gatewayCreatedSuccessfully);
-      setOpen(false);
+      const res = await api.post<any, { success: boolean }>('/gateway', data);
+      if (res.success) {
+        toast.success(dictionary.gatewayCreatedSuccessfully);
+        setOpen(false);
+      } else {
+        toast.error(dictionary.canNotConnectToGateway);
+      }
       await revalidate('gateways');
     } catch (error: any) {
       switch (error.error) {
@@ -66,10 +73,12 @@ export default function NewGatewayDialog({ dictionary }: DictionaryProps) {
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button>
-          <Icons.plus className="w-5 h-5 mr-2" />
-          {dictionary.newGateway}
-        </Button>
+        {triggerBtn || (
+          <Button>
+            <Icons.plus className="w-5 h-5 mr-2" />
+            {dictionary.newGateway}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
@@ -79,7 +88,7 @@ export default function NewGatewayDialog({ dictionary }: DictionaryProps) {
           </DialogDescription>
         </DialogHeader>
 
-        <NewGatewayForm form={form} dictionary={dictionary}/>
+        <NewGatewayForm form={form} dictionary={dictionary} />
         <DialogFooter>
           <DialogClose asChild>
             <Button variant="secondary">{dictionary.cancel}</Button>

@@ -31,6 +31,7 @@ export class GatewayService {
         password: gateway.auth?.password,
         port: gateway.port,
         host: gateway.host,
+        protocol: gateway.port === 1883 ? 'mqtt' : 'mqtts',
       });
     } catch (e) {
       Logger.error(e, 'GatewayService');
@@ -43,10 +44,17 @@ export class GatewayService {
     return { success: true };
   }
 
-  async getGatewaysForUser(userId: string) {
+  async getGatewaysForUser({
+    userId,
+    locationId,
+  }: {
+    userId: string;
+    locationId?: string;
+  }) {
     const location = await this.prisma.area.findMany({
       where: {
         location: {
+          id: locationId,
           ownerId: userId,
         },
       },

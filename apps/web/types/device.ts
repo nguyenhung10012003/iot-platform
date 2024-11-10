@@ -6,6 +6,8 @@ export type Device = {
   templateId: string;
   deviceType: DeviceType;
   areaId: string;
+  gatewayId: string;
+  topic: string;
 };
 
 export interface DeviceModel {

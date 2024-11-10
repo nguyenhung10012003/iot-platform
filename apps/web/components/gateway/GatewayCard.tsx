@@ -1,12 +1,10 @@
 'use client';
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@repo/ui/components/ui/card';
-import Image from 'next/image';
+import { Button } from '@repo/ui/components/ui/button';
+import { toast } from '@repo/ui/components/ui/sonner';
+import api from '../../config/api';
 import { GatewayModel } from '../../types/gateway';
+import revalidate from '../../utils/action';
+import CardImage from '../CardImage';
 
 type GatewayCardProps = {
   gateway: GatewayModel;
@@ -14,20 +12,24 @@ type GatewayCardProps = {
 
 export default function GatewayCard({ gateway }: GatewayCardProps) {
   return (
-    <Card className="w-full overflow-hidden transition-all duration-300 ease-in-out transform hover:shadow-lg">
-      <div className="relative">
-        <Image
-          src={'/image/device.svg'}
-          alt="Card image"
-          className="w-full h-[200px] object-cover"
-          width={300}
-          height={200}
-        />
-      </div>
-      <CardHeader className="px-4">
-        <CardTitle className="text-xl">{gateway.name}</CardTitle>
-        <CardDescription></CardDescription>
-      </CardHeader>
-    </Card>
+    <CardImage
+      title={gateway.name}
+      image="/image/device.svg"
+      component={
+        <Button
+          onClick={async () => {
+            try {
+              await api.delete(`/gateway/${gateway.id}`);
+              revalidate('gateways');
+            } catch (error) {
+              toast.error('Could not delete gateway');
+            }
+          }}
+          variant="secondary"
+        >
+          Delete
+        </Button>
+      }
+    />
   );
 }

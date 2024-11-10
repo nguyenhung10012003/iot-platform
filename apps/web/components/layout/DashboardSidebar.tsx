@@ -90,10 +90,12 @@ export default function DashboardSidebar({
 
   const pathname = usePathname();
   const path = useMemo(() => `/${pathname.split('/')[2] || ''}`, [pathname]);
-  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(true);
 
   return (
     <Card
+      onMouseMove={() => setIsCollapsed(false)}
+      onMouseLeave={() => setIsCollapsed(true)}
       className={`flex h-screen flex-col max-w-[250px] shadow-md rounded-xxl ${!isCollapsed ? 'w-full' : ''}`}
     >
       <div className="h-20 border-b">Logo</div>

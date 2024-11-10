@@ -6,7 +6,10 @@ type DeviceSectionProps = {
   deviceTemplates: DeviceTemplateModel[];
 };
 
-export default function DeviceSection({ deviceTemplates, dictionary }: DeviceSectionProps & DictionaryProps) {
+export default function DeviceSection({
+  deviceTemplates,
+  dictionary,
+}: DeviceSectionProps & DictionaryProps) {
   const groupedTemplates = deviceTemplates.reduce(
     (acc, template) => {
       (acc[template.deviceType] = acc[template.deviceType] || []).push(
@@ -22,9 +25,13 @@ export default function DeviceSection({ deviceTemplates, dictionary }: DeviceSec
       {Object.entries(groupedTemplates).map(([deviceType, templates]) => (
         <div key={deviceType}>
           <h2 className="font-bold text-2xl mb-4 border-b">{deviceType}</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {templates.map((template) => (
-              <DeviceCard key={template.id} deviceTemplate={template} dictionary={dictionary} />
+              <DeviceCard
+                key={template.id}
+                deviceTemplate={template}
+                dictionary={dictionary}
+              />
             ))}
           </div>
         </div>
