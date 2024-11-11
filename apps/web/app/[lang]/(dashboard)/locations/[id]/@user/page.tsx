@@ -26,25 +26,25 @@ export default async function UserLocationPage({
       <TabsList className="w-full border-b">
         <TabsTrigger
           value="devices"
-          className="text-lg max-w-[100px] hover:text-primary/70"
+          className="text-lg max-w-[130px] hover:text-primary/70"
         >
           {dictionary.devices}
         </TabsTrigger>
         <TabsTrigger
           value="users"
-          className="text-lg max-w-[100px] hover:text-primary/70"
+          className="text-lg max-w-[130px] hover:text-primary/70"
         >
           {dictionary.users}
         </TabsTrigger>
         <TabsTrigger
           value="jobs"
-          className="text-lg max-w-[100px] hover:text-primary/70"
+          className="text-lg max-w-[130px] hover:text-primary/70"
         >
           {dictionary.jobs}
         </TabsTrigger>
         <TabsTrigger
           value="charts"
-          className="text-lg max-w-[100px] hover:text-primary/70"
+          className="text-lg max-w-[130px] hover:text-primary/70"
         >
           {dictionary.charts}
         </TabsTrigger>
@@ -55,11 +55,11 @@ export default async function UserLocationPage({
           Areas
         </TabsTrigger> */}
       </TabsList>
-      <TabsContent value="areas">
+      {/* <TabsContent value="areas">
         <DeviceTable dictionary={dictionary}/>
-      </TabsContent>
+      </TabsContent> */}
       <TabsContent value="devices">
-        <DeviceTable dictionary={dictionary}/>
+        <DeviceTable dictionary={dictionary} locationId={params.id}/>
       </TabsContent>
       <TabsContent value="users">
         <UserLocationTable locationId={params.id} dictionary={dictionary}/>

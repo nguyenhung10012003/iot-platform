@@ -17,8 +17,21 @@ export class DeviceService {
     });
   }
 
-  async getDeviceByUser(userId: string) {
-    //TODO: Implement this method
+  async getDeviceByLocation({userId, locationId}:{userId: string, locationId: string}) {
+    const location = await this.prisma.location.findUnique({
+      where: {
+        id: locationId,
+      },
+      include: {
+        areas: {
+          include: {
+            devices: true,
+          },
+        }
+      }
+    })
+
+    return location?.areas.flatMap(area => area.devices) || [];
   }
 
   async createDevice(data: CreateDeviceDto) {

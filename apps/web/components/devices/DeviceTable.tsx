@@ -25,6 +25,8 @@ import {
   DropdownMenuTrigger,
 } from '@repo/ui/components/ui/dropdown-menu';
 import { Input } from '@repo/ui/components/ui/input';
+import { Skeleton } from '@repo/ui/components/ui/skeleton';
+import { toast } from '@repo/ui/components/ui/sonner';
 import {
   Table,
   TableBody,
@@ -33,13 +35,26 @@ import {
   TableHeader,
   TableRow,
 } from '@repo/ui/components/ui/table';
+import useSWR from 'swr';
+import api from '../../config/api';
 import { DeviceModel } from '../../types/device';
 import { DictionaryProps } from '../../types/dictionary';
 import NewDeviceDialog from './NewDeviceDialog';
 
-const data: DeviceModel[] = [];
-
-export function DeviceTable({ dictionary }: DictionaryProps) {
+const fetcher = (url: string) =>
+  api.get<any, DeviceModel[]>(url).then((res) => res);
+export function DeviceTable({
+  dictionary,
+  locationId,
+}: DictionaryProps & { locationId: string }) {
+  const { data, isLoading, error, mutate } = useSWR(
+    `/device?locationId=${locationId}`,
+    fetcher,
+    {
+      revalidateOnFocus: false,
+      refreshInterval: 0,
+    },
+  );
   const columns: ColumnDef<DeviceModel>[] = [
     {
       id: 'select',
@@ -69,6 +84,7 @@ export function DeviceTable({ dictionary }: DictionaryProps) {
         return (
           <Button
             variant="ghost"
+            className="px-0 hover:bg-transparent"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
             {dictionary.deviceName}
@@ -76,28 +92,30 @@ export function DeviceTable({ dictionary }: DictionaryProps) {
           </Button>
         );
       },
-      cell: ({ row }) => <div className="lowercase">{row.getValue('name')}</div>,
+      cell: ({ row }) => <div>{row.getValue('name')}</div>,
     },
     {
       accessorKey: 'deviceType',
       header: dictionary.deviceType,
-      cell: ({ row }) => <div className="capitalize">{row.getValue('name')}</div>,
+      cell: ({ row }) => (
+        <div className="capitalize">{row.getValue('deviceType')}</div>
+      ),
     },
-    {
-      accessorKey: 'Info',
-      header: () => <div className="text-right">{dictionary.information}</div>,
-      cell: ({ row }) => {
-        return (
-          <div className="text-right font-medium">{row.getValue('area')}</div>
-        );
-      },
-    },
+    // {
+    //   accessorKey: 'Info',
+    //   header: () => <div className="text-right">{dictionary.information}</div>,
+    //   cell: ({ row }) => {
+    //     return (
+    //       <div className="text-right font-medium">{row.getValue('area')}</div>
+    //     );
+    //   },
+    // },
     {
       id: 'actions',
       enableHiding: false,
       cell: ({ row }) => {
-        const payment = row.original;
-  
+        const device = row.original;
+
         return (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -108,8 +126,20 @@ export function DeviceTable({ dictionary }: DictionaryProps) {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>{dictionary.actions}</DropdownMenuLabel>
-              <DropdownMenuItem>{dictionary.edit}</DropdownMenuItem>
-              <DropdownMenuItem>{dictionary.delete}</DropdownMenuItem>
+              {/* <DropdownMenuItem>{dictionary.edit}</DropdownMenuItem> */}
+              <DropdownMenuItem
+                onClick={() => {
+                  try {
+                    api.delete(`/device/${device.id}`);
+                    mutate();
+                    toast.success(dictionary.deviceDeletedSuccessfully);
+                  } catch (e) {
+                    toast.error(dictionary.failedToDeleteDevice);
+                  }
+                }}
+              >
+                {dictionary.delete}
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         );
@@ -125,7 +155,7 @@ export function DeviceTable({ dictionary }: DictionaryProps) {
   const [rowSelection, setRowSelection] = React.useState({});
 
   const table = useReactTable({
-    data,
+    data: data || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -142,6 +172,7 @@ export function DeviceTable({ dictionary }: DictionaryProps) {
       rowSelection,
     },
   });
+  if (isLoading) return <Skeleton className="w-full h-40" />;
 
   return (
     <div className="w-full">
@@ -157,6 +188,7 @@ export function DeviceTable({ dictionary }: DictionaryProps) {
         <NewDeviceDialog
           triggerBtn={<Button>{dictionary.addDevice}</Button>}
           dictionary={dictionary}
+          onCreate={mutate}
         />
       </div>
       <div className="rounded-md border">

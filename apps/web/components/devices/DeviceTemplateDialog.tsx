@@ -20,11 +20,17 @@ import {
   DeviceTemplateModel,
 } from '../../types/device-template';
 import { DictionaryProps } from '../../types/dictionary';
-import NewDeviceTemplateForm from './NewDeviceTemplateForm';
+import revalidate from '../../utils/action';
+import NewDeviceTemplateForm from './DeviceTemplateForm';
 
-export default function NewDeviceTemplateDialog({
+export default function DeviceTemplateDialog({
   dictionary,
-}: DictionaryProps) {
+  template,
+  trigerBtn,
+}: DictionaryProps & {
+  template?: DeviceTemplateModel;
+  trigerBtn?: React.ReactNode;
+}) {
   const [open, setOpen] = useState(false);
   const formSchema = z.object({
     model: z.string({ message: dictionary.fieldIsRequired }),
@@ -36,6 +42,12 @@ export default function NewDeviceTemplateDialog({
 
   const form = useForm<DeviceTemplate>({
     resolver: zodResolver(formSchema),
+    defaultValues: {
+      model: template?.model,
+      description: template?.description,
+      year: template?.year,
+      deviceType: template?.deviceType,
+    },
   });
 
   const onSubmit = async (data: DeviceTemplate) => {
@@ -49,13 +61,33 @@ export default function NewDeviceTemplateDialog({
     }
 
     try {
-      await api.post<DeviceTemplateModel>('/device-template', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      });
-      toast.success(dictionary.deviceTemplateCreatedSuccessfully);
+      if (template) {
+        await api.patch<DeviceTemplateModel>(
+          `/device-template/${template.id}`,
+          formData,
+          {
+            headers: {
+              'Content-Type': 'multipart/form-data',
+            },
+          },
+        );
+        toast.success(dictionary.deviceTemplateUpdated);
+      } else {
+        await api.post<DeviceTemplateModel>('/device-template', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        });
+        toast.success(dictionary.deviceTemplateCreatedSuccessfully);
+      }
+      revalidate('device-templates');
+      setOpen(false);
+      form.reset();
     } catch (e) {
+      if (template) {
+        toast.error(dictionary.failedToUpdateDeviceTemplate);
+        return;
+      }
       toast.error(dictionary.failedToCreateDeviceTemplate);
     }
   };
@@ -71,10 +103,12 @@ export default function NewDeviceTemplateDialog({
       open={open}
     >
       <DialogTrigger asChild>
-        <Button>
-          <Icons.plus className="mr-2 h-5 w-5 max-w-[100px]" />
-          {dictionary.newDeviceTemplate}
-        </Button>
+        {trigerBtn || (
+          <Button>
+            <Icons.plus className="mr-2 h-5 w-5 max-w-[100px]" />
+            {dictionary.newDeviceTemplate}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent
         onPointerDownOutside={(event) => {
@@ -85,7 +119,11 @@ export default function NewDeviceTemplateDialog({
         <DialogDescription>
           {dictionary.createNewDeviceTemplate}
         </DialogDescription>
-        <NewDeviceTemplateForm form={form} onSubmit={onSubmit} dictionary={dictionary}/>
+        <NewDeviceTemplateForm
+          form={form}
+          onSubmit={onSubmit}
+          dictionary={dictionary}
+        />
       </DialogContent>
     </Dialog>
   );

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { hashPassword } from 'utils/hashing';
 import { CreateUserDto } from '../auth/dto/CreateUserDto';
+import { Prisma } from '@prisma/client';
 
 type FindOneOptions = {
   throwIfNotFound?: boolean;
@@ -49,5 +50,9 @@ export class UserService {
     return this.prisma.user.findUniqueOrThrow({
       where: { id },
     });
+  }
+
+  async find(args: Prisma.UserFindManyArgs) {
+    return this.prisma.user.findMany();
   }
 }

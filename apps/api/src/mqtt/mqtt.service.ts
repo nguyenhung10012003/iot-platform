@@ -60,12 +60,18 @@ export class MqttService {
     client.publish(topic, message);
   }
 
-  async subscribe(id: string, topic: string) {
+  async subscribe(
+    id: string,
+    topic: string,
+    callback?: (topic: string, message: string) => void,
+  ) {
     const client = this.client.get(id);
     if (!client) {
       throw new Error('Client not found');
     }
-    client.subscribe(topic);
+    client.subscribe(topic, (err, message) => {
+      console.log('message', message);
+    });
   }
 
   async unsubscribe(id: string, topic: string) {

@@ -1,3 +1,4 @@
+import { HasAnyRole } from '@app/common/decorators/has-role.decorator';
 import { AccessTokenGuard } from '@app/common/guards';
 import { AuthenticatedRequest } from '@app/common/types';
 import { Controller, Get, Query, Req, UseGuards } from '@nestjs/common';
@@ -11,6 +12,16 @@ export class UserController {
   @Get('/me')
   async getMe(@Req() req: AuthenticatedRequest) {
     return this.userService.findById(req.user.userId);
+  }
+
+  @Get()
+  @HasAnyRole('ADMIN')
+  async getAll(@Req() req: AuthenticatedRequest) {
+    return this.userService.find({
+      where: {
+        role: 'USER',
+      },
+    });
   }
 
   @Get('/search')

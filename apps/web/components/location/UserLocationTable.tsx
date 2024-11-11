@@ -30,6 +30,7 @@ import { DictionaryProps } from '../../types/dictionary';
 import { UserLocation } from '../../types/user';
 import UserTable from '../DataTable';
 import AddUserLocationDialog from '../user/AddUserLocationDialog';
+import DataTable from '../DataTable';
 
 const fetcher = async (url: string) =>
   api.get<any, UserLocation[]>(url).then((res) => res);
@@ -42,6 +43,11 @@ export default function UserLocationTable({
   const { data, isLoading, error, mutate } = useSWR(
     `location/user?locationId=${locationId}`,
     fetcher,
+    {
+      revalidateOnFocus: false,
+      refreshInterval: 0,
+      revalidateOnReconnect: false,
+    }
   );
 
   const columns: ColumnDef<UserLocation>[] = [
@@ -195,7 +201,7 @@ export default function UserLocationTable({
           onAddUser={() => mutate()}
         />
       </div>
-      <UserTable table={table} columns={columns} dictionary={dictionary} />
+      <DataTable table={table} columns={columns} dictionary={dictionary} />
     </div>
   );
 }

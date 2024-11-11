@@ -1,8 +1,19 @@
-import { Body, Controller, Get, Post, Req, UseGuards } from '@nestjs/common';
-import { DeviceService } from './device.service';
 import { AccessTokenGuard } from '@app/common/guards';
-import { CreateDeviceDto } from './types/create-device.dto';
 import { AuthenticatedRequest } from '@app/common/types';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Query,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { DeviceService } from './device.service';
+import { CreateDeviceDto } from './types/create-device.dto';
+import { DeviceQuery } from './types/device.query';
 
 @Controller('device')
 @UseGuards(AccessTokenGuard)
@@ -15,7 +26,19 @@ export class DeviceController {
   }
 
   @Get()
-  async getDevices(@Req() req: AuthenticatedRequest) {
+  async getDevices(
+    @Req() req: AuthenticatedRequest,
+    @Query() query: DeviceQuery,
+  ) {
     //TODO: Implement this method
+    return this.deviceService.getDeviceByLocation({
+      userId: req.user.userId,
+      locationId: query.locationId,
+    });
+  }
+
+  @Delete(':id')
+  async deleteDevice(@Param('id') id: string) {
+    return this.deviceService.deleteDevice(id);
   }
 }

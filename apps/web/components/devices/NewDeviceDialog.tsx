@@ -14,17 +14,19 @@ import Image from 'next/image';
 import { useCallback, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
+import api from '../../config/api';
 import { Device } from '../../types/device';
 import { DeviceTemplateModel } from '../../types/device-template';
 import { DictionaryProps } from '../../types/dictionary';
 import { GatewayModel } from '../../types/gateway';
 import Stepper from '../Stepper';
 import NewDeviceForm from './NewDeviceForm';
+import SelectTemplate from './SelectTemplate';
 
 type NewDeviceDialogProps = {
   // isOpen: boolean;
   // onClose: () => void;
-  // onCreate: () => void;
+  onCreate?: () => void;
   triggerBtn?: React.ReactNode;
   template?: DeviceTemplateModel;
   gateway?: GatewayModel;
@@ -34,6 +36,7 @@ export default function NewDeviceDialog({
   template,
   triggerBtn,
   dictionary,
+  onCreate,
   gateway,
 }: NewDeviceDialogProps & DictionaryProps) {
   const [currentStep, setCurrentStep] = useState<number>(1);
@@ -62,13 +65,14 @@ export default function NewDeviceDialog({
 
   const onSubmit = async (formData: Device) => {
     try {
-      // const res = await api.post('/device', {
-      //   ...formData,
-      //   templateId: templateChoosen?.id,
-      //   deviceType: templateChoosen?.deviceType,
-      // });
-      console.log(formData);
+      const res = await api.post('/device', {
+        ...formData,
+        templateId: templateChoosen?.id,
+        deviceType: templateChoosen?.deviceType,
+      });
+      onCreate && onCreate();
       toast.success(dictionary.deviceCreatedSuccessfully);
+      setOpen(false);
     } catch (e) {
       toast.error(dictionary.failedToCreateDevice);
     }
@@ -82,6 +86,15 @@ export default function NewDeviceDialog({
             <h1 className="text-lg font-semibold mb-2">
               {dictionary.chooseATemplate}
             </h1>
+            {!template && (
+              <SelectTemplate
+                chooseTemplate={template}
+                onSelect={(t) => {
+                  setTemplateChoosen(t);
+                  setDisabledNext(false);
+                }}
+              />
+            )}
           </div>
           {templateChoosen && (
             <div className="flex py-2">
@@ -127,6 +140,7 @@ export default function NewDeviceDialog({
     if (!isOpen) {
       setCurrentStep(1);
       form.reset();
+      setTemplateChoosen(template);
     }
   }, []);
 

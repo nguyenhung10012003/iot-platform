@@ -151,5 +151,8 @@
   "fillInJobDetails": "Nhập thông tin công việc",
   "enterUsernameAssignee": "Nhập tên đăng nhập của người được giao",
   "statusUpdatedSuccessfully": "Trạng thái đã được cập nhật thành công",
-  "failedToUpdateStatus": "Cập nhật trạng thái thất bại"
+  "failedToUpdateStatus": "Cập nhật trạng thái thất bại",
+  "failedToDeleteDevice": "Xóa thiết bị thất bại",
+  "deviceDeletedSuccessfully": "Xóa thiết bị thành công",
+  "deviceTemplateUpdated": "Mẫu thiết bị đã được cập nhật"
 }

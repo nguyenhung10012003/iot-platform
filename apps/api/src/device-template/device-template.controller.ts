@@ -6,6 +6,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
   UploadedFile,
@@ -47,6 +48,33 @@ export class DeviceTemplateController {
   ) {
     const imageUrl = await this.aws3.uploadFile(image);
     return this.deviceTemplateService.createDeviceTemplate({
+      ...data,
+      image: imageUrl?.url,
+    });
+  }
+
+  @Patch(':id')
+  @HasAnyRole('ADMIN')
+  @UseInterceptors(
+    FileInterceptor('image', {
+      fileFilter: (req, file, cb) => {
+        if (!file) {
+          return cb(null, true);
+        }
+        if (!file.mimetype.match(/image/)) {
+          return cb(new Error('Only image files are allowed!'), false);
+        }
+        cb(null, true);
+      },
+    }),
+  )
+  async updateDeviceTemplate(
+    @Param('id') id: string,
+    @Body() data: createDeviceTemplateDto,
+    @UploadedFile() image?: Express.Multer.File,
+  ) {
+    const imageUrl = await this.aws3.uploadFile(image);
+    return this.deviceTemplateService.updateDeviceTemplate(id, {
       ...data,
       image: imageUrl?.url,
     });
