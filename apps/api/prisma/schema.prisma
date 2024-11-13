@@ -113,6 +113,7 @@ model Device {
   areaId       String         @db.ObjectId
   area         Area           @relation(fields: [areaId], references: [id])
   deviceType   DeviceType
+  data         Data[]
   templateId   String         @db.ObjectId
   template     DeviceTemplate @relation(fields: [templateId], references: [id])
   gatewayId    String?        @db.ObjectId
@@ -137,6 +138,19 @@ type LocationSetting {
   totalHole       Int
   dripRatePerHole Int
   wateringMode    Boolean
+}
+
+type Data {
+  type DataType
+  time Int
+  data Float
+}
+
+enum DataType {
+  Temperature
+  Humidity
+  Pressure
+  Wind
 }
 
 enum DeviceType {

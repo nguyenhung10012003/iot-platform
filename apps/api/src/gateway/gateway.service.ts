@@ -66,10 +66,14 @@ export class GatewayService {
   }
 
   async deleteGateway(gatewayId: string) {
-    await this.prisma.gateway.delete({
-      where: { id: gatewayId },
+    await this.prisma.$transaction(async (prisma) => {
+      await Promise.all([
+        prisma.gateway.delete({
+          where: { id: gatewayId },
+        }),
+        this.mqttService.disconnect(gatewayId),
+      ]);
     });
-    await this.mqttService.disconnect(gatewayId);
     return { success: true };
   }
 }

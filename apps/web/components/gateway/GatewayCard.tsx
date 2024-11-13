@@ -20,7 +20,7 @@ export default function GatewayCard({ gateway }: GatewayCardProps) {
           onClick={async () => {
             try {
               await api.delete(`/gateway/${gateway.id}`);
-              revalidate('gateways');
+              revalidate('gateway');
             } catch (error) {
               toast.error('Could not delete gateway');
             }

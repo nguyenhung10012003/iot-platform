@@ -5,12 +5,10 @@ import {
   TabsTrigger,
 } from '@repo/ui/components/ui/tabs';
 import { DeviceTable } from '../../../../../../components/devices/DeviceTable';
+import ChartSection from '../../../../../../components/location/ChartSection';
 import UserLocationTable from '../../../../../../components/location/UserLocationTable';
-import JobTable from './JobTable';
-import HumidityChart from '../../../../../../components/charts/HumidityChart';
-import WaterAmountChart from '../../../../../../components/charts/WaterAmountChart';
-import ProductivityChart from '../../../../../../components/charts/ProductivityChart';
 import { getDictionary } from '../../../../../dictionaries';
+import JobTable from './JobTable';
 
 export default async function UserLocationPage({
   params,
@@ -59,18 +57,16 @@ export default async function UserLocationPage({
         <DeviceTable dictionary={dictionary}/>
       </TabsContent> */}
       <TabsContent value="devices">
-        <DeviceTable dictionary={dictionary} locationId={params.id}/>
+        <DeviceTable dictionary={dictionary} locationId={params.id} />
       </TabsContent>
       <TabsContent value="users">
-        <UserLocationTable locationId={params.id} dictionary={dictionary}/>
+        <UserLocationTable locationId={params.id} dictionary={dictionary} />
       </TabsContent>
       <TabsContent value="jobs">
-        <JobTable locationId={params.id} dictionary={dictionary}/>
+        <JobTable locationId={params.id} dictionary={dictionary} />
       </TabsContent>
       <TabsContent value="charts">
-        <HumidityChart />
-        <WaterAmountChart />
-        <ProductivityChart />
+        <ChartSection locationId={params.id} dictionary={dictionary} />
       </TabsContent>
     </Tabs>
   );

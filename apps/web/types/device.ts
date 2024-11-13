@@ -10,6 +10,12 @@ export type Device = {
   topic: string;
 };
 
+type SensorData = {
+  type: 'Temperature' | 'Humidity' | 'Rainfall' | 'Wind' | 'Soil_Moisture';
+  time: number;
+  data: number;
+};
+
 export interface DeviceModel {
   id: string;
   name: string;
@@ -19,4 +25,6 @@ export interface DeviceModel {
   gatewayId?: string;
   areaId: string;
   deviceType: DeviceType;
+  topic: string;
+  data?: SensorData[];
 }
