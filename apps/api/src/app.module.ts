@@ -4,19 +4,31 @@ import {
   RefreshTokenStrategy,
 } from '@app/common/strategies';
 import { Module } from '@nestjs/common';
+import { ScheduleModule } from '@nestjs/schedule';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
-import { UserModule } from './user/user.module';
 import { DeviceTemplateModule } from './device-template/device-template.module';
 import { DeviceModule } from './device/device.module';
-import { LocationModule } from './location/location.module';
 import { GatewayModule } from './gateway/gateway.module';
-import { MqttModule } from './mqtt/mqtt.module';
 import { JobModule } from './job/job.module';
+import { LocationModule } from './location/location.module';
+import { MqttModule } from './mqtt/mqtt.module';
+import { UserModule } from './user/user.module';
 
 @Module({
-  imports: [CommonModule, UserModule, AuthModule, DeviceTemplateModule, DeviceModule, LocationModule, GatewayModule, MqttModule, JobModule],
+  imports: [
+    CommonModule,
+    UserModule,
+    AuthModule,
+    DeviceTemplateModule,
+    DeviceModule,
+    LocationModule,
+    GatewayModule,
+    MqttModule,
+    JobModule,
+    ScheduleModule.forRoot(),
+  ],
   controllers: [AppController],
   providers: [AppService, AccessTokenStrategy, RefreshTokenStrategy],
 })

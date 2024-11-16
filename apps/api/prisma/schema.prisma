@@ -39,6 +39,7 @@ model Location {
   areas         Area[]
   userLocations UserLocation[]
   Job           Job[]
+  irrigation    Irrigation[]
 
   @@index([ownerId], name: "ownerId")
 }
@@ -111,6 +112,7 @@ model Device {
   serialNumber String         @unique
   topic        String
   areaId       String         @db.ObjectId
+  online       Boolean        @default(false)
   area         Area           @relation(fields: [areaId], references: [id])
   deviceType   DeviceType
   data         Data[]
@@ -121,6 +123,14 @@ model Device {
 
   @@index([areaId], name: "areaId")
   @@index([gatewayId], name: "gatewayId")
+}
+
+model Irrigation {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  amout      Float
+  time       Int
+  locationId String   @db.ObjectId
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
 }
 
 type GatewayAuth {
@@ -149,8 +159,9 @@ type Data {
 enum DataType {
   Temperature
   Humidity
-  Pressure
+  Rainfall
   Wind
+  SoilMoisture
 }
 
 enum DeviceType {

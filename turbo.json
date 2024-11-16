@@ -22,6 +22,7 @@
         "AWS_SECRET_ACCESS_KEY",
         "AWS_REGION",
         "AWS_BUCKET_NAME",
+        "PREDICT_URL",
         "NEXT_PUBLIC_API_URL"
       ],
       "dependsOn": ["^build"],

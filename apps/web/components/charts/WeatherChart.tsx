@@ -1,17 +1,29 @@
 'use client';
 
+import { Card } from '@repo/ui/components/ui/card';
 import {
+  CartesianGrid,
   ChartContainer,
-  ChartLegend,
-  ChartLegendContent,
   ChartTooltip,
   ChartTooltipContent,
-  CartesianGrid, Line, LineChart, XAxis, YAxis,
+  Line,
+  LineChart,
+  XAxis,
+  YAxis,
 } from '@repo/ui/components/ui/chart';
-import {  } from 'recharts';
+import {} from 'recharts';
 
-export default function WeatherChart({title, datas, label, color} : {title: string, label: string, color?: string, datas: {time: string, data: number}[]}) {
-
+export default function WeatherChart({
+  title,
+  datas,
+  label,
+  color,
+}: {
+  title: string;
+  label: string;
+  color?: string;
+  datas: { time: string; data: number }[];
+}) {
   const chartConfig = {
     data: {
       label: label,
@@ -20,16 +32,16 @@ export default function WeatherChart({title, datas, label, color} : {title: stri
   };
 
   return (
-    <div className="w-full h-full flex flex-col items-center gap-4 m-4">
+    <Card className="h-full flex flex-col items-center gap-4 my-4 mx-8 p-4">
       <h2 className="text-xl font-semibold">{title}</h2>
       <ChartContainer config={chartConfig} className="max-h-[400px] w-full">
         <LineChart data={datas} accessibilityLayer>
           <CartesianGrid vertical={false} />
           <XAxis
             dataKey="time"
-            tickLine={false}
+            // tickLine={false}
             tickMargin={10}
-            axisLine={false}
+            // axisLine={false}
           />
           <YAxis />
           <ChartTooltip cursor={false} content={<ChartTooltipContent />} />
@@ -43,6 +55,6 @@ export default function WeatherChart({title, datas, label, color} : {title: stri
           />
         </LineChart>
       </ChartContainer>
-    </div>
+    </Card>
   );
 }

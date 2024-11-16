@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
+import { SchedulerService } from 'src/scheduler/scheduler.service';
 import { UserService } from 'src/user/user.service';
 import { AddUserToLocationDto } from './types/add-user-location.dto';
 import { RemoveUserFromLocationDto } from './types/remove-user-location.dto';
@@ -10,6 +11,7 @@ export class LocationService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
+    private readonly schedulerService: SchedulerService,
   ) {}
 
   async getLocations(args: Prisma.LocationFindManyArgs) {
@@ -25,7 +27,7 @@ export class LocationService {
   }
 
   async createLocation(data: Prisma.LocationUncheckedCreateInput) {
-    return this.prisma.location.create({
+    const location = await this.prisma.location.create({
       data: {
         ...data,
         userLocations: {
@@ -37,13 +39,39 @@ export class LocationService {
       },
       include: { areas: true },
     });
+
+    if (location?.setting?.wateringMode) {
+      this.schedulerService.addCronJob(
+        `watering-${location.id}`,
+        '* * */3 * * *',
+        async () => {
+          console.log('Watering plants');
+        },
+      );
+    }
+
+    return location;
   }
 
   async updateLocation(id: string, data: Prisma.LocationUncheckedUpdateInput) {
-    return this.prisma.location.update({
+    const location = await this.prisma.location.update({
       where: { id },
       data,
     });
+
+    if (location?.setting?.wateringMode) {
+      this.schedulerService.addCronJob(
+        `watering-${location.id}`,
+        '* * */3 * * *',
+        async () => {
+          console.log('Watering plants');
+        },
+      );
+    } else {
+      this.schedulerService.removeCronJob(`watering-${location.id}`);
+    }
+
+    return location;
   }
 
   async addUserToLocation(data: AddUserToLocationDto) {

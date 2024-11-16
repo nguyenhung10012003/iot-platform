@@ -11,7 +11,7 @@ export type Device = {
 };
 
 type SensorData = {
-  type: 'Temperature' | 'Humidity' | 'Rainfall' | 'Wind' | 'Soil_Moisture';
+  type: 'Temperature' | 'Humidity' | 'Rainfall' | 'Wind' | 'SoilMoisture';
   time: number;
   data: number;
 };
@@ -21,6 +21,7 @@ export interface DeviceModel {
   name: string;
   serialNumber: string;
   templateId: string;
+  online: boolean;
   template: DeviceTemplateModel;
   gatewayId?: string;
   areaId: string;

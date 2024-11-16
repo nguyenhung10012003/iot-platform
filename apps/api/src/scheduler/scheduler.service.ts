@@ -1,0 +1,23 @@
+import { Injectable } from '@nestjs/common';
+import { SchedulerRegistry } from '@nestjs/schedule';
+import { CronJob } from 'cron';
+
+@Injectable()
+export class SchedulerService {
+  constructor(private scheduleRegistry: SchedulerRegistry) {}
+
+  public async addCronJob(
+    name: string,
+    cron: string,
+    callback: () => void | Promise<void>,
+  ) {
+    const job = new CronJob(cron, callback);
+    this.scheduleRegistry.addCronJob(name, job);
+    job.start();
+  }
+
+  public async removeCronJob(name: string) {
+    this.scheduleRegistry.deleteCronJob(name);
+  }
+
+}

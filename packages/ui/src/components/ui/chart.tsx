@@ -364,4 +364,4 @@ export {
   ChartTooltipContent,
 };
 
-export { CartesianGrid, Line, LineChart, XAxis, YAxis, AreaChart, Area } from 'recharts';
+export { CartesianGrid, Line, LineChart, XAxis, YAxis, AreaChart, Area, PolarRadiusAxis, RadialBar, RadialBarChart, Label } from 'recharts';
