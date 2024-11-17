@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { SchedulerRegistry } from '@nestjs/schedule';
 import { CronJob } from 'cron';
 
@@ -14,6 +14,7 @@ export class SchedulerService {
     const job = new CronJob(cron, callback);
     this.scheduleRegistry.addCronJob(name, job);
     job.start();
+    Logger.debug(`Cron job ${name} added`);
   }
 
   public async removeCronJob(name: string) {

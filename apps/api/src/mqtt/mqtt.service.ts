@@ -3,8 +3,6 @@ import { IClientOptions, MqttClient, connectAsync } from 'mqtt';
 import { SensorData } from 'src/device/types/sensor-data';
 import { PrismaService } from 'src/prisma.service';
 
-
-
 @Injectable()
 export class MqttService implements OnModuleInit {
   private client: Map<string, MqttClient> = new Map();
@@ -44,7 +42,6 @@ export class MqttService implements OnModuleInit {
                     },
                   },
                 });
-               
               },
             );
           });
@@ -100,6 +97,19 @@ export class MqttService implements OnModuleInit {
     });
 
     Logger.log(`Client id: ${id} Subscribed to ${topic}`, 'MqttService');
+  }
+
+  async onMessage<T>(
+    id: string,
+    callback: (topic: string, message: T) => void,
+  ) {
+    const client = this.client.get(id);
+    if (!client) {
+      throw new Error('Client not found');
+    }
+    client.on('message', (topic, message) => {
+      callback(topic, JSON.parse(message.toString()));
+    });
   }
 
   async unsubscribe(id: string, topic: string) {

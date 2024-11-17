@@ -21,7 +21,7 @@ export default function ChartSection({
     `/device?locationId=${locationId}`,
     fetcher,
     {
-      refreshInterval: 0,
+      refreshInterval: 5000,
       revalidateOnFocus: false,
       revalidateOnReconnect: false,
     },

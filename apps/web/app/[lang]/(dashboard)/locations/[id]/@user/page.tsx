@@ -9,6 +9,7 @@ import ChartSection from '../../../../../../components/location/ChartSection';
 import UserLocationTable from '../../../../../../components/location/UserLocationTable';
 import { getDictionary } from '../../../../../dictionaries';
 import JobTable from './JobTable';
+import AutomationSection from '../../../../../../components/automation/AutomationSection';
 
 export default async function UserLocationPage({
   params,
@@ -46,6 +47,12 @@ export default async function UserLocationPage({
         >
           {dictionary.charts}
         </TabsTrigger>
+        <TabsTrigger
+          value="automations"
+          className="text-lg max-w-[130px] hover:text-primary/70"
+        >
+          Automations
+          </TabsTrigger>
         {/* <TabsTrigger
           value="areas"
           className="text-lg max-w-[100px] hover:text-primary/70"
@@ -67,6 +74,9 @@ export default async function UserLocationPage({
       </TabsContent>
       <TabsContent value="charts">
         <ChartSection locationId={params.id} dictionary={dictionary} />
+      </TabsContent>
+      <TabsContent value="automations">
+        <AutomationSection dictionary={dictionary} />
       </TabsContent>
     </Tabs>
   );

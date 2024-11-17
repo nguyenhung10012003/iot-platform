@@ -15,6 +15,7 @@ import { JobModule } from './job/job.module';
 import { LocationModule } from './location/location.module';
 import { MqttModule } from './mqtt/mqtt.module';
 import { UserModule } from './user/user.module';
+import { AutomationModule } from './automation/automation.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { UserModule } from './user/user.module';
     GatewayModule,
     MqttModule,
     JobModule,
+    AutomationModule,
     ScheduleModule.forRoot(),
   ],
   controllers: [AppController],

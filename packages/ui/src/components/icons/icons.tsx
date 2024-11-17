@@ -11,6 +11,8 @@ import {
   PlusIcon as PlusIconOutline,
   UserIcon as UserIconOutline,
   PencilIcon as PencilIconOutline,
+  ClockIcon as ClockIconOutline,
+  CommandLineIcon as CommandLineIconOutline,
 } from '@heroicons/react/24/outline';
 import {
   ArrowUpTrayIcon,
@@ -24,6 +26,8 @@ import {
   PlusIcon,
   UserIcon,
   PencilIcon,
+  ClockIcon,
+  CommandLineIcon,
 } from '@heroicons/react/24/solid';
 
 import { ArrowLeftFromLineIcon, ArrowRightFromLineIcon, MoreHorizontal, ArrowUpDown } from 'lucide-react';
@@ -123,5 +127,19 @@ export const Icons = {
       <PencilIcon {...props} />
     ) : (
       <PencilIconOutline {...props} />
+    ),
+
+  clock: (props: IconProps) =>
+    props.variant === 'solid' ? (
+      <ClockIcon {...props} />
+    ) : (
+      <ClockIconOutline {...props} />
+    ),
+
+  command: (props: IconProps) =>
+    props.variant === 'solid' ? (
+      <CommandLineIcon {...props} />
+    ) : (
+      <CommandLineIconOutline {...props} />
     ),
 };

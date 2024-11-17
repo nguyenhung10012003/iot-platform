@@ -40,6 +40,7 @@ model Location {
   userLocations UserLocation[]
   Job           Job[]
   irrigation    Irrigation[]
+  Automations   Automations[]
 
   @@index([ownerId], name: "ownerId")
 }
@@ -120,6 +121,7 @@ model Device {
   template     DeviceTemplate @relation(fields: [templateId], references: [id])
   gatewayId    String?        @db.ObjectId
   gateway      Gateway?       @relation(fields: [gatewayId], references: [id], onDelete: Cascade)
+  Automations  Automations[]
 
   @@index([areaId], name: "areaId")
   @@index([gatewayId], name: "gatewayId")
@@ -131,6 +133,37 @@ model Irrigation {
   time       Int
   locationId String   @db.ObjectId
   location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+}
+
+model Automations {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  condition   Condition?
+  actions     Action[]
+  limitPeriod Int?
+  deviceId    String     @db.ObjectId
+  device      Device     @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+  locationId  String     @db.ObjectId
+  location    Location   @relation(fields: [locationId], references: [id], onDelete: Cascade)
+}
+
+type Condition {
+  type                 ConditionType
+  cronCondition        String?
+  deviceStateCondition DeviceStateCondition?
+}
+
+type Action {
+  type    ActionType
+  toEmail String?
+  title   String?
+  body    String?
+}
+
+type DeviceStateCondition {
+  type     DeviceStateConditionType
+  dataType DataType?
+  value    String
 }
 
 type GatewayAuth {
@@ -186,4 +219,29 @@ enum JobStatus {
   PENDING
   IN_PROGRESS
   COMPLETED
+}
+
+enum ConditionType {
+  Schedule
+  DeviceState
+  Scene
+}
+
+enum DeviceStateConditionType {
+  equal
+  notEqual
+  greaterThan
+  lessThan
+  greaterThanOrEqual
+  lessThanOrEqual
+  between
+  notBetween
+  in
+  notIn
+}
+
+enum ActionType {
+  TurnOn
+  TurnOff
+  SendEmail
 }

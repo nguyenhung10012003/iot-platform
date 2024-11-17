@@ -128,9 +128,9 @@ export function DeviceTable({
               <DropdownMenuLabel>{dictionary.actions}</DropdownMenuLabel>
               {/* <DropdownMenuItem>{dictionary.edit}</DropdownMenuItem> */}
               <DropdownMenuItem
-                onClick={() => {
+                onClick={async () => {
                   try {
-                    api.delete(`/device/${device.id}`);
+                    await api.delete(`/device/${device.id}`);
                     mutate();
                     toast.success(dictionary.deviceDeletedSuccessfully);
                   } catch (e) {

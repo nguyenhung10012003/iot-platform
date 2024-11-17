@@ -10,8 +10,10 @@ export type Device = {
   topic: string;
 };
 
+export type SensorDataType = 'Temperature' | 'Humidity' | 'Rainfall' | 'Wind' | 'SoilMoisture';
+
 type SensorData = {
-  type: 'Temperature' | 'Humidity' | 'Rainfall' | 'Wind' | 'SoilMoisture';
+  type: SensorDataType;
   time: number;
   data: number;
 };
