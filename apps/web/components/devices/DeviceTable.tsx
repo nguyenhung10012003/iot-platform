@@ -55,6 +55,7 @@ export function DeviceTable({
       refreshInterval: 0,
     },
   );
+  console.log(data, isLoading, error);
   const columns: ColumnDef<DeviceModel>[] = [
     {
       id: 'select',

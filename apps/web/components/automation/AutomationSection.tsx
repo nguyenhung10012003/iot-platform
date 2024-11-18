@@ -20,10 +20,11 @@ export default function AutomationSection({ dictionary }: DictionaryProps) {
       shouldRetryOnError: false,
     },
   );
+  console.log(data);
   if (isLoading) return;
   return (
-    <div className="w-full">
-      <div className="flex justify-end">
+    <div className="w-full ">
+      <div className="flex justify-end pb-4">
         <AutomationDialog
           locationId={id}
           dictionary={dictionary}

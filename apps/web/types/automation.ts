@@ -1,20 +1,22 @@
 import { SensorDataType } from "./device";
 
 export type ConditionType = 'Schedule' | 'DeviceState' | 'Scene';
-export type deviceStateConditionType = 'equal' | 'notEqual' | 'greaterThan' | 'lessThan' | 'greaterThanOrEqual' | 'lessThanOrEqual' | 'between' | 'notBetween' | 'in' | 'notIn';
+export type DeviceStateConditionType = 'equal' | 'notEqual' | 'greaterThan' | 'lessThan' | 'greaterThanOrEqual' | 'lessThanOrEqual' | 'between' | 'notBetween' | 'in' | 'notIn';
 
 export type Condition = {
   type: ConditionType;
   cronCondition?: string;
   deviceStateCondition?: {
     dataType: SensorDataType;
-    type: deviceStateConditionType;
+    type: DeviceStateConditionType;
     value: string;
   };
 }
 
-type Action = {
-  type: 'TurnOn' | 'TurnOff' | 'SendEmail';
+export type ActionType = 'TurnOn' | 'TurnOff' | 'SendEmail';
+
+export type Action = {
+  type: ActionType;
   toEmail?: string;
   title?: string;
   body?: string;

@@ -30,18 +30,22 @@ export class MqttService implements OnModuleInit {
               gateway.id,
               device.topic,
               async (topic, message: SensorData) => {
-                const newDevice = await this.prisma.device.update({
-                  where: { id: device.id },
-                  data: {
+                try {
+                  const newDevice = await this.prisma.device.update({
+                    where: { id: device.id },
                     data: {
-                      push: {
-                        type: message.type,
-                        time: message.time,
-                        data: message.data,
+                      data: {
+                        push: {
+                          type: message.type,
+                          time: message.time,
+                          data: message.data,
+                        },
                       },
                     },
-                  },
-                });
+                  });
+                } catch (e) {
+                  Logger.error(e, 'MqttService');
+                }
               },
             );
           });

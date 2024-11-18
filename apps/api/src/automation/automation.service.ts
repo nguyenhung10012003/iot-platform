@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common';
+import { MailerService } from '@nestjs-modules/mailer';
+import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { SensorData } from 'src/device/types/sensor-data';
 import { MqttService } from 'src/mqtt/mqtt.service';
@@ -12,6 +13,7 @@ export class AutomationService {
     private readonly prisma: PrismaService,
     private readonly schedulerService: SchedulerService,
     private readonly mqttService: MqttService,
+    private readonly mailService: MailerService,
   ) {}
 
   async getAutomations({ locationId }: { locationId: string }) {
@@ -72,7 +74,19 @@ export class AutomationService {
                 switch (action.type) {
                   case 'SendEmail':
                     // Gửi email
-                    console.log('Send email');
+                    try {
+                      const info = await this.mailService.sendMail({
+                        from: process.env.SENDGRID_SENDER,
+                        to: action.toEmail,
+                        subject: action.title,
+                        text: action.body,
+                      });
+                      Logger.log(
+                        `Send email to ${action.toEmail} with info: ${info}`,
+                      );
+                    } catch (e) {
+                      console.error(e);
+                    }
                     break;
                 }
               });

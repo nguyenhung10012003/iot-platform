@@ -23,6 +23,8 @@
         "AWS_REGION",
         "AWS_BUCKET_NAME",
         "PREDICT_URL",
+        "SENDGRID_SENDER",
+        "SENDGRID_API_KEY",
         "NEXT_PUBLIC_API_URL"
       ],
       "dependsOn": ["^build"],
