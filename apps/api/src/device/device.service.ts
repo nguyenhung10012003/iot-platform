@@ -57,6 +57,7 @@ export class DeviceService {
       this.mqtt.subscribe(
         data.gatewayId,
         data.topic,
+        device.id,
         async (topic, message: SensorData) => {
           await this.prisma.device.update({
             where: { id: device.id },
@@ -86,6 +87,7 @@ export class DeviceService {
       this.mqtt.subscribe(
         device.gatewayId,
         device.topic,
+        device.id,
         (topic, message: SensorData) => {
           this.prisma.device.update({
             where: { id: device.id },

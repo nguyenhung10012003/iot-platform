@@ -154,10 +154,11 @@ type Condition {
 }
 
 type Action {
-  type    ActionType
-  toEmail String?
-  title   String?
-  body    String?
+  type     ActionType
+  deviceId String?
+  toEmail  String?
+  title    String?
+  body     String?
 }
 
 type DeviceStateCondition {

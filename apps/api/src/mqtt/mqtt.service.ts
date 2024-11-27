@@ -3,9 +3,14 @@ import { IClientOptions, MqttClient, connectAsync } from 'mqtt';
 import { SensorData } from 'src/device/types/sensor-data';
 import { PrismaService } from 'src/prisma.service';
 
+type MqttServiceClient<T = any> = {
+  client: MqttClient;
+  callbacks?: { callback: (topic: string, message: T) => void; key: string }[];
+};
+
 @Injectable()
 export class MqttService implements OnModuleInit {
-  private client: Map<string, MqttClient> = new Map();
+  private client: Map<string, MqttServiceClient> = new Map();
   constructor(private readonly prisma: PrismaService) {}
 
   async onModuleInit() {
@@ -25,10 +30,11 @@ export class MqttService implements OnModuleInit {
             host: gateway.host,
             protocol: gateway.port === 1883 ? 'mqtt' : 'mqtts',
           });
-          gateway.devicesConnected.forEach((device) => {
-            this.subscribe<SensorData>(
+          gateway.devicesConnected.forEach(async (device) => {
+            await this.subscribe<SensorData>(
               gateway.id,
               device.topic,
+              gateway.id,
               async (topic, message: SensorData) => {
                 try {
                   const newDevice = await this.prisma.device.update({
@@ -48,6 +54,7 @@ export class MqttService implements OnModuleInit {
                 }
               },
             );
+            this.onMessage(gateway.id);
           });
         }),
       );
@@ -64,7 +71,7 @@ export class MqttService implements OnModuleInit {
         connectTimeout: 3000,
       });
 
-      this.client.set(id, client);
+      this.client.set(id, { client });
       Logger.log(`Client id: ${id} Connected`, 'MqttService');
 
       return client;
@@ -78,7 +85,7 @@ export class MqttService implements OnModuleInit {
   }
 
   async publish(id: string, topic: string, message: string) {
-    const client = this.client.get(id);
+    const { client } = this.client.get(id);
     if (!client) {
       throw new Error('Client not found');
     }
@@ -88,32 +95,56 @@ export class MqttService implements OnModuleInit {
   async subscribe<T>(
     id: string,
     topic: string,
+    callbackKey?: string,
     callback?: (topic: string, message: T) => void,
   ) {
     const client = this.client.get(id);
     if (!client) {
       throw new Error('Client not found');
     }
-    client.subscribe(topic);
-    client.on('message', (topic, message) => {
-      console.log(message.toString());
-      callback?.(topic, JSON.parse(message.toString()));
-    });
-
+    client.client.subscribe(topic);
+    client.callbacks?.push({ callback: callback, key: callbackKey });
     Logger.log(`Client id: ${id} Subscribed to ${topic}`, 'MqttService');
   }
 
-  async onMessage<T>(
+  async onMessage<T>(id: string) {
+    const client = this.client.get(id);
+    if (!client) {
+      throw new Error('Client not found');
+    }
+    client.client.on('message', (topic, message) => {
+      const callbacks = client.callbacks || [];
+      callbacks.forEach(async (cb) => {
+        cb.callback(topic, JSON.parse(message.toString()));
+      });
+    });
+  }
+
+  async addCallback<T>(
     id: string,
+    callbackKey: string,
     callback: (topic: string, message: T) => void,
   ) {
     const client = this.client.get(id);
     if (!client) {
       throw new Error('Client not found');
     }
-    client.on('message', (topic, message) => {
-      callback(topic, JSON.parse(message.toString()));
-    });
+    if (!client.callbacks) {
+      client.callbacks = [];
+    }
+    client.callbacks?.push({ callback, key: callbackKey });
+    Logger.debug(
+      `Client id: ${id} Added callback with key: ${callbackKey}`,
+      'MqttService',
+    );
+  }
+
+  async removeCallback(id: string, callbackKey: string) {
+    const client = this.client.get(id);
+    if (!client) {
+      throw new Error('Client not found');
+    }
+    client.callbacks = client.callbacks?.filter((cb) => cb.key !== callbackKey);
   }
 
   async unsubscribe(id: string, topic: string) {
@@ -121,12 +152,13 @@ export class MqttService implements OnModuleInit {
     if (!client) {
       throw new Error('Client not found');
     }
-    client.unsubscribe(topic);
+    client.client.unsubscribe(topic);
+    client.callbacks = [];
     Logger.log(`Client id: ${id} Unsubscribed to ${topic}`, 'MqttService');
   }
 
   async disconnect(id: string) {
-    const client = this.client.get(id);
+    const { client } = this.client.get(id);
     if (!client) {
       return;
     }

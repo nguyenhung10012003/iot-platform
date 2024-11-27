@@ -6,7 +6,6 @@ import {
 import { MailerModule } from '@nestjs-modules/mailer';
 import { Module } from '@nestjs/common';
 import { ScheduleModule } from '@nestjs/schedule';
-import { createTransport } from 'nodemailer';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -18,6 +17,7 @@ import { JobModule } from './job/job.module';
 import { LocationModule } from './location/location.module';
 import { MqttModule } from './mqtt/mqtt.module';
 import { UserModule } from './user/user.module';
+import { MailerService } from './mailer.service';
 
 @Module({
   imports: [
@@ -32,18 +32,8 @@ import { UserModule } from './user/user.module';
     JobModule,
     AutomationModule,
     ScheduleModule.forRoot(),
-    MailerModule.forRoot({
-      transport: createTransport({
-        host: 'smtp.sendgrid.net',
-        port: 587,
-        auth: {
-          user: 'apikey',
-          pass: process.env.SENDGRID_API_KEY,
-        },
-      }),
-    }),
   ],
   controllers: [AppController],
-  providers: [AppService, AccessTokenStrategy, RefreshTokenStrategy],
+  providers: [AppService, AccessTokenStrategy, RefreshTokenStrategy, MailerService],
 })
 export class AppModule {}
