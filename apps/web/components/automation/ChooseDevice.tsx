@@ -18,11 +18,13 @@ export default function ChooseDevice({
   locationId,
   defaultValue,
   onChange,
+  value,
   dictionary,
   deviceTypes,
 }: {
   locationId: string;
   defaultValue?: string;
+  value?: string;
   onChange: (value: string) => void;
   deviceTypes?: DeviceType[];
 } & DictionaryProps) {
@@ -32,7 +34,7 @@ export default function ChooseDevice({
   });
 
   return (
-    <Select onValueChange={onChange}>
+    <Select onValueChange={onChange} value={value}>
       <SelectTrigger>
         <SelectValue placeholder="Choose device" defaultValue={defaultValue} />
       </SelectTrigger>

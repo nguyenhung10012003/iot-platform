@@ -31,7 +31,7 @@ import {
 } from '../../types/automation';
 import { SensorDataType } from '../../types/device';
 import { DictionaryProps } from '../../types/dictionary';
-import { toCronString } from '../../utils/cron';
+import { parseCron, toCronString } from '../../utils/cron';
 import AddActionDialog from './AddActionDialog';
 import ChooseDevice from './ChooseDevice';
 import ScheduleChoose from './ScheduleChoose';
@@ -52,30 +52,35 @@ export default function AutomationDialog({
 }: AutomationDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState(automation?.name);
+  console.log(name);
   const [conditionType, setConditionType] = useState<ConditionType | undefined>(
     automation?.condition.type,
   );
   const [deviceStateConditionType, setDeviceStateConditionType] = useState<
     DeviceStateConditionType | undefined
   >(automation?.condition.deviceStateCondition?.type);
-  const [deviceStateValue, setDeviceStateValue] = useState<
-    string | undefined
-  >();
+  const [deviceStateValue, setDeviceStateValue] = useState<string | undefined>(
+    automation?.condition.deviceStateCondition?.value,
+  );
 
-  const [minute, setMinute] = useState(0);
-  const [hour, setHour] = useState(12);
-  const [daysOfWeek, setDaysOfWeek] = useState<number[]>([]);
+  const [time, setTime] = useState(
+    parseCron(automation?.condition.cronCondition || '0 12 * * *'),
+  );
   const handleToggle = (value: number) => {
-    if (daysOfWeek.includes(value)) {
-      setDaysOfWeek(daysOfWeek.filter((day) => day !== value));
+    if (time.days.includes(value)) {
+      setTime({ ...time, days: time.days.filter((day) => day !== value) });
     } else {
-      setDaysOfWeek([...daysOfWeek, value]);
+      setTime({ ...time, days: [...time.days, value] });
     }
   };
 
-  const [choosenDevice, setChoosenDevice] = useState<string | undefined>();
-  const [actions, setActions] = useState<Action[]>([]);
-  const [dataType, setDataType] = useState<SensorDataType | undefined>();
+  const [choosenDevice, setChoosenDevice] = useState<string | undefined>(
+    automation?.deviceId,
+  );
+  const [actions, setActions] = useState<Action[]>(automation?.actions || []);
+  const [dataType, setDataType] = useState<SensorDataType | undefined>(
+    automation?.condition.deviceStateCondition?.dataType,
+  );
 
   const handleOnSaveSchedule = async () => {
     let data;
@@ -87,7 +92,7 @@ export default function AutomationDialog({
           locationId: locationId,
           condition: {
             type: conditionType,
-            cronCondition: toCronString(hour, minute, daysOfWeek),
+            cronCondition: toCronString(time.hour, time.minute, time.days),
           },
           actions: actions,
         };
@@ -108,14 +113,29 @@ export default function AutomationDialog({
           actions: actions,
         };
         break;
+      case 'Scene':
+        data = {
+          name: name || 'Automation',
+          locationId: locationId,
+          condition: {
+            type: conditionType,
+          },
+          actions: actions,
+        };
+        break;
     }
     try {
-      await api.post('automation', data);
+      if (automation) {
+        await api.patch(`automation/${automation.id}`, data);
+        toast.success('Automation updated successfully');
+      } else {
+        await api.post('automation', data);
+        toast.success('Automation created successfully');
+      }
       setIsOpen(false);
-      toast.success('Automation created successfully');
     } catch (e) {
       console.error(e);
-      toast.error('Failed to create automation');
+      toast.error('Failed to create/update automation');
     } finally {
       onSaved?.();
     }
@@ -124,14 +144,15 @@ export default function AutomationDialog({
   const handleOpenChange = (open: boolean) => {
     setIsOpen(open);
     if (!open) {
-      setConditionType(undefined);
-      setName('');
-      setMinute(0);
-      setHour(12);
-      setDaysOfWeek([]);
-      setChoosenDevice(undefined);
-      setActions([]);
-      setDeviceStateValue(undefined);
+      setConditionType(automation?.condition.type);
+      setName(automation?.name);
+      setTime(parseCron(automation?.condition.cronCondition || '0 12 * * *'));
+      setChoosenDevice(automation?.deviceId);
+      setActions(automation?.actions || []);
+      setDeviceStateValue(automation?.condition.deviceStateCondition?.value);
+      setDeviceStateConditionType(
+        automation?.condition.deviceStateCondition?.type,
+      );
     }
   };
 
@@ -185,10 +206,10 @@ export default function AutomationDialog({
             <Input value={name} onChange={(e) => setName(e.target.value)} />
           </div>
           <ScheduleChoose
-            minute={minute}
-            setMinute={setMinute}
-            hour={hour}
-            setHour={setHour}
+            minute={time.minute}
+            setMinute={(value) => setTime({ ...time, minute: value })}
+            hour={time.hour}
+            setHour={(value) => setTime({ ...time, hour: value })}
             handleToggle={handleToggle}
           />
           <div className="flex gap-4 w-full flex-col sm:flex-row">
@@ -221,13 +242,19 @@ export default function AutomationDialog({
         <div className="mt-4 space-y-4">
           <div className="space-y-2">
             <Label>Name</Label>
-            <Input value={name} onChange={(e) => setName(e.target.value)} />
+            <Input
+              value={name}
+              onChange={(e) => {
+                console.log(e.target.value);
+                setName(e.target.value);
+              }}
+            />
           </div>
           <div className="flex gap-2 w-full justify-between items-center">
             <Label>Choose device</Label>
             <ChooseDevice
+              value={choosenDevice}
               locationId={locationId}
-              defaultValue={automation?.deviceId}
               onChange={(value) => setChoosenDevice(value)}
               dictionary={dictionary}
               deviceTypes={['SENSOR']}
@@ -237,6 +264,7 @@ export default function AutomationDialog({
             <div className="flex flex-col gap-2 w-full">
               <Label>Choose Data Type</Label>
               <Select
+                value={dataType}
                 onValueChange={(value: SensorDataType) => setDataType(value)}
               >
                 <SelectTrigger>
@@ -260,6 +288,7 @@ export default function AutomationDialog({
                 onValueChange={(value: DeviceStateConditionType) =>
                   setDeviceStateConditionType(value)
                 }
+                value={deviceStateConditionType}
               >
                 <SelectTrigger>
                   <SelectValue defaultValue={deviceStateConditionType} />
@@ -328,12 +357,76 @@ export default function AutomationDialog({
                 label: 'Send Email',
                 description: 'Send an email',
               },
+              {
+                type: 'TurnOn',
+                label: 'Turn On Device',
+                description: 'Turn on the device',
+              },
+              {
+                type: 'TurnOff',
+                label: 'Turn Off Device',
+                description: 'Turn off the device',
+              },
             ]}
+            dictionary={dictionary}
           />
         </div>
       );
-    if (conditionType === 'Scene') return <div>Scene</div>;
-  }, [conditionType, actions]);
+    if (conditionType === 'Scene')
+      return (
+        <div className="flex gap-4 w-full  flex-col">
+          <div>
+            <Label className="mb-2">Name</Label>
+            <Input value={name} onChange={(e) => setName(e.target.value)} />
+          </div>
+          <div className="space-y-2">
+            <Label>Actions</Label>
+            {actions.map((action, index) => (
+              <Card
+                key={index}
+                className="py-2 px-3 shadow-sm flex justify-between items-center"
+              >
+                <p>{action.type}</p>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="p-1 h-8 w-8 rounded-full"
+                  onClick={() => {
+                    setActions((prev) => prev.filter((_, i) => i !== index));
+                  }}
+                >
+                  <Icons.close className="w-5 h-5" />
+                </Button>
+              </Card>
+            ))}
+          </div>
+          <AddActionDialog
+            trigger={
+              <Button className="w-full text-secondary-foreground bg-transparent border-2 border-dashed hover:bg-primary-foreground">
+                Add Action
+              </Button>
+            }
+            onAdd={(action) => {
+              console.log(action);
+              if (action) setActions((prev) => [...prev, action]);
+            }}
+            actionFilters={[
+              {
+                type: 'TurnOn',
+                label: 'Turn On Device',
+                description: 'Turn on the device',
+              },
+              {
+                type: 'TurnOff',
+                label: 'Turn Off Device',
+                description: 'Turn off the device',
+              },
+            ]}
+            dictionary={dictionary}
+          />
+        </div>
+      );
+  }, [conditionType, actions, time, choosenDevice, deviceStateValue, name]);
   return (
     <Dialog open={isOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>

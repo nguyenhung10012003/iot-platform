@@ -39,6 +39,9 @@ class Action {
   type: 'TurnOn' | 'TurnOff' | 'SendEmail';
   @IsOptional()
   @IsString()
+  deviceId?: string;
+  @IsOptional()
+  @IsString()
   toEmail?: string;
   @IsOptional()
   @IsString()
@@ -53,7 +56,8 @@ export class CreateAutomationDto {
   name: string;
 
   @IsString()
-  deviceId: string;
+  @IsOptional()
+  deviceId?: string;
 
   @IsString()
   locationId: string;

@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 
 type CardImageProps = {
-  title: string;
+  title: string | React.ReactNode;
   description?: string;
   image?: string;
   href?: string;
@@ -50,10 +50,20 @@ const Base = ({
         )}
       </div>
       <CardHeader>
-        <Link href={href || ''} prefetch={false}>
-          <CardTitle>{title}</CardTitle>
-          <CardDescription>{description}</CardDescription>
-        </Link>
+    
+          {href ? (
+            <Link href={href} prefetch={false}>
+              <CardTitle>{title}</CardTitle>
+              <CardDescription>{description}</CardDescription>
+            </Link>
+          ) : (
+            <div>
+              <CardTitle>{title}</CardTitle>
+              <CardDescription>{description}</CardDescription>
+            </div>
+          )}
+
+      
       </CardHeader>
     </Card>
   );

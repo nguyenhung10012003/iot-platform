@@ -18,7 +18,9 @@ export class SchedulerService {
   }
 
   public async removeCronJob(name: string) {
+    if (!this.scheduleRegistry.doesExist('cron', name)) {
+      return;
+    }
     this.scheduleRegistry.deleteCronJob(name);
   }
-
 }

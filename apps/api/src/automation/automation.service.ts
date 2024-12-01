@@ -118,6 +118,62 @@ export class AutomationService implements OnModuleInit {
       data,
       include: { device: true },
     });
+    await this.handleAutomation(automation);
+
+    return automation;
+  }
+
+  async activeAutomation(id: string) {
+    const automation = await this.prisma.automations.findFirst({
+      where: { id },
+    });
+
+    await Promise.all(
+      automation.actions.map(async (action) => {
+        switch (action.type) {
+          case 'SendEmail':
+            // Gửi email
+            try {
+              const info = await this.mailService.sendMail({
+                from: process.env.SENDGRID_SENDER,
+                to: action.toEmail,
+                subject: action.title,
+                text: action.body,
+              });
+              Logger.log(`Send email to ${action.toEmail} with info: ${info}`);
+            } catch (e) {
+              console.error(e);
+            }
+            break;
+          case 'TurnOff':
+            await this.prisma.device.update({
+              where: { id: action.deviceId },
+              data: { online: false },
+            });
+            break;
+          case 'TurnOn':
+            await this.prisma.device.update({
+              where: { id: action.deviceId },
+              data: { online: true },
+            });
+            break;
+        }
+      }),
+    );
+  }
+
+  async updateAutomation(id: string, data: Prisma.AutomationsUncheckedUpdateInput) {
+    const automation = await this.prisma.automations.update({
+      where: { id },
+      data,
+      include: { device: true },
+    });
+    this.schedulerService.removeCronJob(`automation-${id}`);
+    this.mqttService.removeCallback(automation.device.gatewayId, id);
+    await this.handleAutomation(automation);
+  }
+
+  async handleAutomation(automation: Awaited<ReturnType<typeof this.createAutomation>>) {
     if (automation.condition.type === 'Schedule') {
       this.schedulerService.addCronJob(
         `automation-${automation.id}`,
@@ -198,12 +254,6 @@ export class AutomationService implements OnModuleInit {
         },
       );
     }
-
-    return automation;
-  }
-
-  async activeAutomation(id: string) {
-    
   }
 
   async deleteAutomation(id: string) {

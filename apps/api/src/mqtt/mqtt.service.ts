@@ -144,6 +144,10 @@ export class MqttService implements OnModuleInit {
     if (!client) {
       throw new Error('Client not found');
     }
+    Logger.debug(
+      `Client id: ${id} Removed callback with key: ${callbackKey}`,
+      'MqttService',
+    );
     client.callbacks = client.callbacks?.filter((cb) => cb.key !== callbackKey);
   }
 

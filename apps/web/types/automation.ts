@@ -1,7 +1,17 @@
-import { SensorDataType } from "./device";
+import { SensorDataType } from './device';
 
 export type ConditionType = 'Schedule' | 'DeviceState' | 'Scene';
-export type DeviceStateConditionType = 'equal' | 'notEqual' | 'greaterThan' | 'lessThan' | 'greaterThanOrEqual' | 'lessThanOrEqual' | 'between' | 'notBetween' | 'in' | 'notIn';
+export type DeviceStateConditionType =
+  | 'equal'
+  | 'notEqual'
+  | 'greaterThan'
+  | 'lessThan'
+  | 'greaterThanOrEqual'
+  | 'lessThanOrEqual'
+  | 'between'
+  | 'notBetween'
+  | 'in'
+  | 'notIn';
 
 export type Condition = {
   type: ConditionType;
@@ -11,16 +21,17 @@ export type Condition = {
     type: DeviceStateConditionType;
     value: string;
   };
-}
+};
 
 export type ActionType = 'TurnOn' | 'TurnOff' | 'SendEmail';
 
 export type Action = {
   type: ActionType;
+  deviceId?: string;
   toEmail?: string;
   title?: string;
   body?: string;
-}
+};
 
 export interface AutomationModel {
   id: string;

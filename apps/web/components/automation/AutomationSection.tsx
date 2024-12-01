@@ -1,6 +1,9 @@
 'use client';
+import { Button } from '@repo/ui/components/ui/button';
+import { toast } from '@repo/ui/components/ui/sonner';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
+import { mutate as globalMutate } from 'swr';
 import api from '../../config/api';
 import { AutomationModel } from '../../types/automation';
 import { DictionaryProps } from '../../types/dictionary';
@@ -21,6 +24,22 @@ export default function AutomationSection({ dictionary }: DictionaryProps) {
     },
   );
   console.log(data);
+
+  const handleDelete = async (id: string) => {
+    try {
+      await api.delete(`automation/${id}`);
+      mutate();
+      toast.success('Automation deleted');
+    } catch (error) {}
+  };
+
+  const handleActiveAutomation = async (id: string) => {
+    try {
+      await api.patch(`automation/${id}/run`);
+      mutate();
+      toast.success('Automation is running');
+    } catch (error) {}
+  };
   if (isLoading) return;
   return (
     <div className="w-full ">
@@ -33,7 +52,37 @@ export default function AutomationSection({ dictionary }: DictionaryProps) {
       </div>
       <div className="grid lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4">
         {data?.map((automation) => (
-          <CardImage key={automation.id} title={automation.name} />
+          <CardImage
+            key={automation.id}
+            title={automation.name}
+            component={
+              <div className="flex flex-col gap-2">
+                {automation?.condition.type === 'Scene' && (
+                  <Button
+                    onClick={() => {
+                      handleActiveAutomation(automation.id);
+
+                    }}
+                  >
+                    Run
+                  </Button>
+                )}
+                <AutomationDialog
+                  triggerBtn={<Button>Edit</Button>}
+                  locationId={id}
+                  dictionary={dictionary}
+                  automation={automation}
+                  onSaved={mutate}
+                />
+                <Button
+                  variant="destructive"
+                  onClick={() => handleDelete(automation.id)}
+                >
+                  Delete
+                </Button>
+              </div>
+            }
+          />
         ))}
       </div>
     </div>

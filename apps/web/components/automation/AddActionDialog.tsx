@@ -12,8 +12,11 @@ import {
 import { Input } from '@repo/ui/components/ui/input';
 import { Label } from '@repo/ui/components/ui/label';
 import { Textarea } from '@repo/ui/components/ui/textarea';
-import { useState } from 'react';
+import { useParams } from 'next/navigation';
+import { useMemo, useState } from 'react';
 import { Action, ActionType } from '../../types/automation';
+import { DictionaryProps } from '../../types/dictionary';
+import ChooseDevice from './ChooseDevice';
 
 type AddActionDialogProps = {
   trigger?: React.ReactNode;
@@ -25,9 +28,11 @@ export default function AddActionDialog({
   trigger,
   onAdd,
   actionFilters,
-}: AddActionDialogProps) {
+  dictionary,
+}: AddActionDialogProps & DictionaryProps) {
   const [action, setAction] = useState<Action | undefined>();
   const [open, setOpen] = useState(false);
+  const { id }: { id: string } = useParams();
 
   const handleOpenChange = (open: boolean) => {
     setOpen(open);
@@ -35,6 +40,54 @@ export default function AddActionDialog({
       setAction(undefined);
     }
   };
+
+  const actionContent = useMemo(() => {
+    if (action?.type === 'SendEmail') {
+      return (
+        <div className="flex flex-col gap-4">
+          <div className="space-y-2">
+            <Label>Receiver email</Label>
+            <Input
+              type="email"
+              value={action.toEmail}
+              onChange={(e) =>
+                setAction({ ...action, toEmail: e.target.value })
+              }
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Subject</Label>
+            <Input
+              value={action.title}
+              onChange={(e) => setAction({ ...action, title: e.target.value })}
+            />
+          </div>
+          <div className="space-y-2">
+            <Label>Content</Label>
+            <Textarea
+              value={action.body}
+              onChange={(e) => setAction({ ...action, body: e.target.value })}
+            />
+          </div>
+        </div>
+      );
+    } else if (action?.type === 'TurnOff' || action?.type === 'TurnOn') {
+      return (
+        <div className="flex flex-col gap-4">
+          <div className="space-y-2">
+            <Label>Choose device</Label>
+            <ChooseDevice
+              locationId={id}
+              defaultValue={action?.deviceId}
+              onChange={(value) => setAction({ ...action, deviceId: value })}
+              dictionary={dictionary}
+              deviceTypes={['LIGHT_BULB', 'DOME', 'VALVE']}
+            />
+          </div>
+        </div>
+      );
+    }
+  }, [action]);
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
@@ -61,36 +114,7 @@ export default function AddActionDialog({
           </div>
         )}
 
-        {action?.type === 'SendEmail' && (
-          <div className="flex flex-col gap-4">
-            <div className="space-y-2">
-              <Label>Receiver email</Label>
-              <Input
-                type="email"
-                value={action.toEmail}
-                onChange={(e) =>
-                  setAction({ ...action, toEmail: e.target.value })
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Subject</Label>
-              <Input
-                value={action.title}
-                onChange={(e) =>
-                  setAction({ ...action, title: e.target.value })
-                }
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Content</Label>
-              <Textarea
-                value={action.body}
-                onChange={(e) => setAction({ ...action, body: e.target.value })}
-              />
-            </div>
-          </div>
-        )}
+        {actionContent}
         <DialogFooter>
           <Button
             onClick={() => {
