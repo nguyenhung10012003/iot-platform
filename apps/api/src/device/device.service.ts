@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { MqttService } from 'src/mqtt/mqtt.service';
 import { PrismaService } from 'src/prisma.service';
@@ -59,18 +59,22 @@ export class DeviceService {
         data.topic,
         device.id,
         async (topic, message: SensorData) => {
-          await this.prisma.device.update({
-            where: { id: device.id },
-            data: {
+          try {
+            await this.prisma.device.update({
+              where: { id: device.id },
               data: {
-                push: {
-                  type: message.type,
-                  time: message.time,
-                  data: message.data,
+                data: {
+                  push: {
+                    type: message.type,
+                    time: message.time,
+                    data: message.data,
+                  },
                 },
               },
-            },
-          });
+            });
+          } catch (e) {
+            Logger.error(e, 'MqttService');
+          }
         },
       );
     }
@@ -88,19 +92,23 @@ export class DeviceService {
         device.gatewayId,
         device.topic,
         device.id,
-        (topic, message: SensorData) => {
-          this.prisma.device.update({
-            where: { id: device.id },
-            data: {
+        async (topic, message: SensorData) => {
+          try {
+            const deviceUpdated = await this.prisma.device.update({
+              where: { id: device.id },
               data: {
-                push: {
-                  type: message.type,
-                  time: message.time,
-                  data: message.data,
+                data: {
+                  push: {
+                    type: message.type,
+                    time: message.time,
+                    data: message.data,
+                  },
                 },
               },
-            },
-          });
+            });
+          } catch (e) {
+            Logger.error(e, 'MqttService');
+          }
         },
       );
     }

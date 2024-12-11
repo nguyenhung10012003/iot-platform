@@ -5,7 +5,7 @@ import { PrismaService } from 'src/prisma.service';
 
 type MqttServiceClient<T = any> = {
   client: MqttClient;
-  callbacks?: { callback: (topic: string, message: T) => void; key: string }[];
+  callbacks?: { callback: (topic: string, message: T) => Promise<void>; key: string }[];
 };
 
 @Injectable()
@@ -54,8 +54,8 @@ export class MqttService implements OnModuleInit {
                 }
               },
             );
-            this.onMessage(gateway.id);
           });
+          this.onMessage(gateway.id);
         }),
       );
     } catch (e) {
@@ -71,7 +71,7 @@ export class MqttService implements OnModuleInit {
         connectTimeout: 3000,
       });
 
-      this.client.set(id, { client });
+      this.client.set(id, { client, callbacks: [] });
       Logger.log(`Client id: ${id} Connected`, 'MqttService');
 
       return client;
@@ -96,14 +96,18 @@ export class MqttService implements OnModuleInit {
     id: string,
     topic: string,
     callbackKey?: string,
-    callback?: (topic: string, message: T) => void,
+    callback?: (topic: string, message: T) => Promise<void>,
   ) {
     const client = this.client.get(id);
     if (!client) {
       throw new Error('Client not found');
     }
     client.client.subscribe(topic);
-    client.callbacks?.push({ callback: callback, key: callbackKey });
+    if (client.callbacks) {
+      client.callbacks.push({ callback: callback, key: callbackKey });
+    } else {
+      client.callbacks = [{ callback: callback, key: callbackKey }];
+    }
     Logger.log(`Client id: ${id} Subscribed to ${topic}`, 'MqttService');
   }
 
@@ -112,18 +116,22 @@ export class MqttService implements OnModuleInit {
     if (!client) {
       throw new Error('Client not found');
     }
-    client.client.on('message', (topic, message) => {
+    client.client.on('message', async (topic, message) => {
       const callbacks = client.callbacks || [];
-      callbacks.forEach(async (cb) => {
-        cb.callback(topic, JSON.parse(message.toString()));
-      });
+      await Promise.all(callbacks.map(async (cb) => {
+        await cb.callback(topic, JSON.parse(message.toString()));
+      }));
+      Logger.debug(
+        `Client id: ${id} Received message ${message} from topic: ${topic}`,
+        'MqttService',
+      );
     });
   }
 
   async addCallback<T>(
     id: string,
     callbackKey: string,
-    callback: (topic: string, message: T) => void,
+    callback: (topic: string, message: T) => Promise<void>,
   ) {
     const client = this.client.get(id);
     if (!client) {
