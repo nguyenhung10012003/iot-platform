@@ -43,7 +43,7 @@ export class MqttService implements OnModuleInit {
                       data: {
                         push: {
                           type: message.type,
-                          time: message.time,
+                          time: new Date().getTime(),
                           data: message.data,
                         },
                       },
