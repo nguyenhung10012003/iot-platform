@@ -60,3 +60,4 @@ pnpm-debug.log*
 # Misc
 .DS_Store
 *.pem
+**/__pycache__/app.cpython-312.pyc

@@ -25,6 +25,7 @@
         "PREDICT_URL",
         "SENDGRID_SENDER",
         "SENDGRID_API_KEY",
+        "PREDICT_API_URL",
         "NEXT_PUBLIC_API_URL"
       ],
       "dependsOn": ["^build"],

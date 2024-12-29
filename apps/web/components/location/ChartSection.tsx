@@ -13,6 +13,13 @@ import RadianCardChart from './RadianCardChart';
 
 const fetcher = (url: string) =>
   api.get<any, DeviceModel[]>(url).then((res) => res);
+const colors = {
+  Temperature: 'hsl(var(--chart-1))',
+  Humidity: 'hsl(var(--chart-2))',
+  Rainfall: 'hsl(var(--chart-3))',
+  Wind: 'hsl(var(--chart-4))',
+  SoilMoisture: 'hsl(var(--chart-5))',
+};
 export default function ChartSection({
   locationId,
   dictionary,
@@ -62,7 +69,7 @@ export default function ChartSection({
           return <DeviceSwitcher key={device.id} device={device} />;
         })}
       </div>
-      <div className="grid md:grid-cols-2 grid-cols-1 gap-4 mx-8">
+      <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mx-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <RadianCardChart
             chartConfig={{
@@ -98,9 +105,17 @@ export default function ChartSection({
           </Card>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {chartsData?.map(({ type, datas }) => {
-          return <Weather datas={datas} title={type} label={type} />;
+          return (
+            <Weather
+              key={type}
+              datas={datas}
+              title={type}
+              label={type}
+              color={colors[type as keyof typeof colors]}
+            />
+          );
         })}
       </div>
     </div>

@@ -129,10 +129,11 @@ model Device {
 
 model Irrigation {
   id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  amout      Float
+  amount     Float
   time       Int
   locationId String   @db.ObjectId
   location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  createdAt  DateTime @default(now())
 }
 
 model Automations {

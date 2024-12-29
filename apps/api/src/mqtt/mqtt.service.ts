@@ -5,7 +5,10 @@ import { PrismaService } from 'src/prisma.service';
 
 type MqttServiceClient<T = any> = {
   client: MqttClient;
-  callbacks?: { callback: (topic: string, message: T) => Promise<void>; key: string }[];
+  callbacks?: {
+    callback: (topic: string, message: T) => Promise<void>;
+    key: string;
+  }[];
 };
 
 @Injectable()
@@ -118,9 +121,11 @@ export class MqttService implements OnModuleInit {
     }
     client.client.on('message', async (topic, message) => {
       const callbacks = client.callbacks || [];
-      await Promise.all(callbacks.map(async (cb) => {
-        await cb.callback(topic, JSON.parse(message.toString()));
-      }));
+      await Promise.all(
+        callbacks.map(async (cb) => {
+          await cb.callback(topic, JSON.parse(message.toString()));
+        }),
+      );
       Logger.debug(
         `Client id: ${id} Received message ${message} from topic: ${topic}`,
         'MqttService',

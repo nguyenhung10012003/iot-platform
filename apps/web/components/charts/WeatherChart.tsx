@@ -49,7 +49,7 @@ export default function WeatherChart({
           <Line
             dataKey={'data'}
             type="monotone"
-            stroke="hsl(var(--chart-1))"
+            stroke={color || 'hsl(var(--chart-1))'}
             strokeWidth={2}
             dot={false}
           />

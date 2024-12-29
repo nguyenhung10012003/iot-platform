@@ -11,7 +11,7 @@ export class SchedulerService {
     cron: string,
     callback: () => void | Promise<void>,
   ) {
-    const job = new CronJob(cron, callback);
+    const job = new CronJob(cron, callback, null, true, 'Asia/Ho_Chi_Minh', null, true);
     this.scheduleRegistry.addCronJob(name, job);
     job.start();
     Logger.debug(`Cron job ${name} added`);

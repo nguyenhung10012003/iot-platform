@@ -96,10 +96,12 @@ export default function DashboardSidebar({
     <Card
       onMouseMove={() => setIsCollapsed(false)}
       onMouseLeave={() => setIsCollapsed(true)}
-      className={`flex h-screen flex-col max-w-[250px] shadow-md rounded-xxl ${!isCollapsed ? 'w-full' : ''}`}
+      className={`flex h-screen flex-col max-w-[250px] shadow-md rounded-xxl transition-all duration-300 ease-linear ${!isCollapsed ? 'w-full' : ''}`}
     >
-      <div className="h-20 border-b">Logo</div>
-      <ScrollArea className="w-full h-full p-2">
+      <div className="h-20 border-b transition-all duration-300 ease-linear">
+        Logo
+      </div>
+      <ScrollArea className="w-full h-full p-2 transition-all duration-300 ease-linear">
         {items
           .filter((item) => item.role.includes(role))
           .map((item) => (
@@ -113,10 +115,10 @@ export default function DashboardSidebar({
             />
           ))}
       </ScrollArea>
-      <div className="h-12 border-t p-2">
+      <div className="h-12 border-t p-2 transition-all duration-300 ease-linear">
         <button
           onClick={() => setIsCollapsed(!isCollapsed)}
-          className="w-full text-sm flex items-center gap-2 p-3 rounded-xxl hover:bg-secondary font-semibold"
+          className="w-full text-sm flex items-center gap-2 p-3 rounded-xxl hover:bg-secondary font-semibold transition-all duration-300 ease-linear"
         >
           {isCollapsed ? (
             <Icons.expand className="w-5 h-5" />

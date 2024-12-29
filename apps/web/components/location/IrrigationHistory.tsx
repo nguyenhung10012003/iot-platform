@@ -1,5 +1,15 @@
 'use client';
 
+import { Button } from '@repo/ui/components/ui/button';
+import { Checkbox } from '@repo/ui/components/ui/checkbox';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@repo/ui/components/ui/table';
 import {
   ColumnDef,
   ColumnFiltersState,
@@ -12,50 +22,22 @@ import {
   getSortedRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ArrowUpDown, MoreHorizontal } from 'lucide-react';
-import * as React from 'react';
-
-import { Button } from '@repo/ui/components/ui/button';
-import { Checkbox } from '@repo/ui/components/ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@repo/ui/components/ui/dropdown-menu';
-import { Input } from '@repo/ui/components/ui/input';
-import { Skeleton } from '@repo/ui/components/ui/skeleton';
-import { toast } from '@repo/ui/components/ui/sonner';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@repo/ui/components/ui/table';
+import { ArrowUpDown } from 'lucide-react';
+import React from 'react';
 import useSWR from 'swr';
 import api from '../../config/api';
-import { DeviceModel } from '../../types/device';
-import { DictionaryProps } from '../../types/dictionary';
-import NewDeviceDialog from './NewDeviceDialog';
+import { Irrigation } from '../../types/irrigation';
+import { formatDate } from '../../utils/date';
 
 const fetcher = (url: string) =>
-  api.get<any, DeviceModel[]>(url).then((res) => res);
-export function DeviceTable({
-  dictionary,
+  api.get<any, Irrigation[]>(url).then((res) => res);
+export default function IrrigationHistory({
   locationId,
-}: DictionaryProps & { locationId: string }) {
-  const { data, isLoading, error, mutate } = useSWR(
-    `/device?locationId=${locationId}`,
-    fetcher,
-    {
-      revalidateOnFocus: false,
-      refreshInterval: 0,
-    },
-  );
-  const columns: ColumnDef<DeviceModel>[] = [
+}: {
+  locationId: string;
+}) {
+  const { data, error } = useSWR(`/irrigation/${locationId}`, fetcher);
+  const columns: ColumnDef<Irrigation>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -79,7 +61,7 @@ export function DeviceTable({
       enableHiding: false,
     },
     {
-      accessorKey: 'name',
+      accessorKey: 'createdAt',
       header: ({ column }) => {
         return (
           <Button
@@ -87,61 +69,28 @@ export function DeviceTable({
             className="px-0 hover:bg-transparent"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            {dictionary.deviceName}
+            Time
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
       },
-      cell: ({ row }) => <div>{row.getValue('name')}</div>,
-    },
-    {
-      accessorKey: 'deviceType',
-      header: dictionary.deviceType,
       cell: ({ row }) => (
-        <div className="capitalize">{row.getValue('deviceType')}</div>
+        <div>{formatDate(new Date(row.getValue('createdAt')))}</div>
       ),
     },
-    // {
-    //   accessorKey: 'Info',
-    //   header: () => <div className="text-right">{dictionary.information}</div>,
-    //   cell: ({ row }) => {
-    //     return (
-    //       <div className="text-right font-medium">{row.getValue('area')}</div>
-    //     );
-    //   },
-    // },
     {
-      id: 'actions',
-      enableHiding: false,
+      accessorKey: 'amount',
+      header: 'Water Amount (liter)',
+      cell: ({ row }) => (
+        <div className="capitalize">{Math.round(row.getValue('amount'))}</div>
+      ),
+    },
+    {
+      accessorKey: 'time',
+      header: () => <div className="text-right">Irrigation Time (second)</div>,
       cell: ({ row }) => {
-        const device = row.original;
-
         return (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" className="h-8 w-8 p-0">
-                <span className="sr-only">Open menu</span>
-                <MoreHorizontal className="h-4 w-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{dictionary.actions}</DropdownMenuLabel>
-              {/* <DropdownMenuItem>{dictionary.edit}</DropdownMenuItem> */}
-              <DropdownMenuItem
-                onClick={async () => {
-                  try {
-                    await api.delete(`/device/${device.id}`);
-                    mutate();
-                    toast.success(dictionary.deviceDeletedSuccessfully);
-                  } catch (e) {
-                    toast.error(dictionary.failedToDeleteDevice);
-                  }
-                }}
-              >
-                {dictionary.delete}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="text-right font-medium">{row.getValue('time')}</div>
         );
       },
     },
@@ -172,25 +121,8 @@ export function DeviceTable({
       rowSelection,
     },
   });
-  if (isLoading) return <Skeleton className="w-full h-40" />;
-
   return (
-    <div className="w-full">
-      <div className="flex items-center py-4 justify-between">
-        <Input
-          placeholder={`${dictionary.filterName}...`}
-          value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
-          onChange={(event) =>
-            table.getColumn('name')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
-        <NewDeviceDialog
-          triggerBtn={<Button>{dictionary.addDevice}</Button>}
-          dictionary={dictionary}
-          onCreate={mutate}
-        />
-      </div>
+    <div>
       <div className="rounded-md border">
         <Table>
           <TableHeader>
@@ -253,7 +185,7 @@ export function DeviceTable({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            {dictionary.previous}
+            {'Next'}
           </Button>
           <Button
             variant="outline"
@@ -261,7 +193,7 @@ export function DeviceTable({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            {dictionary.next}
+            {'Previous'}
           </Button>
         </div>
       </div>
