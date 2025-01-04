@@ -27,7 +27,9 @@ const SidebarItem = ({
       href={href}
     >
       {icon({ className: `w-6 h-6`, variant: active ? 'solid' : 'outline' })}
-      <span className={`${isCollapsed ? 'hidden' : ''}`}>{label}</span>
+      <span className={`text-nowrap ${isCollapsed ? 'hidden' : ''}`}>
+        {label}
+      </span>
     </Link>
   );
 };
@@ -96,7 +98,7 @@ export default function DashboardSidebar({
     <Card
       onMouseMove={() => setIsCollapsed(false)}
       onMouseLeave={() => setIsCollapsed(true)}
-      className={`flex h-screen flex-col max-w-[250px] shadow-md rounded-xxl transition-all duration-300 ease-linear ${!isCollapsed ? 'w-full' : ''}`}
+      className={`fixed z-50 md:relative flex h-screen flex-col shadow-md rounded-xxl transition-all duration-200 ease-linear ${!isCollapsed ? 'w-[300px]' : 'w-[64px]'}`}
     >
       <div className="h-20 border-b transition-all duration-300 ease-linear">
         Logo

@@ -26,7 +26,7 @@ export default function Component({
   value,
 }: {
   chartConfig: any;
-  title: string;
+  title: string | React.ReactNode;
   value: number;
 }) {
   return (

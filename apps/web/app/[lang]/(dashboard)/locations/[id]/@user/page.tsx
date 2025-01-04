@@ -23,7 +23,7 @@ export default async function UserLocationPage({
   const dictionary = await getDictionary(params.lang);
   return (
     <Tabs className="flex flex-col gap-4 p-4 md:p-6" defaultValue="devices">
-      <TabsList className="w-full border-b">
+      <TabsList className="w-full border-b overflow-x-auto overflow-y-hidden md:h-10 h-12">
         <TabsTrigger
           value="devices"
           className="text-lg max-w-[130px] hover:text-primary/70"

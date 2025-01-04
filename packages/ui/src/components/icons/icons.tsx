@@ -3,16 +3,16 @@ import {
   BellIcon as BellIconOutline,
   BoltIcon as BoltIconOutline,
   CheckIcon as CheckIconOutline,
+  ClockIcon as ClockIconOutline,
   CogIcon as CogIconOutline,
+  CommandLineIcon as CommandLineIconOutline,
   CpuChipIcon as CpuChipIconOutline,
   HomeIcon as HomeIconOutline,
   MagnifyingGlassIcon as MagnifyingGlassIconOutline,
   MapPinIcon as MapPinIconOutline,
+  PencilIcon as PencilIconOutline,
   PlusIcon as PlusIconOutline,
   UserIcon as UserIconOutline,
-  PencilIcon as PencilIconOutline,
-  ClockIcon as ClockIconOutline,
-  CommandLineIcon as CommandLineIconOutline,
   XCircleIcon as XCircleIconOutline,
 } from '@heroicons/react/24/outline';
 import {
@@ -20,19 +20,29 @@ import {
   BellIcon,
   BoltIcon,
   CheckIcon,
+  ClockIcon,
   CogIcon,
+  CommandLineIcon,
   CpuChipIcon,
   HomeIcon,
   MapPinIcon,
+  PencilIcon,
   PlusIcon,
   UserIcon,
-  PencilIcon,
-  ClockIcon,
-  CommandLineIcon,
   XCircleIcon,
 } from '@heroicons/react/24/solid';
 
-import { ArrowLeftFromLineIcon, ArrowRightFromLineIcon, MoreHorizontal, ArrowUpDown } from 'lucide-react';
+import {
+  ArrowLeftFromLineIcon,
+  ArrowRightFromLineIcon,
+  ArrowUpDown,
+  CloudHail,
+  Droplets,
+  MoreHorizontal,
+  ThermometerSun,
+  Waves,
+  Wind,
+} from 'lucide-react';
 
 export type IconProps = React.HTMLAttributes<SVGElement> & {
   variant?: 'outline' | 'solid';
@@ -151,4 +161,14 @@ export const Icons = {
     ) : (
       <XCircleIconOutline {...props} />
     ),
+
+  soil: (props: IconProps) => <Waves {...props} />,
+
+  water: (props: IconProps) => <Droplets {...props} />,
+
+  temperature: (props: IconProps) => <ThermometerSun {...props} />,
+
+  rain: (props: IconProps) => <CloudHail {...props} />,
+
+  wind: (props: IconProps) => <Wind {...props} />,
 };

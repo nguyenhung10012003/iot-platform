@@ -1,5 +1,6 @@
 'use client';
 
+import { Icons } from '@repo/ui/components/icons/icons';
 import { Card } from '@repo/ui/components/ui/card';
 import { useMemo } from 'react';
 import useSWR from 'swr';
@@ -78,7 +79,12 @@ export default function ChartSection({
               },
             }}
             value={humidity || 0}
-            title={'Humidity'}
+            title={
+              <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold">Humidity</h2>
+                <Icons.water className="w-6 h-6" />
+              </div>
+            }
           />
           <RadianCardChart
             chartConfig={{
@@ -87,20 +93,34 @@ export default function ChartSection({
               },
             }}
             value={soilMoisture || 0}
-            title={'Moisture'}
+            title={
+              <div className="flex justify-between items-center">
+                <h2 className="text-lg font-semibold">Soil Moisture</h2>
+                <Icons.soil className="w-6 h-6" />
+              </div>
+            }
           />
         </div>
         <div className="grid gap-4 md:grid-cols-2  grid-cols-1">
           <Card className="p-4">
-            <h2 className="text-lg font-semibold">Temperature</h2>
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold">Temperature</h2>
+              <Icons.temperature className="w-6 h-6" />
+            </div>
             <span className="font-semibold">{temperature || 0}</span>
           </Card>
           <Card className="p-4">
-            <h2 className="text-lg font-semibold">Wind</h2>
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold">Wind</h2>
+              <Icons.wind className="w-6 h-6" />
+            </div>
             <span className="font-semibold">{wind || 0}</span>
           </Card>
           <Card className="p-4">
-            <h2 className="text-lg font-semibold">Rainfall</h2>
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold">Rainfall</h2>
+              <Icons.rain className="w-6 h-6" />
+            </div>
             <span className="font-semibold">{rainfall || 0}</span>
           </Card>
         </div>
