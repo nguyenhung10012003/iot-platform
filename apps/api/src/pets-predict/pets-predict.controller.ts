@@ -57,8 +57,8 @@ export class PetsPredictController {
     }
     const imageUrl = await this.aws3.uploadFile(image);
     const imageBlob = new Blob([image.buffer], { type: image.mimetype });
-    // const result = await this.petPredictService.predict(imageBlob, image.filename);
-    const result = "Healthy";
+    const result = await this.petPredictService.predict(imageBlob, image.filename);
+    // const result = "Healthy";
     return this.petPredictService.createPetsPredict({
       image: imageUrl?.url,
       result,
