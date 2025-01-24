@@ -21,7 +21,7 @@ export class PredictService {
       ) {
         return null;
       }
-      const result = await fetch(process.env.PREDICT_API_URL, {
+      const result = await fetch(`${process.env.PREDICT_API_URL}/predict`, {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {

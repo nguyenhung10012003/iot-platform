@@ -30,8 +30,12 @@ const getUserGateways = async () => {
 
 export default async function GatewaysPage({
   params,
+  searchParams,
 }: {
   params: { lang: string };
+  searchParams: {
+    search: string;
+  };
 }) {
   const [dictionary, data] = await Promise.all([
     getDictionary(params.lang),
@@ -41,7 +45,7 @@ export default async function GatewaysPage({
     return (
       <div className="flex flex-col gap-4 p-4 md:p-6 h-full">
         <div className="flex justify-between">
-          <DeviceToolbar filter={false} dictionary={dictionary}/>
+          <DeviceToolbar filter={false} dictionary={dictionary} />
         </div>
         <div className="w-full h-full flex flex-col justify-center items-center gap-2">
           <h1 className="text-md text-gray-500">
@@ -56,13 +60,22 @@ export default async function GatewaysPage({
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
       <div className="flex justify-between">
-        <DeviceToolbar filter={false} dictionary={dictionary}/>
+        <DeviceToolbar filter={false} dictionary={dictionary} />
         <NewGatewayDialog dictionary={dictionary} />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {data.map((gateway) => (
-          <GatewayCard key={gateway.id} gateway={gateway} />
-        ))}
+        {data
+          ?.filter((d) => {
+            if (searchParams.search) {
+              return d.name
+                .toLowerCase()
+                .includes(searchParams.search.toLowerCase());
+            }
+            return true;
+          })
+          .map((gateway) => (
+            <GatewayCard key={gateway.id} gateway={gateway} />
+          )) || []}
       </div>
     </div>
   );

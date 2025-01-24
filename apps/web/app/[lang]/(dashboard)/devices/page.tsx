@@ -18,17 +18,42 @@ export const dynamic = 'force-dynamic';
 
 export default async function DevicesPage({
   params,
+  searchParams,
 }: {
   params: { lang: string };
+  searchParams: {
+    search: string;
+    filter: string;
+  };
 }) {
   const [dictionary, data] = await Promise.all([
     getDictionary(params.lang),
     getDeviceTemplates(),
   ]);
+  console.log(searchParams);
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
-      <DeviceToolbar dictionary={dictionary}/>
-      <DeviceSection deviceTemplates={data} dictionary={dictionary} />
+      <DeviceToolbar dictionary={dictionary} />
+      <DeviceSection
+        deviceTemplates={
+          data?.filter((d) => {
+            if (!searchParams.search && !searchParams.filter) {
+              return true;
+            }
+            if (searchParams.search) {
+              return d.model
+                .toLowerCase()
+                .includes(searchParams.search.toLowerCase());
+            }
+            if (searchParams.filter) {
+              const filters = searchParams.filter.split(',');
+              return filters.includes(d.deviceType);
+            }
+            return true;
+          }) || []
+        }
+        dictionary={dictionary}
+      />
     </div>
   );
 }

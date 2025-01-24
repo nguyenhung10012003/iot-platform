@@ -33,10 +33,15 @@ const getDeviceTemplates = async () => {
 
 export default async function DeviceTemplatesPage({
   params,
+  searchParams,
 }: {
   params: {
     lang: string;
   };
+  searchParams: {
+    search: string;
+    filter: string;
+  }
 }) {
   const [dictionary, data] = await Promise.all([
     getDictionary(params.lang),
@@ -50,7 +55,21 @@ export default async function DeviceTemplatesPage({
         <NewDeviceTemplateDialog dictionary={dictionary} />
       </div>
       <DeviceTemplateSection
-        deviceTemplates={data || []}
+        deviceTemplates={data?.filter((d) => {
+          if (!searchParams.search && !searchParams.filter) {
+            return true;
+          }
+          if (searchParams.search) {
+            return d.model
+              .toLowerCase()
+              .includes(searchParams.search.toLowerCase());
+          }
+          if (searchParams.filter) {
+            const filters = searchParams.filter.split(',');
+            return filters.includes(d.deviceType);
+          }
+          return true;
+        }) || []}
         dictionary={dictionary}
       />
     </div>

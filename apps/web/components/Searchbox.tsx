@@ -16,20 +16,6 @@ interface SearchboxProps {
   searchOnEnter?: boolean;
 }
 
-const createInputProps = (searchboxProps: SearchboxProps) => {
-  const inputProps: React.InputHTMLAttributes<HTMLInputElement> = {};
-  inputProps.type = 'text';
-  if (searchboxProps.value) inputProps.value = searchboxProps.value;
-  if (searchboxProps.onChange) inputProps.onChange = searchboxProps.onChange;
-  inputProps.className = cn(
-    'border-none p-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-auto shadow-none bg-popover',
-    searchboxProps.inputClassName,
-  );
-  if (searchboxProps.placeholder)
-    inputProps.placeholder = searchboxProps.placeholder;
-  return inputProps;
-};
-
 export default function Searchbox({
   value,
   boxClassName,
@@ -45,12 +31,6 @@ export default function Searchbox({
       onSearch?.(e.currentTarget.value);
     }
   };
-  const inputProps = createInputProps({
-    value,
-    onChange,
-    inputClassName,
-    placeholder,
-  });
 
   return (
     <div
@@ -66,7 +46,16 @@ export default function Searchbox({
       >
         <SearchIcon className="w-4 h-4 mr-2" />
       </div>
-      <Input {...inputProps} onKeyDown={handleKeyDown} />
+      <Input
+        placeholder={placeholder || ''}
+        value={value || ''}
+        onChange={onChange}
+        onKeyDown={handleKeyDown}
+        className={cn(
+          'border-none p-0 focus-visible:ring-0 focus-visible:ring-offset-0 h-auto shadow-none bg-popover',
+          inputClassName,
+        )}
+      />
       {value && (
         <Button
           variant="ghost"
@@ -74,6 +63,7 @@ export default function Searchbox({
           onClick={() => {
             onClear?.();
           }}
+          className="p-0 h-auto w-auto"
         >
           <XIcon className="w-4 h-4" />
         </Button>

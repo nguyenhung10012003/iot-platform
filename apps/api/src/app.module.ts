@@ -19,6 +19,7 @@ import { MqttModule } from './mqtt/mqtt.module';
 import { UserModule } from './user/user.module';
 import { MailerService } from './mailer.service';
 import { IrrigationModule } from './irrigation/irrigation.module';
+import { PetsPredictModule } from './pets-predict/pets-predict.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { IrrigationModule } from './irrigation/irrigation.module';
     JobModule,
     AutomationModule,
     IrrigationModule,
+    PetsPredictModule,
     ScheduleModule.forRoot(),
   ],
   controllers: [AppController],

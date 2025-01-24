@@ -41,6 +41,7 @@ model Location {
   Job           Job[]
   irrigation    Irrigation[]
   Automations   Automations[]
+  PetsPredict   PetsPredict[]
 
   @@index([ownerId], name: "ownerId")
 }
@@ -146,6 +147,15 @@ model Automations {
   device      Device?    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   locationId  String     @db.ObjectId
   location    Location   @relation(fields: [locationId], references: [id], onDelete: Cascade)
+}
+
+model PetsPredict {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  locationId String   @db.ObjectId
+  location   Location @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  image      String
+  result     String
+  createdAt  DateTime @default(now())
 }
 
 type Condition {

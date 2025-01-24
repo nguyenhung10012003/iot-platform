@@ -61,3 +61,4 @@ pnpm-debug.log*
 .DS_Store
 *.pem
 **/__pycache__/app.cpython-312.pyc
+apps/predict/model.h5
