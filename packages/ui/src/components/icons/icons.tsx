@@ -1,4 +1,5 @@
 import {
+  ArchiveBoxXMarkIcon as ArchiveBoxXMarkIconOutline,
   ArrowUpTrayIcon as ArrowUpTrayIconOutline,
   BellIcon as BellIconOutline,
   BoltIcon as BoltIconOutline,
@@ -12,11 +13,12 @@ import {
   MapPinIcon as MapPinIconOutline,
   PencilIcon as PencilIconOutline,
   PlusIcon as PlusIconOutline,
+  TrashIcon as TrashIconOutline,
   UserIcon as UserIconOutline,
   XCircleIcon as XCircleIconOutline,
-  ArchiveBoxXMarkIcon as ArchiveBoxXMarkIconOutline,
 } from '@heroicons/react/24/outline';
 import {
+  ArchiveBoxXMarkIcon,
   ArrowUpTrayIcon,
   BellIcon,
   BoltIcon,
@@ -29,9 +31,9 @@ import {
   MapPinIcon,
   PencilIcon,
   PlusIcon,
+  TrashIcon,
   UserIcon,
   XCircleIcon,
-  ArchiveBoxXMarkIcon,
 } from '@heroicons/react/24/solid';
 
 import {
@@ -179,5 +181,12 @@ export const Icons = {
       <ArchiveBoxXMarkIcon {...props} />
     ) : (
       <ArchiveBoxXMarkIconOutline {...props} />
+    ),
+
+  delete: (props: IconProps) =>
+    props.variant === 'solid' ? (
+      <TrashIcon {...props} />
+    ) : (
+      <TrashIconOutline {...props} />
     ),
 };

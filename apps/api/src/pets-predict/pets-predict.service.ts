@@ -43,6 +43,14 @@ export class PetsPredictService {
       // }
     });
     const predict = await result.json();
-    return predict?.name || "";
+    return predict?.prediction?.name || "";
+  }
+
+  async deletePetsPredict(id: string) {
+    return this.prisma.petsPredict.delete({
+      where: {
+        id,
+      },
+    });
   }
 }

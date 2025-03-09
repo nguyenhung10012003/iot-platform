@@ -96,7 +96,7 @@ export default async function UserLocationPage({
         <IrrigationHistory locationId={params.id} />
       </TabsContent>
       <TabsContent value="disease-detect">
-        <DiseaseDetectHistory />
+        <DiseaseDetectHistory canDelete/>
       </TabsContent>
     </Tabs>
   );

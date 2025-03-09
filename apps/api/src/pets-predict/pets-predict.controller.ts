@@ -1,6 +1,7 @@
 import { AccessTokenGuard } from '@app/common/guards';
 import {
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -64,5 +65,10 @@ export class PetsPredictController {
       result,
       locationId,
     });
+  }
+
+  @Delete(':id')
+  deletePetsPredict(@Param('id') id: string) {
+    return this.petPredictService.deletePetsPredict(id);
   }
 }
