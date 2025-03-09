@@ -26,6 +26,8 @@ model User {
   locations     Location[]
   userLocations UserLocation[]
   Job           Job[]
+  notifications Notification[]
+  createJobs Job[] @relation(name: "creator")
 }
 
 model Location {
@@ -53,6 +55,8 @@ model Job {
   status      JobStatus @default(PENDING)
   report      String?
   locationId  String    @db.ObjectId
+  creatorId   String    @db.ObjectId
+  creator     User      @relation(name: "creator",fields: [creatorId], references: [id], onDelete: Cascade)
   asigneeId   String?   @db.ObjectId
   asignee     User?     @relation(fields: [asigneeId], references: [id], onDelete: Cascade)
   location    Location  @relation(fields: [locationId], references: [id], onDelete: Cascade)
@@ -147,6 +151,7 @@ model Automations {
   device      Device?    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   locationId  String     @db.ObjectId
   location    Location   @relation(fields: [locationId], references: [id], onDelete: Cascade)
+  useAI       Boolean    @default(false)
 }
 
 model PetsPredict {
@@ -158,6 +163,20 @@ model PetsPredict {
   createdAt  DateTime @default(now())
 }
 
+model Notification {
+  id           String @id @default(auto()) @map("_id") @db.ObjectId
+  sendToUserId String @db.ObjectId
+  sendToUser   User   @relation(fields: [sendToUserId], references: [id])
+  content      String
+  status       NotificationStatus @default(UNREAD)
+  createdAt    DateTime           @default(now())
+}
+
+enum NotificationStatus {
+  READ
+  UNREAD
+}
+
 type Condition {
   type                 ConditionType
   cronCondition        String?
@@ -166,6 +185,7 @@ type Condition {
 
 type Action {
   type     ActionType
+  time     Int?
   deviceId String?
   toEmail  String?
   title    String?
@@ -256,4 +276,5 @@ enum ActionType {
   TurnOn
   TurnOff
   SendEmail
+  Watering
 }

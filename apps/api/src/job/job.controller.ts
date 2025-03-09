@@ -7,7 +7,9 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -15,7 +17,10 @@ import { AwsS3Service } from 'src/s3/aws-s3.service';
 import { JobService } from './job.service';
 import { CreateJobDto } from './types/create-job.dto';
 import { UpdateJobDto } from './types/update-job.dto';
+import { AuthenticatedRequest } from '@app/common/types';
+import { AccessTokenGuard } from '@app/common/guards';
 
+@UseGuards(AccessTokenGuard)
 @Controller('job')
 export class JobController {
   constructor(
@@ -24,8 +29,11 @@ export class JobController {
   ) {}
 
   @Post()
-  async createJob(@Body() createJobDto: CreateJobDto) {
-    return this.jobService.createJob(createJobDto);
+  async createJob(
+    @Body() createJobDto: CreateJobDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    return this.jobService.createJob(createJobDto, req.user.userId);
   }
 
   @Get()
@@ -55,13 +63,18 @@ export class JobController {
   async updateJob(
     @Param('id') id: string,
     @Body() updateJobDto: UpdateJobDto,
+    @Req() req: AuthenticatedRequest,
     @UploadedFile() file?: Express.Multer.File,
   ) {
     const report = await this.s3.uploadFile(file);
-    return this.jobService.updateJob(id, {
-      ...updateJobDto,
-      report: report?.url,
-    });
+    return this.jobService.updateJob(
+      id,
+      {
+        ...updateJobDto,
+        report: report?.url,
+      },
+      req.user.userId,
+    );
   }
 
   @Delete(':id')

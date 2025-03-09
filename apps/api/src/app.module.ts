@@ -20,6 +20,7 @@ import { UserModule } from './user/user.module';
 import { MailerService } from './mailer.service';
 import { IrrigationModule } from './irrigation/irrigation.module';
 import { PetsPredictModule } from './pets-predict/pets-predict.module';
+import { NotificationModule } from './notification/notification.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { PetsPredictModule } from './pets-predict/pets-predict.module';
     AutomationModule,
     IrrigationModule,
     PetsPredictModule,
+    NotificationModule,
     ScheduleModule.forRoot(),
   ],
   controllers: [AppController],

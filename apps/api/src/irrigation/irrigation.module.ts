@@ -9,5 +9,6 @@ import { IrrigationService } from './irrigation.service';
   imports: [SchedulerModule],
   controllers: [IrrigationController],
   providers: [PrismaService, IrrigationService, PredictService],
+  exports: [IrrigationService],
 })
 export class IrrigationModule {}

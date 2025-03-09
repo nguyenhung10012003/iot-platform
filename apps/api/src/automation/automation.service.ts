@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { SensorData } from 'src/device/types/sensor-data';
+import { IrrigationService } from 'src/irrigation/irrigation.service';
 import { MailerService } from 'src/mailer.service';
 import { MqttService } from 'src/mqtt/mqtt.service';
 import { PrismaService } from 'src/prisma.service';
@@ -14,6 +15,7 @@ export class AutomationService implements OnModuleInit {
     private readonly schedulerService: SchedulerService,
     private readonly mqttService: MqttService,
     private readonly mailService: MailerService,
+    private readonly irrigationService: IrrigationService,
   ) {}
 
   async onModuleInit() {
@@ -41,6 +43,36 @@ export class AutomationService implements OnModuleInit {
                   await this.prisma.device.update({
                     where: { id: automation.deviceId },
                     data: { online: true },
+                  });
+                  break;
+                case 'Watering':
+                  const location = await this.prisma.location.findFirst({
+                    where: { id: automation.locationId },
+                    include: {areas: true}
+                  });
+                  if (automation.useAI) {
+                    const areas = location.areas;
+                    this.irrigationService.watering(areas, location);
+                    break;
+                  }
+
+                  const irrigationSpeed =
+                    location?.setting?.dripRatePerHole *
+                    location?.setting?.totalHole;
+                  const time = automation.actions[0].time;
+
+                  const amount = irrigationSpeed * time;
+
+                  Logger.debug(
+                    `Watering automation id: ${automation.id}, amount: ${amount}, time: ${time}, location: ${location?.name}`,
+                  );
+
+                  await this.prisma.irrigation.create({
+                    data: {
+                      amount: amount,
+                      locationId: location.id,
+                      time: time,
+                    },
                   });
                   break;
               }
