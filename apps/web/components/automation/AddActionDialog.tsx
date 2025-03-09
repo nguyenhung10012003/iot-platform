@@ -17,20 +17,25 @@ import { useMemo, useState } from 'react';
 import { Action, ActionType } from '../../types/automation';
 import { DictionaryProps } from '../../types/dictionary';
 import ChooseDevice from './ChooseDevice';
+import { Switch } from '@repo/ui/components/ui/switch';
 
 type AddActionDialogProps = {
+  actionDefault?: Action;
   trigger?: React.ReactNode;
   onAdd?: (action?: Action) => void;
   actionFilters?: { type: ActionType; label: string; description: string }[];
+  allowAI?: boolean;
 };
 
 export default function AddActionDialog({
+  actionDefault,
   trigger,
   onAdd,
   actionFilters,
   dictionary,
+  allowAI,
 }: AddActionDialogProps & DictionaryProps) {
-  const [action, setAction] = useState<Action | undefined>();
+  const [action, setAction] = useState<Action | undefined>(actionDefault);
   const [open, setOpen] = useState(false);
   const { id }: { id: string } = useParams();
 
@@ -86,6 +91,27 @@ export default function AddActionDialog({
           </div>
         </div>
       );
+    } else if (action?.type === 'Watering') {
+      return (
+        <div className='flex flex-col gap-4'>
+          {allowAI && <div className='flex justify-between items-center'>
+            <Label>Use AI</Label>
+            <Switch checked={action.useAI} onCheckedChange={(value) => setAction({...action, useAI: value})}/>
+          </div>}
+          {(!action.useAI || !allowAI) && (
+            <Label className="flex items-center">
+              Watering duration in:&nbsp;
+              <Input
+                type="number"
+                value={action.time}
+                onChange={(e) => setAction({ ...action, time: parseInt(e.target.value) })}
+                className='max-w-14 h-auto p-1'
+              />
+              &nbsp;seconds
+            </Label>
+          )}
+        </div>
+      )
     }
   }, [action]);
   return (

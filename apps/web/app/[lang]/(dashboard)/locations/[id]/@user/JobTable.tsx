@@ -28,6 +28,7 @@ import JobDialog from '../../../../../../components/job/JobDialog';
 import api from '../../../../../../config/api';
 import { Job, JobCreated } from '../../../../../../types/job';
 import { DictionaryProps } from '../../../../../../types/dictionary';
+import JobStatusBadge from '../../../../../../components/job/JobStatusBadge';
 
 const fetcher = async (url: string) =>
   api.get<any, Job[]>(url).then((res) => res);
@@ -98,7 +99,7 @@ export default function JobTable({ locationId, dictionary }: { locationId: strin
       header: dictionary.status,
       cell: ({ row }) => {
         const job = row.original;
-        return <Badge>{job.status}</Badge>;
+        return <JobStatusBadge status={job.status} />;
       },
       filterFn: (row, columnId, filterValue) => {
         const job = row.original;

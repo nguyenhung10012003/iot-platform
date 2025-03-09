@@ -36,7 +36,7 @@ class Condition {
 
 class Action {
   @IsString()
-  type: 'TurnOn' | 'TurnOff' | 'SendEmail';
+  type: 'TurnOn' | 'TurnOff' | 'SendEmail' | 'Watering';
   @IsOptional()
   @IsString()
   deviceId?: string;
@@ -49,6 +49,10 @@ class Action {
   @IsOptional()
   @IsString()
   body?: string;
+  @IsOptional()
+  time?: number;
+  @IsOptional()
+  useAI: boolean;
 }
 
 export class CreateAutomationDto {

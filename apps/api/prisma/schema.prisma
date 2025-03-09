@@ -151,7 +151,6 @@ model Automations {
   device      Device?    @relation(fields: [deviceId], references: [id], onDelete: Cascade)
   locationId  String     @db.ObjectId
   location    Location   @relation(fields: [locationId], references: [id], onDelete: Cascade)
-  useAI       Boolean    @default(false)
 }
 
 model PetsPredict {
@@ -186,6 +185,7 @@ type Condition {
 type Action {
   type     ActionType
   time     Int?
+  useAI    Boolean?
   deviceId String?
   toEmail  String?
   title    String?

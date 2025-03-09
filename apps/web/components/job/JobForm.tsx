@@ -7,6 +7,7 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import { Input } from '@repo/ui/components/ui/input';
+import { Icons } from '@repo/ui/components/icons/icons';
 import {
   Select,
   SelectContent,
@@ -18,9 +19,9 @@ import { Textarea } from '@repo/ui/components/ui/textarea';
 import { UseFormReturn } from 'react-hook-form';
 import useSWR from 'swr';
 import api from '../../config/api';
+import { DictionaryProps } from '../../types/dictionary';
 import { JobForm as JobFormType } from '../../types/job';
 import { UserLocation } from '../../types/user';
-import { DictionaryProps } from '../../types/dictionary';
 
 type JobFormProps = {
   locationId: string;
@@ -39,7 +40,7 @@ export default function JobForm({ form, locationId, dictionary }: JobFormProps &
   }
   return (
     <Form {...form}>
-      <form>
+      <form className="flex flex-col gap-2">
         <FormField
           name="title"
           control={form.control}
@@ -82,11 +83,18 @@ export default function JobForm({ form, locationId, dictionary }: JobFormProps &
                     </FormControl>
                   </SelectTrigger>
                   <SelectContent>
-                    {data?.map((ul) => (
-                      <SelectItem key={ul.user.id} value={ul.user.id}>
-                        {ul.user.username}
-                      </SelectItem>
-                    ))}
+                    {data?.length ? (
+                      data?.map((ul) => (
+                        <SelectItem key={ul.user.id} value={ul.user.id}>
+                          {ul.user.username}
+                        </SelectItem>
+                      ))
+                    ) : (
+                      <div className="flex justify-center items-center text-muted-foreground h-20 flex-col">
+                        <Icons.empty variant={'solid'} className="h-10 w-10 text-gray-500" />
+                        No user
+                      </div>
+                    )}
                   </SelectContent>
                 </Select>
                 <FormMessage />

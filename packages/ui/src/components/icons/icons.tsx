@@ -14,6 +14,7 @@ import {
   PlusIcon as PlusIconOutline,
   UserIcon as UserIconOutline,
   XCircleIcon as XCircleIconOutline,
+  ArchiveBoxXMarkIcon as ArchiveBoxXMarkIconOutline,
 } from '@heroicons/react/24/outline';
 import {
   ArrowUpTrayIcon,
@@ -30,6 +31,7 @@ import {
   PlusIcon,
   UserIcon,
   XCircleIcon,
+  ArchiveBoxXMarkIcon,
 } from '@heroicons/react/24/solid';
 
 import {
@@ -171,4 +173,11 @@ export const Icons = {
   rain: (props: IconProps) => <CloudHail {...props} />,
 
   wind: (props: IconProps) => <Wind {...props} />,
+
+  empty: (props: IconProps) => 
+    props.variant === 'solid' ? (
+      <ArchiveBoxXMarkIcon {...props} />
+    ) : (
+      <ArchiveBoxXMarkIconOutline {...props} />
+    ),
 };

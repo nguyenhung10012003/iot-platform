@@ -212,7 +212,7 @@ export default function AutomationDialog({
             setHour={(value) => setTime({ ...time, hour: value })}
             handleToggle={handleToggle}
           />
-          <div className="flex gap-4 w-full flex-col sm:flex-row">
+          {/* <div className="flex gap-4 w-full flex-col sm:flex-row">
             <div className="flex flex-col gap-2 w-full">
               <Label>Choose device</Label>
               <ChooseDevice
@@ -234,7 +234,63 @@ export default function AutomationDialog({
                 }
               />
             </div>
+          </div> */}
+          <div className="space-y-2">
+            <Label>Actions</Label>
+            {actions.map((action, index) => (
+              <Card
+                key={index}
+                className="py-2 px-3 shadow-sm flex justify-between items-center"
+              >
+                <p>{action.type}</p>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="p-1 h-8 w-8 rounded-full"
+                  onClick={() => {
+                    setActions((prev) => prev.filter((_, i) => i !== index));
+                  }}
+                >
+                  <Icons.close className="w-5 h-5" />
+                </Button>
+              </Card>
+            ))}
           </div>
+
+          <AddActionDialog
+            trigger={
+              <Button className="w-full text-secondary-foreground bg-transparent border-2 border-dashed hover:bg-primary-foreground">
+                Add Action
+              </Button>
+            }
+            onAdd={(action) => {
+              console.log(action);
+              if (action) setActions((prev) => [...prev, action]);
+            }}
+            actionFilters={[
+              {
+                type: 'SendEmail',
+                label: 'Send Email',
+                description: 'Send an email',
+              },
+              {
+                type: 'TurnOn',
+                label: 'Turn On Device',
+                description: 'Turn on the device',
+              },
+              {
+                type: 'TurnOff',
+                label: 'Turn Off Device',
+                description: 'Turn off the device',
+              },
+              {
+                type: 'Watering',
+                label: 'Watering',
+                description: 'Watering the plant',
+              },
+            ]}
+            dictionary={dictionary}
+          />
         </div>
       );
     if (conditionType === 'DeviceState')
@@ -367,6 +423,11 @@ export default function AutomationDialog({
                 label: 'Turn Off Device',
                 description: 'Turn off the device',
               },
+              {
+                type: 'Watering',
+                label: 'Watering',
+                description: 'Watering the plant',
+              }
             ]}
             dictionary={dictionary}
           />
@@ -421,8 +482,14 @@ export default function AutomationDialog({
                 label: 'Turn Off Device',
                 description: 'Turn off the device',
               },
+              {
+                type: 'Watering',
+                label: 'Watering',
+                description: 'Watering the plant',
+              }
             ]}
             dictionary={dictionary}
+            allowAI={false}
           />
         </div>
       );

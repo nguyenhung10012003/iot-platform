@@ -38,7 +38,7 @@ export default function DiseaseDetectHistory() {
     },
     {
       id: 'image',
-      header: 'Image',
+      header: () => <div className="w-24 text-center">Image</div>,
       cell: ({ row }) => (
         <img
           src={row.original.image}

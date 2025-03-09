@@ -25,7 +25,7 @@ export default function AddUserForm({
 } & DictionaryProps) {
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className='flex flex-col gap-2'>
         <FormField
           control={form.control}
           name="username"

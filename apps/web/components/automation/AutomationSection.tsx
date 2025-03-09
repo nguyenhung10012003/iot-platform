@@ -3,7 +3,6 @@ import { Button } from '@repo/ui/components/ui/button';
 import { toast } from '@repo/ui/components/ui/sonner';
 import { useParams } from 'next/navigation';
 import useSWR from 'swr';
-import { mutate as globalMutate } from 'swr';
 import api from '../../config/api';
 import { AutomationModel } from '../../types/automation';
 import { DictionaryProps } from '../../types/dictionary';

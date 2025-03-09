@@ -11,6 +11,7 @@ import IrrigationHistory from '../../../../../../components/location/IrrigationH
 import UserLocationTable from '../../../../../../components/location/UserLocationTable';
 import { getDictionary } from '../../../../../dictionaries';
 import JobTable from './JobTable';
+import DiseaseDetectHistory from '../../../../../../components/disease/DiseaseDetectHistory';
 
 export default async function UserLocationPage({
   params,
@@ -66,6 +67,12 @@ export default async function UserLocationPage({
         >
           Tưới tiêu
         </TabsTrigger>
+        <TabsTrigger
+          value="disease-detect"
+          className="text-lg max-w-[130px] hover:text-primary/70"
+        >
+          Disease detect
+        </TabsTrigger>
       </TabsList>
       {/* <TabsContent value="areas">
         <DeviceTable dictionary={dictionary}/>
@@ -87,6 +94,9 @@ export default async function UserLocationPage({
       </TabsContent>
       <TabsContent value="irrigation">
         <IrrigationHistory locationId={params.id} />
+      </TabsContent>
+      <TabsContent value="disease-detect">
+        <DiseaseDetectHistory />
       </TabsContent>
     </Tabs>
   );

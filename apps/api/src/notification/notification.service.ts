@@ -1,44 +1,37 @@
 import { Injectable } from '@nestjs/common';
 import { Notification } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
+import { NotificationGateway } from './notification.gateway';
+
+export interface MessageEvent {
+  userId: string;
+  data: Notification;
+}
 
 @Injectable()
 export class NotificationService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notificationGateway: NotificationGateway,
+  ) {}
 
-  private clients = new Map<string, Array<any>>();
-
-  addClient(userId: string, res: any) {
-    if (!this.clients.has(userId)) {
-      this.clients.set(userId, []);
-    }
-    this.clients.get(userId).push(res);
+  // Gửi tin nhắn tới một userId cụ thể
+  sendNotificationToUser(userId: string, message: Notification) {
+    this.notificationGateway.sendNotification(userId, message);
   }
 
-  removeClient(userId: string, res: any) {
-    if (this.clients.has(userId)) {
-      this.clients.set(
-        userId,
-        this.clients.get(userId).filter((client) => client !== res),
-      );
-      if (this.clients.get(userId).length === 0) {
-        this.clients.delete(userId);
-      }
-    }
-  }
-
-  async sendNotificationToUser(userId: string, notification: Notification) {
-    if (this.clients.has(userId)) {
-      this.clients.get(userId).forEach((res) => {
-        res.write(`data: ${JSON.stringify(notification)}\n\n`);
-      });
-    }
+  // Gửi tin nhắn tới nhiều userId
+  sendNotificationToUsers(userIds: string[], message: Notification) {
+    this.notificationGateway.sendNotifications(userIds, message);
   }
 
   async getNotifications(userId: string) {
     const notifications = await this.prisma.notification.findMany({
       where: {
         sendToUserId: userId,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
@@ -60,5 +53,18 @@ export class NotificationService {
     });
 
     return notification;
+  }
+
+  async markNotificationsAsRead(ids: string[]) {
+    await this.prisma.notification.updateMany({
+      where: {
+        id: {
+          in: ids,
+        },
+      },
+      data: {
+        status: 'READ',
+      },
+    });
   }
 }

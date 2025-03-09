@@ -23,14 +23,16 @@ export type Condition = {
   };
 };
 
-export type ActionType = 'TurnOn' | 'TurnOff' | 'SendEmail';
+export type ActionType = 'TurnOn' | 'TurnOff' | 'SendEmail' | 'Watering';
 
 export type Action = {
   type: ActionType;
+  time?: number;
   deviceId?: string;
   toEmail?: string;
   title?: string;
   body?: string;
+  useAI?: boolean;
 };
 
 export interface AutomationModel {

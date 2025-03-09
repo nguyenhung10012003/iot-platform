@@ -6,6 +6,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import api from '../../config/api';
 import UploadFileArea from '../UploadFileArea';
+import { mutate } from 'swr';
 
 export default function DeseaseDetect() {
   const { id: locationId } = useParams<{ id: string }>();
@@ -28,6 +29,7 @@ export default function DeseaseDetect() {
           },
         },
       );
+      mutate(`pets-predict?locationId=${locationId}`);
       setResult(response.result);
     } catch (error) {
       console.error(error);
