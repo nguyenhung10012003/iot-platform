@@ -20,14 +20,13 @@ import { useUser } from '../../hooks/useUser';
 import { DictionaryProps } from '../../types/dictionary';
 import Notification from '../notification/Notification';
 import ThemeToggle from '../ThemeToggle';
-import { SSEProvider } from 'react-hooks-sse';
 import { getCookie } from 'cookies-next';
 
 export default function DashboardHeader({ dictionary }: DictionaryProps) {
   const { signout, user } = useUser();
   const userId = getCookie('userId');
   return (
-    <SSEProvider endpoint={`${process.env.NEXT_PUBLIC_API_URL}/notifications/sse/${userId}`}>
+
       <div className="flex justify-end">
         <Card className="rounded-full shadow-md">
           <CardContent className="px-3 py-1 flex items-center justify-end gap-2">
@@ -68,6 +67,5 @@ export default function DashboardHeader({ dictionary }: DictionaryProps) {
           </CardContent>
         </Card>
       </div>
-    </SSEProvider>
   );
 }
