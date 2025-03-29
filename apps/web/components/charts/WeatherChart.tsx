@@ -32,7 +32,7 @@ export default function WeatherChart({
   };
 
   return (
-    <Card className="h-full flex flex-col items-center gap-4 my-4 mx-8 p-4">
+    <Card className="h-full flex flex-col items-center gap-4 p-4">
       <h2 className="text-xl font-semibold">{title}</h2>
       <ChartContainer config={chartConfig} className="max-h-[400px] w-full">
         <LineChart data={datas} accessibilityLayer>
