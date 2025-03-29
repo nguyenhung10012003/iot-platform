@@ -36,6 +36,10 @@
     },
     "lint": {},
     "test": {},
+    "start": {
+      "cache": false,
+      "persistent": true
+    },
     "test:e2e": {},
     "prisma:generate": {
       "dependsOn": ["^prisma:generate"]

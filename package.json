@@ -11,6 +11,7 @@
     "test": "turbo test",
     "test:e2e": "turbo test:e2e",
     "lint": "turbo lint",
+    "start": "turbo start",
     "db:migrate:deploy": "turbo run db:migrate:deploy",
     "db:push": "turbo run db:push --filter api",
     "db:seed": "turbo run db:seed",

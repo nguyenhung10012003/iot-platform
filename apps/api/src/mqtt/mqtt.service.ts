@@ -71,6 +71,7 @@ export class MqttService implements OnModuleInit {
       const client = await connectAsync({
         ...options,
         clientId: id,
+        clean: true,
         connectTimeout: 5000,
         reconnectPeriod: 1000,
         resubscribe: true,
@@ -108,6 +109,7 @@ export class MqttService implements OnModuleInit {
       throw new Error('Client not found');
     }
     client.client.subscribe(topic);
+    // console.log(topic)
     if (client.callbacks) {
       client.callbacks.push({ callback: callback, key: callbackKey });
     } else {
