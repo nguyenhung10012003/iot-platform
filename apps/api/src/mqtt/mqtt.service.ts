@@ -71,7 +71,9 @@ export class MqttService implements OnModuleInit {
       const client = await connectAsync({
         ...options,
         clientId: id,
-        connectTimeout: 3000,
+        connectTimeout: 5000,
+        reconnectPeriod: 1000,
+        resubscribe: true,
       });
 
       this.client.set(id, { client, callbacks: [] });

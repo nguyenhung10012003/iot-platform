@@ -26,7 +26,10 @@
         "SENDGRID_SENDER",
         "SENDGRID_API_KEY",
         "PREDICT_API_URL",
-        "NEXT_PUBLIC_API_URL"
+        "NEXT_PUBLIC_API_URL",
+        "FIREBASE_PROJECT_ID",
+        "FIREBASE_CLIENT_EMAIL",
+        "FIREBASE_PRIVATE_KEY"
       ],
       "dependsOn": ["^build"],
       "outputs": [".next/**", "!.next/cache/**"]

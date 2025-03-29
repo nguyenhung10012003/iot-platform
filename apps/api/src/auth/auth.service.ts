@@ -5,12 +5,15 @@ import ms from 'ms';
 import { UserService } from 'src/user/user.service';
 import { comparePassword } from 'utils/hashing';
 import { CreateUserDto } from './dto/CreateUserDto';
+import { PrismaService } from 'src/prisma.service';
+import { admin } from 'src/firebase.config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly prisma: PrismaService,
   ) {}
 
   /**
@@ -117,5 +120,48 @@ export class AuthService {
     const user = await this.userService.createUser(data);
     if (user) return this.validateUser(data);
     return null;
+  }
+
+  async singinWithGoogle(idToken: string) {
+    try {
+      const decodedToken = await admin.auth().verifyIdToken(idToken);
+      const { email, name, picture } = decodedToken;
+
+      let user = await this.prisma.user.findUnique({
+        where: {
+          username: email,
+        },
+      });
+
+      if (user) {
+        user = await this.prisma.user.update({
+          where: { id: user.id },
+          data: {
+            name: name || user.name,
+            avatar: picture || user.avatar,
+            provider: 'GOOGLE',
+          },
+        });
+      } else {
+        user = await this.prisma.user.create({
+          data: {
+            username: email,
+            name: name || email,
+            avatar: picture || '',
+            password: '',
+            role: 'USER',
+            provider: 'GOOGLE',
+          },
+        });
+      }
+
+      return this.createAuthResponse(user, {
+        sub: user.id,
+        username: user.username,
+        role: user.role,
+      });
+    } catch (error) {
+      throw new UnauthorizedException('Invalid Google token');
+    }
   }
 }

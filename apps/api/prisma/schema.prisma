@@ -18,6 +18,8 @@ model User {
   username      String         @unique
   password      String
   name          String?
+  avatar        String?
+  provider      String?
   role          Role           @default(USER)
   employerIds   String[]       @db.ObjectId
   employeeIds   String[]       @db.ObjectId

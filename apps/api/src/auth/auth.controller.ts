@@ -15,4 +15,9 @@ export class AuthController {
   async signin(@Body() createUserDto: CreateUserDto) {
     return this.authService.signin(createUserDto);
   }
+
+  @Post('/google')
+  async google(@Body() body: { idToken: string }) {
+    return this.authService.singinWithGoogle(body.idToken);
+  }
 }
