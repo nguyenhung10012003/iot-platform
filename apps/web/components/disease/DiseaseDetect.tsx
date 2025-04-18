@@ -4,9 +4,9 @@ import { Button } from '@repo/ui/components/ui/button';
 import { Separator } from '@repo/ui/components/ui/separator';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { mutate } from 'swr';
 import api from '../../config/api';
 import UploadFileArea from '../UploadFileArea';
-import { mutate } from 'swr';
 
 export default function DeseaseDetect() {
   const { id: locationId } = useParams<{ id: string }>();
@@ -50,7 +50,11 @@ export default function DeseaseDetect() {
     <div className="flex flex-row gap-4 w-full">
       <div className="flex w-full flex-col gap-4">
         <h2 className="text-xl font-semibold">Disease Detection</h2>
-        <UploadFileArea value={file} onChange={setFile} onDrop={setFile} />
+        <UploadFileArea
+          value={file ? [file] : null}
+          onChange={(files) => setFile(files[0] ?? null)}
+          onDrop={(files) => setFile(files[0] ?? null)}
+        />
         {preview && (
           <img
             src={preview}

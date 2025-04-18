@@ -19,8 +19,10 @@ type LocationFormProps = {
 };
 
 export default function LocationForm({ form, onSubmit }: LocationFormProps) {
-  const onDrop = (file: File) => {
-    form.setValue('image', file);
+  const onDrop = (files: File[]) => {
+    if (files[0]) {
+      form.setValue('image', files[0]);
+    }
   };
   const [{ dragActive }, { handleDrag, handleDrop }] = useDragDrop(onDrop);
   return (
