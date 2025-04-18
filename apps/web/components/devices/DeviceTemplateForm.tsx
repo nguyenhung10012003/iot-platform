@@ -1,3 +1,4 @@
+'use client';
 import { Icons } from '@repo/ui/components/icons/icons';
 import { Button } from '@repo/ui/components/ui/button';
 import {
@@ -21,6 +22,8 @@ import { UseFormReturn } from 'react-hook-form';
 import { useDragDrop } from '../../../../packages/ui/src/hooks/use-drag-drop';
 import { DeviceTemplate, deviceTypes } from '../../types/device-template';
 import { DictionaryProps } from '../../types/dictionary';
+import { useState } from 'react';
+import { User } from '../../types/user';
 
 type NewDeviceTemplateFormProps = {
   onSubmit: (data: DeviceTemplate) => void;
@@ -37,9 +40,10 @@ export default function NewDeviceTemplateForm({
     { length: currentYear - 1970 },
     (_, i) => currentYear - i,
   );
+  const [users, setUsers] = useState<User[]>([]);
 
-  const onDrop = (file: File) => {
-    form.setValue('image', file);
+  const onDrop = (files: File[]) => {
+    form.setValue('image', files[0]);
   };
 
   const [{ dragActive }, { handleDrag, handleDrop }] = useDragDrop(onDrop);

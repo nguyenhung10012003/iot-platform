@@ -3,9 +3,9 @@ import { Input } from '@repo/ui/components/ui/input';
 import { useDragDrop } from '../../../packages/ui/src/hooks/use-drag-drop';
 
 type UploadFileAreaProps = {
-  value: File | null;
-  onChange: (file: File) => void;
-  onDrop: (file: File) => void;
+  value: File[] | null;
+  onChange: (file: File[]) => void;
+  onDrop: (file: File[]) => void;
   accept?: string;
 };
 
@@ -45,15 +45,13 @@ export default function UploadFileArea({
           className="hidden"
           accept={accept}
           onChange={(event) => {
-            const file = event.target.files?.[0];
-            if (file) {
-              onChange(file);
-            }
+            const files = Array.from(event.target.files || []);
+            onChange(files);
           }}
         />
         {value && (
           <div className="text-sm text-gray-500">
-            Selected file: {value.name}
+            Selected files: {value.map((file) => file.name).join(', ')}
           </div>
         )}
       </div>

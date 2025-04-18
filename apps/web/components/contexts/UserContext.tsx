@@ -13,7 +13,7 @@ type UserContextType = {
 
 export const UserContext = createContext<UserContextType | null>(null);
 
-export const UserProvider = ({ children }: { children: React.ReactNode }) => {
+export const UserProvider = ({ children, initialUser }: { children: React.ReactNode, initialUser: User | null }) => {
   const fetchUser = useCallback(async () => {
     const userId = getCookie('userId');
     if (!userId) return null;
@@ -24,7 +24,7 @@ export const UserProvider = ({ children }: { children: React.ReactNode }) => {
       return null;
     }
   }, []);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<User | null>(initialUser || null);
 
   useEffect(() => {
     fetchUser().then((user) => setUser(user));

@@ -1,4 +1,4 @@
-import { IsIn, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class UpdateJobDto {
   @IsString()
@@ -12,9 +12,15 @@ export class UpdateJobDto {
   asigneeId?: string;
   @IsString()
   @IsOptional()
-  @IsIn(['PENDING', 'IN_PROGRESS', 'COMPLETED'])
-  status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
-  @IsString()
+  @IsIn(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'])
+  status?: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
+  @IsNumber()
   @IsOptional()
-  report?: string;
+  order?: number;
+  @IsArray()
+  @IsOptional()
+  reports?: {
+    url: string;
+    name: string;
+  }[];
 }

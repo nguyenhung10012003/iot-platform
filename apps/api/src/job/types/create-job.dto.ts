@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateJobDto {
   @IsString()
@@ -11,4 +11,7 @@ export class CreateJobDto {
   @IsString()
   @IsOptional()
   asigneeId?: string;
+  @IsNumber()
+  @IsOptional()
+  order?: number;
 }

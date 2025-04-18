@@ -16,7 +16,8 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AwsS3Service } from 'src/s3/aws-s3.service';
 import { DeviceTemplateService } from './device-template.service';
-import { createDeviceTemplateDto } from './types/create-device-teamplate.dto';
+import { CreateDeviceTemplateDto } from './types/create-device-teamplate.dto';
+import { UpdateDeviceTemplateDto } from './types/update-device-template.dto';
 import { GetDeviceTemplateQuery } from './types/get-device-template.query';
 
 @Controller('device-template')
@@ -43,7 +44,7 @@ export class DeviceTemplateController {
     }),
   )
   async createDeviceTemplate(
-    @Body() data: createDeviceTemplateDto,
+    @Body() data: CreateDeviceTemplateDto,
     @UploadedFile() image?: Express.Multer.File,
   ) {
     const imageUrl = await this.aws3.uploadFile(image);
@@ -70,7 +71,7 @@ export class DeviceTemplateController {
   )
   async updateDeviceTemplate(
     @Param('id') id: string,
-    @Body() data: createDeviceTemplateDto,
+    @Body() data: UpdateDeviceTemplateDto,
     @UploadedFile() image?: Express.Multer.File,
   ) {
     const imageUrl = await this.aws3.uploadFile(image);

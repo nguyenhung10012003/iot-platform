@@ -1,8 +1,8 @@
 import { Type } from 'class-transformer';
-import { IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsIn, IsNumber, IsOptional, IsString } from 'class-validator';
 import { DeviceType } from './device-type';
 
-export class createDeviceTemplateDto {
+export class UpdateDeviceTemplateDto {
   @IsString()
   @IsOptional()
   model: string;
@@ -15,4 +15,8 @@ export class createDeviceTemplateDto {
   @IsString()
   @IsIn(['SENSOR', 'LIGHT_BULB', 'DOME', 'VALVE'])
   deviceType: DeviceType;
+  @IsArray()
+  @IsOptional()
+  @IsString({ each: true })
+  userIds?: string[];
 }

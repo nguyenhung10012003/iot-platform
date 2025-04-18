@@ -46,6 +46,10 @@ export class JobService {
       include: {
         asignee: true,
       },
+      orderBy: {
+        order: 'asc',
+        // createdAt: 'asc',
+      },
     });
   }
 
@@ -102,7 +106,7 @@ export class JobService {
       return job;
     }
 
-    if (data.report) {
+    if (data.reports) {
       const user = await this.prisma.user.findUnique({
         where: {
           id: userId,

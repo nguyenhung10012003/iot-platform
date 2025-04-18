@@ -6,6 +6,7 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@repo/ui/components/ui/dialog';
@@ -115,10 +116,12 @@ export default function DeviceTemplateDialog({
           event.preventDefault();
         }}
       >
-        <DialogTitle>{dictionary.newDeviceTemplate}</DialogTitle>
-        <DialogDescription>
-          {dictionary.createNewDeviceTemplate}
-        </DialogDescription>
+        <DialogHeader>
+          <DialogTitle>{dictionary.newDeviceTemplate}</DialogTitle>
+          <DialogDescription>
+            {dictionary.createNewDeviceTemplate}
+          </DialogDescription>
+        </DialogHeader>
         <NewDeviceTemplateForm
           form={form}
           onSubmit={onSubmit}

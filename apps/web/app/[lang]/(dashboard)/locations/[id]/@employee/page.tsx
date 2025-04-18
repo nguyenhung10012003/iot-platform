@@ -7,7 +7,7 @@ import {
 import DiseaseDetect from '../../../../../../components/disease/DiseaseDetect';
 import DiseaseDetectHistory from '../../../../../../components/disease/DiseaseDetectHistory';
 import { getDictionary } from '../../../../../dictionaries';
-import JobTable from './JobTable';
+import JobKanbanBoard from '../@user/JobKanbanBoard';
 
 export default async function EmployeeLocationPage({
   params,
@@ -35,7 +35,7 @@ export default async function EmployeeLocationPage({
         </TabsTrigger>
       </TabsList>
       <TabsContent value="jobs">
-        <JobTable locationId={params.id} dictionary={dictionary} />
+        <JobKanbanBoard locationId={params.id} dictionary={dictionary} />
       </TabsContent>
       <TabsContent value="disease-detect">
         <div className="space-y-4">

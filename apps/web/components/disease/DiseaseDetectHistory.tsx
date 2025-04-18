@@ -88,7 +88,7 @@ export default function DiseaseDetectHistory({canDelete}: {canDelete?: boolean})
   });
   return (
     <div>
-      <h2 className="text-xl font-semibold">Disease Detection History</h2>
+      <h2 className="text-xl font-semibold mb-2">Disease Detection History</h2>
       <div className="rounded-md border">
         <Table>
           <TableHeader>

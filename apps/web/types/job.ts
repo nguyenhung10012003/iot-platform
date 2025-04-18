@@ -13,13 +13,17 @@ export type JobCreated = {
   locationId: string;
 };
 
-export type JobStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
+export type JobStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'CANCELLED';
 
 export type Job = {
   id: string;
   title: string;
   status: JobStatus;
-  report?: string;
+  order: number;
+  reports?: {
+    url: string;
+    name: string;
+  }[];
   description?: string;
   locationId: string;
   asigneeId?: string;

@@ -172,13 +172,13 @@ export default function JobTable({ locationId, dictionary }: { locationId: strin
                 dictionary={dictionary}
               />
 
-              {job.report && (
+              {job.reports?.[0] && (
                 <Button
                   variant="ghost"
                   className="w-full h-auto justify-start"
                   onClick={() => {
                     const a = document.createElement('a');
-                    const url = new URL(job.report || '');
+                    const url = new URL(job.reports?.[0] || '');
                     a.href = url.href;
                     a.setAttribute('download', 'report');
                     document.body.appendChild(a);

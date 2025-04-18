@@ -1,7 +1,13 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import {
+  Injectable,
+  Logger,
+  OnModuleDestroy,
+  OnModuleInit,
+} from '@nestjs/common';
 import { IClientOptions, MqttClient, connectAsync } from 'mqtt';
 import { SensorData } from 'src/device/types/sensor-data';
 import { PrismaService } from 'src/prisma.service';
+import { v4 as uuid } from 'uuid';
 
 type MqttServiceClient<T = any> = {
   client: MqttClient;
@@ -12,7 +18,7 @@ type MqttServiceClient<T = any> = {
 };
 
 @Injectable()
-export class MqttService implements OnModuleInit {
+export class MqttService implements OnModuleInit, OnModuleDestroy {
   private client: Map<string, MqttServiceClient> = new Map();
   constructor(private readonly prisma: PrismaService) {}
 
@@ -66,19 +72,80 @@ export class MqttService implements OnModuleInit {
     }
   }
 
+  async onModuleDestroy() {
+    await Promise.all(
+      Array.from(this.client.keys()).map(async (id) => {
+        await this.disconnect(id);
+      }),
+    );
+  }
+
+  /**
+   * Creates a new MQTT client and waits for connection confirmation
+   * @param id - The client ID
+   * @param options - MQTT client options
+   * @returns Promise<MqttClient> - The connected MQTT client
+   * @throws Error if connection confirmation is not received within 10 seconds
+   */
   async createClient(id: string, options?: IClientOptions) {
     try {
       const client = await connectAsync({
         ...options,
-        clientId: id,
+        clientId: uuid(),
         clean: true,
         connectTimeout: 5000,
         reconnectPeriod: 1000,
         resubscribe: true,
       });
 
+      // Create a promise that resolves when we receive the connection confirmation
+      const connectionConfirmed = new Promise<MqttClient>((resolve, reject) => {
+        const timeout = setTimeout(() => {
+          client.end();
+          reject(
+            new Error(
+              `Connection confirmation timeout after 10 seconds, clientId: ${client.options.clientId}`,
+            ),
+          );
+        }, 10000);
+
+        // Subscribe to the connection confirmation topic
+        client.subscribe(
+          `gateway/connected/${client.options.clientId}`,
+          (err) => {
+            if (err) {
+              clearTimeout(timeout);
+              reject(err);
+              return;
+            }
+          },
+        );
+
+        // Handle the connection confirmation message
+        const messageHandler = (topic: string, message: Buffer) => {
+          try {
+            const data = JSON.parse(message.toString());
+            if (
+              data.type === 'gateway/connected' &&
+              data.data?.status === 'connected'
+            ) {
+              clearTimeout(timeout);
+              client.removeListener('message', messageHandler);
+              resolve(client);
+            }
+          } catch (e) {
+            // Ignore parsing errors
+          }
+        };
+
+        client.on('message', messageHandler);
+      });
+
+      // Wait for the connection confirmation
+      await connectionConfirmed;
+
       this.client.set(id, { client, callbacks: [] });
-      Logger.log(`Client id: ${id} Connected`, 'MqttService');
+      Logger.log(`Client id: ${id} Connected and confirmed`, 'MqttService');
 
       return client;
     } catch (e: any) {
@@ -179,11 +246,11 @@ export class MqttService implements OnModuleInit {
   }
 
   async disconnect(id: string) {
-    const { client } = this.client.get(id);
-    if (!client) {
+    const client = this.client.get(id);
+    if (!client?.client) {
       return;
     }
-    client.end();
+    client.client.end();
     this.client.delete(id);
     Logger.log(`Client id: ${id} Disconnected`, 'MqttService');
   }
