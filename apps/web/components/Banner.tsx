@@ -9,7 +9,7 @@ import {
   CarouselPrevious,
 } from '@repo/ui/components/ui/carousel';
 import React from 'react';
-
+import Image from 'next/image';
 export default function Banner() {
   const plugin = React.useRef(
     Autoplay({ delay: 2000, stopOnInteraction: false }),
@@ -25,17 +25,36 @@ export default function Banner() {
       onMouseLeave={plugin.current.reset}
     >
       <CarouselContent>
-        {Array.from({ length: 5 }).map((_, index) => (
-          <CarouselItem key={index}>
-            <div className="p-1">
-              <Card>
-                <CardContent className="flex aspect-video items-center justify-center p-6">
-                  <span className="text-4xl font-semibold">{index + 1}</span>
-                </CardContent>
-              </Card>
-            </div>
-          </CarouselItem>
-        ))}
+        <CarouselItem>
+          <div className="p-1">
+            <Card className="p-0">
+              <CardContent className="flex aspect-video items-center justify-center p-0">
+                <Image
+                  src={'/image/banner1.jpeg'}
+                  width={500}
+                  height={500}
+                  className="w-full h-full object-cover rounded-md"
+                  alt="banner"
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </CarouselItem>
+        <CarouselItem>
+          <div className="p-1">
+            <Card className="p-0">
+              <CardContent className="flex aspect-video items-center justify-center p-0">
+                <Image
+                  src={'/image/banner2.jpeg'}
+                  width={500}
+                  height={500}
+                  className="w-full h-full object-cover rounded-md"
+                  alt="banner"
+                />
+              </CardContent>
+            </Card>
+          </div>
+        </CarouselItem>
       </CarouselContent>
       <CarouselPrevious />
       <CarouselNext />

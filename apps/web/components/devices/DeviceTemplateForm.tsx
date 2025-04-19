@@ -1,5 +1,6 @@
 'use client';
 import { Icons } from '@repo/ui/components/icons/icons';
+import { Badge } from '@repo/ui/components/ui/badge';
 import { Button } from '@repo/ui/components/ui/button';
 import {
   Form,
@@ -10,6 +11,7 @@ import {
   FormMessage,
 } from '@repo/ui/components/ui/form';
 import { Input } from '@repo/ui/components/ui/input';
+import { Label } from '@repo/ui/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -18,32 +20,85 @@ import {
   SelectValue,
 } from '@repo/ui/components/ui/select';
 import { Textarea } from '@repo/ui/components/ui/textarea';
+import { X } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import { UseFormReturn } from 'react-hook-form';
+import useSWR from 'swr';
 import { useDragDrop } from '../../../../packages/ui/src/hooks/use-drag-drop';
+import api from '../../config/api';
 import { DeviceTemplate, deviceTypes } from '../../types/device-template';
 import { DictionaryProps } from '../../types/dictionary';
-import { useState } from 'react';
 import { User } from '../../types/user';
 
 type NewDeviceTemplateFormProps = {
   onSubmit: (data: DeviceTemplate) => void;
   form: UseFormReturn<DeviceTemplate>;
+  usersInTemplate?: User[];
 };
+
+const fetcher = (url: string) => api.get<any, User[]>(url).then((res) => res);
 
 export default function NewDeviceTemplateForm({
   form,
   onSubmit,
-  dictionary
+  dictionary,
+  usersInTemplate,
 }: NewDeviceTemplateFormProps & DictionaryProps) {
   const currentYear = new Date().getFullYear();
   const years = Array.from(
     { length: currentYear - 1970 },
     (_, i) => currentYear - i,
   );
-  const [users, setUsers] = useState<User[]>([]);
+  const { data: users } = useSWR('/user', fetcher);
+  const [selectedUsers, setSelectedUsers] = useState<User[]>(
+    usersInTemplate || [],
+  );
+  const [searchUser, setSearchUser] = useState<string>('');
+  const [isOpen, setIsOpen] = useState(false);
 
   const onDrop = (files: File[]) => {
     form.setValue('image', files[0]);
+  };
+
+  useEffect(() => {
+    if (searchUser.length > 0) {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
+    }
+  }, [searchUser]);
+
+  useEffect(() => {
+    if (selectedUsers.length > 0) {
+      form.setValue(
+        'userIds',
+        selectedUsers.map((user) => user.id),
+      );
+    }
+  }, [selectedUsers]);
+
+  const onUserSelect = (user: User) => {
+    if (selectedUsers.some((u) => u.id === user.id)) {
+      return;
+    } else {
+      setSelectedUsers([...selectedUsers, user]);
+    }
+    setSearchUser('');
+    setIsOpen(false);
+  };
+
+  const searchedUsers = useMemo(() => {
+    if (!users) return [];
+    return users?.filter(
+      (user) =>
+        (user.name?.toLowerCase().includes(searchUser.toLowerCase()) ||
+          user.username?.toLowerCase().includes(searchUser.toLowerCase())) &&
+        user.role === 'USER',
+    );
+  }, [users, searchUser]);
+
+  const onRemoveUser = (user: User) => {
+    setSelectedUsers(selectedUsers.filter((u) => u.id !== user.id));
   };
 
   const [{ dragActive }, { handleDrag, handleDrop }] = useDragDrop(onDrop);
@@ -78,7 +133,9 @@ export default function NewDeviceTemplateForm({
           name="description"
           render={({ field }) => (
             <FormItem>
-              <FormLabel htmlFor="description">{dictionary.description}</FormLabel>
+              <FormLabel htmlFor="description">
+                {dictionary.description}
+              </FormLabel>
               <FormControl>
                 <Textarea
                   id="description"
@@ -134,7 +191,7 @@ export default function NewDeviceTemplateForm({
                       <SelectValue placeholder={dictionary.typeOfTheDevice} />
                     </SelectTrigger>
                   </FormControl>
-                  <SelectContent>
+                  <SelectContent className="w-full max-w-[460px]">
                     {deviceTypes.map((deviceType) => (
                       <SelectItem key={deviceType} value={deviceType}>
                         {deviceType}
@@ -146,6 +203,62 @@ export default function NewDeviceTemplateForm({
               </FormItem>
             )}
           />
+        </div>
+        <div className="gap-2 flex flex-col relative">
+          <Label>Thêm người dùng</Label>
+          {selectedUsers.length > 0 && (
+            <div className="flex gap-1 flex-wrap">
+              {selectedUsers.map((user) => (
+                <Badge key={user.id} className="flex items-center gap-2 px-1.5">
+                  {user.name || user.username}
+                  <X
+                    className="w-4 h-4 cursor-pointer"
+                    onClick={() => onRemoveUser(user)}
+                  />
+                </Badge>
+              ))}
+            </div>
+          )}
+          <Input
+            type="text"
+            placeholder="Tên người dùng"
+            value={searchUser}
+            onChange={(e) => setSearchUser(e.target.value)}
+            onFocus={() => setIsOpen(true)}
+            // onBlur={() => setIsOpen(false)}
+          />
+          {isOpen && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-background border rounded-md shadow-lg z-10">
+              {!searchedUsers?.length && (
+                <div className="py-6 text-center text-muted-foreground">
+                  No results found.
+                </div>
+              )}
+
+              {searchedUsers?.length > 0 && (
+                <div className="max-h-[220px] overflow-y-auto py-2">
+                  <div className="text-xs font-medium text-muted-foreground px-3 py-1.5">
+                    Results
+                  </div>
+                  <ul>
+                    {searchedUsers?.map((user) => (
+                      <li
+                        key={user.id}
+                        className="px-3 py-2 text-sm cursor-pointer hover:bg-accent hover:text-accent-foreground flex items-center gap-2"
+                        onClick={() => onUserSelect(user)}
+                      >
+                        <div>
+                          <p className="font-medium">
+                            {user.name || user.username}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </div>
         <FormField
           control={form.control}
@@ -171,7 +284,9 @@ export default function NewDeviceTemplateForm({
                         aria-hidden="true"
                       />
                       <p className="mb-2 text-sm text-gray-500">
-                        <span className="font-semibold">{dictionary.clickToUpload}</span>{' '}
+                        <span className="font-semibold">
+                          {dictionary.clickToUpload}
+                        </span>{' '}
                         {dictionary.orDragAndDrop}
                       </p>
                     </div>
@@ -200,6 +315,7 @@ export default function NewDeviceTemplateForm({
             </FormItem>
           )}
         />
+
         <Button type="submit" className="w-full">
           {dictionary.save}
         </Button>

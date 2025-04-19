@@ -18,6 +18,7 @@ import {
 import { Separator } from '@repo/ui/components/ui/separator';
 import { cn } from '@repo/ui/lib/utils';
 import { DictionaryProps } from '../types/dictionary';
+import { Filter } from 'lucide-react';
 
 type FacetedFilterProps = {
   title: string;
@@ -38,7 +39,7 @@ export default function FacetedFilter({
     <Popover>
       <PopoverTrigger asChild>
         <Button variant="outline" className="h-9 border">
-          <Icons.plus className="mr-2 h-4 w-4" />
+          <Filter className="mr-2 h-4 w-4" />
           {title}
           {selections?.size > 0 && (
             <>

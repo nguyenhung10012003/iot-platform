@@ -35,7 +35,7 @@ export default async function EmployeeLocationPage({
         </TabsTrigger>
       </TabsList>
       <TabsContent value="jobs">
-        <JobKanbanBoard locationId={params.id} dictionary={dictionary} />
+        <JobKanbanBoard locationId={params.id} />
       </TabsContent>
       <TabsContent value="disease-detect">
         <div className="space-y-4">

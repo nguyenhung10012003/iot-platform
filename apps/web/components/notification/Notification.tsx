@@ -21,6 +21,7 @@ import useSWR from 'swr';
 import api from '../../config/api';
 import { useSocket } from '../../hooks/useSocket';
 import type { Notification } from '../../types/notification';
+import { useRouter } from 'next/navigation';
 
 const fetcher = (url: string) =>
   api.get<any, Notification[]>(url).then((res) => res);
@@ -89,6 +90,15 @@ export default function Notification() {
     }
   };
 
+  const router = useRouter();
+
+  const handleClickNotification = async (notification: Notification) => {
+    await markAsRead(notification.id);
+    if (notification.link) {
+      router.push(notification.link);
+    }
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -132,10 +142,10 @@ export default function Notification() {
                 {notifications.map((notification) => (
                   <div
                     key={notification.id}
-                    className={`flex items-start gap-3 p-4 hover:bg-muted/50 ${
+                    className={`flex items-start gap-3 p-4 hover:bg-muted/50 cursor-pointer ${
                       notification.status === 'UNREAD' ? 'bg-muted/30' : ''
                     }`}
-                    onClick={() => markAsRead(notification.id)}
+                    onClick={() => handleClickNotification(notification)}
                   >
                     <div className="flex-shrink-0 pt-1">
                       {notification.status === 'UNREAD' ? (

@@ -28,10 +28,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 
 app.get('/qr-data', async (_req: Request, res: Response) => {
-  const gatewayURL = `http://10.15.225.103:${HTTP_PORT}/connect`;
+  const data = {
+    host: 'localhost',
+    port: 1883,
+    clientId: 'esp8266',
+  };
   try {
-    const qr = await QRCode.toDataURL(gatewayURL);
-    res.json({ qr, url: gatewayURL });
+    const qr = await QRCode.toDataURL(JSON.stringify(data));
+    res.json({ qr, url: JSON.stringify(data) });
   } catch {
     res.status(500).json({ error: 'Không tạo được mã QR' });
   }
@@ -79,6 +83,17 @@ mqttClient.on('message', (topic: string, message: Buffer) => {
       latestSensorData[type] = { time, data };
       console.log(
         `✅ ${type}: ${data} @ ${new Date(time * 1000).toLocaleString()}`,
+      );
+      aedesServer.publish(
+        {
+          topic: `esp8266/sensor`,
+          payload: JSON.stringify({ time, data }),
+          cmd: 'publish',
+          qos: 0,
+          dup: false,
+          retain: false,
+        },
+        () => {},
       );
     } else {
       console.warn('⚠️ Payload thiếu trường:', message.toString());

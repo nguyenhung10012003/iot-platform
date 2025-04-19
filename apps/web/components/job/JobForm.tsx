@@ -30,7 +30,7 @@ type JobFormProps = {
 
 const fetcher = async (url: string) =>
   api.get<any, UserLocation[]>(url).then((res) => res);
-export default function JobForm({ form, locationId, dictionary }: JobFormProps & DictionaryProps) {
+export default function JobForm({ form, locationId }: JobFormProps) {
   const { data, isLoading } = useSWR(
     `location/user?locationId=${locationId}&role=EMPLOYEE`,
     fetcher,
@@ -46,7 +46,7 @@ export default function JobForm({ form, locationId, dictionary }: JobFormProps &
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{dictionary.title}</FormLabel>
+              <FormLabel>Title</FormLabel>
               <FormControl>
                 <Input {...field} />
               </FormControl>
@@ -59,7 +59,7 @@ export default function JobForm({ form, locationId, dictionary }: JobFormProps &
           control={form.control}
           render={({ field }) => (
             <FormItem>
-              <FormLabel>{dictionary.description}</FormLabel>
+              <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea {...field} />
               </FormControl>
@@ -72,12 +72,12 @@ export default function JobForm({ form, locationId, dictionary }: JobFormProps &
           render={({ field }) => {
             return (
               <FormItem>
-                <FormLabel>{dictionary.assignee}</FormLabel>
+                <FormLabel>Assignee</FormLabel>
                 <Select onValueChange={field.onChange}>
                   <SelectTrigger>
                     <FormControl>
                       <SelectValue
-                        placeholder={dictionary.enterUsernameAssignee}
+                        placeholder="Enter username assignee"
                         defaultValue={field.value}
                       ></SelectValue>
                     </FormControl>

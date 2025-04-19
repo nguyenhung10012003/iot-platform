@@ -20,7 +20,7 @@ type SelectLocationProps = {
 
 const fetcher = (url: string) =>
   api.get<any, LocationModel[]>(url).then((res) => res);
-export default function SelectLocation({ onSelect, dictionary }: SelectLocationProps & DictionaryProps) {
+export default function SelectLocation({ onSelect}: SelectLocationProps) {
   const { data, error, isLoading, mutate } = useSWR(
     '/location?includeArea=true',
     fetcher,
@@ -36,7 +36,7 @@ export default function SelectLocation({ onSelect, dictionary }: SelectLocationP
   return (
     <Select onValueChange={onValueChange}>
       <SelectTrigger className="w-full">
-        <SelectValue placeholder={dictionary.chooseLocation} />
+        <SelectValue placeholder="Chọn vị trí" />
       </SelectTrigger>
       <SelectContent>
         {data?.map((location) => (
@@ -46,7 +46,6 @@ export default function SelectLocation({ onSelect, dictionary }: SelectLocationP
         ))}
         <SelectSeparator />
         <CreateLocationDialog
-          dictionary={dictionary}
           onSave={(location) => {
             onSelect(location);
             mutate();
@@ -57,7 +56,7 @@ export default function SelectLocation({ onSelect, dictionary }: SelectLocationP
               className="w-full h-auto min-h-0 p-0 bg-transparent justify-start px-1"
             >
               <Icons.plus className="w-4 h-4 mr-2" />
-              {dictionary.createLocation}
+              Tạo vị trí mới
             </Button>
           }
         />

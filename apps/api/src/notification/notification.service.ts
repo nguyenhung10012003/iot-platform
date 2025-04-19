@@ -40,15 +40,18 @@ export class NotificationService {
 
   async createNotification({
     content,
+    link,
     sendToUserId,
   }: {
     content: string;
     sendToUserId: string;
+    link?: string;
   }) {
     const notification = await this.prisma.notification.create({
       data: {
         content,
         sendToUserId,
+        link,
       },
     });
 

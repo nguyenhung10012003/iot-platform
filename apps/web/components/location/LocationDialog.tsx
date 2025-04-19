@@ -31,12 +31,11 @@ export default function LocationDialog({
   triggerBtn,
   location,
   onSave,
-  dictionary,
-}: LocationDialogProps & DictionaryProps) {
+}: LocationDialogProps) {
   const [open, setOpen] = useState<boolean>(false);
   const formSchema = z.object({
-    name: z.string({ message: dictionary.filedIsRequired }),
-    address: z.string({ message: dictionary.filedIsRequired }),
+    name: z.string({ message: 'Tên vị trí là bắt buộc' }),
+    address: z.string({ message: 'Địa chỉ là bắt buộc' }),
     capacity: z.number(),
     area: z.number(),
     disPerRow: z.number(),
@@ -104,10 +103,10 @@ export default function LocationDialog({
           });
       onSave && onSave(res);
       await revalidate('locations');
-      toast.success(dictionary.locationSaveSuccessfully);
+      toast.success('Lưu thông tin vị trí thành công');
       handleOpenChange(false);
     } catch (e) {
-      toast.error(dictionary.locationSaveFailed);
+      toast.error('Lưu thông tin vị trí thất bại');
     }
   };
 
@@ -120,26 +119,26 @@ export default function LocationDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        {triggerBtn ? triggerBtn : <Button>{dictionary.createLocation}</Button>}
+        {triggerBtn ? triggerBtn : <Button>Tạo vị trí mới</Button>}
       </DialogTrigger>
       <DialogContent className="w-full max-w-[700px] max-h-screen overflow-auto">
         <DialogHeader>
           <DialogTitle>
-            {location ? dictionary.editLocation : dictionary.createLocation}
+            {location ? 'Chỉnh sửa thông tin vị trí' : 'Tạo vị trí mới'}
           </DialogTitle>
           <DialogDescription>
             {location
-              ? dictionary.editLocationDetails
-              : dictionary.fillInLocationDetails}
+              ? 'Chỉnh sửa thông tin vị trí'
+              : 'Tạo vị trí mới'}
           </DialogDescription>
         </DialogHeader>
         <LocationForm form={form} onSubmit={onSubmit} />
         <DialogFooter>
           <DialogClose asChild>
-            <Button variant="destructive">{dictionary.cancel}</Button>
+            <Button variant="destructive">Hủy</Button>
           </DialogClose>
           <Button onClick={() => form.handleSubmit(onSubmit)()}>
-            {dictionary.save}
+            Lưu
           </Button>
         </DialogFooter>
       </DialogContent>

@@ -10,6 +10,22 @@ export class GatewayService {
     private readonly mqttService: MqttService,
   ) {}
 
+  async testConnection(data: {
+    host: string;
+    port: number;
+    username?: string;
+    password?: string;
+  }) {
+    const connectionSuccess = await this.mqttService.testConnection({
+      host: data.host,
+      port: data.port,
+      username: data.username,
+      password: data.password,
+      protocol: data.port === 1883 ? 'mqtt' : 'mqtts',
+    });
+    return { status: connectionSuccess ? 'success' : 'error' };
+  }
+
   async createGateway(data: GatewayCreateDto) {
     const gateway = await this.prisma.gateway.create({
       data: {

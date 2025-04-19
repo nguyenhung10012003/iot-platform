@@ -24,6 +24,16 @@ export class GatewayController {
     return this.gatewayService.createGateway(data);
   }
 
+  @Post('test-connection')
+  async testConnection(@Body() data: {
+    host: string;
+    port: number;
+    username?: string;
+    password?: string;
+  }) {
+    return this.gatewayService.testConnection(data);
+  }
+
   @Get()
   async getGateways(
     @Req() req: AuthenticatedRequest,

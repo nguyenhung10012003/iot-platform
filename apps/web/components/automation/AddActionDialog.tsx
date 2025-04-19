@@ -32,9 +32,8 @@ export default function AddActionDialog({
   trigger,
   onAdd,
   actionFilters,
-  dictionary,
   allowAI,
-}: AddActionDialogProps & DictionaryProps) {
+}: AddActionDialogProps) {
   const [action, setAction] = useState<Action | undefined>(actionDefault);
   const [open, setOpen] = useState(false);
   const { id }: { id: string } = useParams();
@@ -85,7 +84,6 @@ export default function AddActionDialog({
               locationId={id}
               defaultValue={action?.deviceId}
               onChange={(value) => setAction({ ...action, deviceId: value })}
-              dictionary={dictionary}
               deviceTypes={['LIGHT_BULB', 'DOME', 'VALVE']}
             />
           </div>

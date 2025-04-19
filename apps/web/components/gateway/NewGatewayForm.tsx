@@ -157,7 +157,7 @@ export default function NewGatewayForm({
             <FormLabel htmlFor="locationId" className="mb-2 mt-1">
               {dictionary.locations}
             </FormLabel>
-            <SelectLocation onSelect={setLocation} dictionary={dictionary} />
+            <SelectLocation onSelect={setLocation} />
           </FormItem>
 
           <FormField

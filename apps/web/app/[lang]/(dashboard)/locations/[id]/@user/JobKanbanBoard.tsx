@@ -14,19 +14,24 @@ import api from '../../../../../../config/api';
 import useDebounce from '../../../../../../hooks/useDebounce';
 import { useUser } from '../../../../../../hooks/useUser';
 import { Job, JobCreated, JobStatus } from '../../../../../../types/job';
+import { Button } from '@repo/ui/components/ui/button';
+import { Icons } from '@repo/ui/components/icons/icons';
 const fetcher = async (url: string) =>
   api.get<any, Job[]>(url).then((res) => res);
 
-interface JobKanbanBoardProps {
-  locationId: string;
-  dictionary: any;
-}
 
 const JobItem = ({ job }: { job: Job }) => {
   const { user } = useUser();
-
+  const onDeleteJob = async () => {
+    try {
+      await api.delete(`job/${job.id}`);
+      mutate(`job?locationId=${job.locationId}`);
+    } catch (error) {
+      toast.error('Failed to delete job');
+    }
+  }
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full group">
       <div className="flex flex-col px-3 py-3 gap-1">
         <div className="flex justify-between gap-2">
           <h4 className="text-lg font-medium line-clamp-1 text-ellipsis cursor-pointer w-full">
@@ -44,11 +49,27 @@ const JobItem = ({ job }: { job: Job }) => {
           maxAvatars={3}
           size="sm"
         />
-        <div className="flex gap-2">
+        <div className="flex gap-0 items-center">
+
+          {user?.role === 'USER' && <JobDialog
+            job={job}
+            locationId={job.locationId}
+            onSave={() => mutate(`job?locationId=${job.locationId}`)}
+            trigger={
+              <Button variant="ghost" size="icon" className='group-hover:flex hidden w-7 h-7'>
+                <Icons.edit className="w-4 h-4" />
+              </Button>
+            }
+          />}
+          {user?.role === 'USER' && (
+            <Button variant="ghost" size="icon" className='group-hover:flex hidden w-7 h-7' onClick={onDeleteJob}>
+              <Icons.delete className="w-4 h-4" />
+            </Button>
+          )}
           <UploadReportDialog
             job={job}
             triggerBtn={
-              <div className="flex gap-1 items-center">
+              <div className="flex gap-1 items-center pl-1.5">
                 <FileText className="w-4 h-4" />
                 <span className="text-sm text-muted-foreground">
                   {job.reports?.length || 0}
@@ -65,8 +86,7 @@ const JobItem = ({ job }: { job: Job }) => {
 
 export default function JobKanbanBoard({
   locationId,
-  dictionary,
-}: JobKanbanBoardProps) {
+}: { locationId: string }) {
   const { data, isLoading, error, mutate } = useSWR(
     `job?locationId=${locationId}`,
     fetcher,
@@ -276,7 +296,6 @@ export default function JobKanbanBoard({
         <JobDialog
           locationId={locationId}
           onSave={handleOnSaveJob}
-          dictionary={dictionary}
         />
       </div>
       <KanbanBoard

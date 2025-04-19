@@ -6,12 +6,11 @@ import { useMemo } from 'react';
 import useSWR from 'swr';
 import api from '../../config/api';
 import { DeviceModel } from '../../types/device';
-import { DictionaryProps } from '../../types/dictionary';
 import { groupSensorData } from '../../utils/utils';
 import Weather from '../charts/WeatherChart';
+import DragDropContainer from '../DragDropContainer';
 import DeviceSwitcher from './DeviceSwitcher';
 import RadianCardChart from './RadianCardChart';
-import DragDropContainer from '../DragDropContainer';
 
 const fetcher = (url: string) =>
   api.get<any, DeviceModel[]>(url).then((res) => res);
@@ -22,10 +21,7 @@ const colors = {
   Wind: 'hsl(var(--chart-4))',
   SoilMoisture: 'hsl(var(--chart-5))',
 };
-export default function ChartSection({
-  locationId,
-  dictionary,
-}: { locationId: string } & DictionaryProps) {
+export default function ChartSection({ locationId }: { locationId: string }) {
   const { data, isLoading } = useSWR(
     `/device?locationId=${locationId}`,
     fetcher,
@@ -67,9 +63,11 @@ export default function ChartSection({
   return (
     <div className="flex flex-col gap-4 mt-2 pb-4">
       <DragDropContainer className="grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 grid-cols-2 gap-4 mx-8">
-        {data?.filter((device) => device.deviceType !== 'SENSOR').map((device) => {
-          return <DeviceSwitcher key={device.id} device={device} />;
-        })}
+        {data
+          ?.filter((device) => device.deviceType !== 'SENSOR')
+          .map((device) => {
+            return <DeviceSwitcher key={device.id} device={device} />;
+          })}
       </DragDropContainer>
       <div className="grid lg:grid-cols-2 grid-cols-1 gap-4 mx-8">
         <DragDropContainer className="grid grid-cols-1 md:grid-cols-2 gap-4">

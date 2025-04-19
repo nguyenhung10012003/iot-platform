@@ -4,5 +4,6 @@ export type Notification = {
   sendToUserId: string;
   creatorId: string;
   status: 'READ' | 'UNREAD';
+  link?: string;
   createdAt: string;
 };

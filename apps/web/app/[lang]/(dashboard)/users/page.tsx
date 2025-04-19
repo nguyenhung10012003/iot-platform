@@ -1,7 +1,6 @@
 import { cookies } from 'next/headers';
 import UserTable from '../../../../components/user/UserTable';
 import { User } from '../../../../types/user';
-import { getDictionary } from '../../../dictionaries';
 
 export const dynamic = 'force-dynamic';
 const getUser = async () => {
@@ -32,13 +31,10 @@ export default async function UserPage({
     lang: string;
   };
 }) {
-  const [dictionary, data] = await Promise.all([
-    getDictionary(params.lang),
-    getUser(),
-  ]);
+  const [data] = await Promise.all([getUser()]);
   return (
     <div className="flex flex-col gap-4 p-4 md:p-6">
-      <UserTable dictionary={dictionary} data={data || []} />
+      <UserTable data={data || []} />
     </div>
   );
 }

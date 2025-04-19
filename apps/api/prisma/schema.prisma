@@ -180,6 +180,7 @@ model Notification {
   sendToUserId String @db.ObjectId
   sendToUser   User   @relation(fields: [sendToUserId], references: [id])
   content      String
+  link         String?
   status       NotificationStatus @default(UNREAD)
   createdAt    DateTime           @default(now())
 }

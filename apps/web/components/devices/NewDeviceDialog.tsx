@@ -17,7 +17,6 @@ import { z } from 'zod';
 import api from '../../config/api';
 import { Device } from '../../types/device';
 import { DeviceTemplateModel } from '../../types/device-template';
-import { DictionaryProps } from '../../types/dictionary';
 import { GatewayModel } from '../../types/gateway';
 import Stepper from '../Stepper';
 import NewDeviceForm from './NewDeviceForm';
@@ -35,10 +34,9 @@ type NewDeviceDialogProps = {
 export default function NewDeviceDialog({
   template,
   triggerBtn,
-  dictionary,
   onCreate,
   gateway,
-}: NewDeviceDialogProps & DictionaryProps) {
+}: NewDeviceDialogProps) {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [templateChoosen, setTemplateChoosen] = useState<
     DeviceTemplateModel | undefined
@@ -52,11 +50,11 @@ export default function NewDeviceDialog({
   );
 
   const formSchema = z.object({
-    name: z.string({ message: dictionary.fieldIsRequired }),
-    serialNumber: z.string({ message: dictionary.fieldIsRequired }),
-    areaId: z.string({ message: dictionary.fieldIsRequired }),
-    topic: z.string({ message: dictionary.fieldIsRequired }),
-    gatewayId: z.string({ message: dictionary.fieldIsRequired }),
+    name: z.string({ message: 'Field is required' }),
+    serialNumber: z.string({ message: 'Field is required' }),
+    areaId: z.string({ message: 'Field is required' }),
+    topic: z.string({ message: 'Field is required' }),
+    gatewayId: z.string({ message: 'Field is required' }),
   });
 
   const form = useForm<Device>({
@@ -71,10 +69,10 @@ export default function NewDeviceDialog({
         deviceType: templateChoosen?.deviceType,
       });
       onCreate && onCreate();
-      toast.success(dictionary.deviceCreatedSuccessfully);
+      toast.success('Device created successfully');
       setOpen(false);
     } catch (e) {
-      toast.error(dictionary.failedToCreateDevice);
+      toast.error('Failed to create device');
     }
   };
 
@@ -83,9 +81,7 @@ export default function NewDeviceDialog({
       component: () => (
         <>
           <div>
-            <h1 className="text-lg font-semibold mb-2">
-              {dictionary.chooseATemplate}
-            </h1>
+            <h1 className="text-lg font-semibold mb-2">Choose a template</h1>
             {!template && (
               <SelectTemplate
                 chooseTemplate={template}
@@ -99,10 +95,10 @@ export default function NewDeviceDialog({
           {templateChoosen && (
             <div className="flex py-2">
               <div className="w-full flex flex-col">
-                <h2 className="font-semibold text-lg">{`${dictionary.modelName}: ${templateChoosen.model}`}</h2>
-                <span className="">{`Description: ${templateChoosen.description || dictionary.noDescriptionForThis}`}</span>
-                <span>{`${dictionary.deviceType}: ${templateChoosen.deviceType}`}</span>
-                <span>{`${dictionary.yearOfManufacture}: ${templateChoosen.year}`}</span>
+                <h2 className="font-semibold text-lg">{`Model Name: ${templateChoosen.model}`}</h2>
+                <span className="">{`Description: ${templateChoosen.description || 'No description for this template'}`}</span>
+                <span>{`Device Type: ${templateChoosen.deviceType}`}</span>
+                <span>{`Year of Manufacture: ${templateChoosen.year}`}</span>
               </div>
               <Image
                 src={templateChoosen.image || '/image/device.svg'}
@@ -117,7 +113,7 @@ export default function NewDeviceDialog({
       ),
     },
     {
-      component: () => <NewDeviceForm form={form} dictionary={dictionary} />,
+      component: () => <NewDeviceForm form={form} />,
     },
   ];
   const totalSteps = steps.length;
@@ -147,9 +143,7 @@ export default function NewDeviceDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        {triggerBtn || (
-          <Button variant="secondary">{dictionary.addDevice}</Button>
-        )}
+        {triggerBtn || <Button variant="secondary">Add Device</Button>}
       </DialogTrigger>
       <DialogContent
         includeX={false}
@@ -169,10 +163,10 @@ export default function NewDeviceDialog({
             disabled={currentStep === 1}
             className="bg-muted hover:bg-muted/90"
           >
-            {dictionary.back}
+            Back
           </Button>
           <Button onClick={handleNext} disabled={disabledNext}>
-            {currentStep === totalSteps ? dictionary.done : dictionary.next}
+            {currentStep === totalSteps ? 'Done' : 'Next'}
           </Button>
         </DialogFooter>
       </DialogContent>

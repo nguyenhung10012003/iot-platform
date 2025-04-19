@@ -1,5 +1,6 @@
 import { HasAnyRole } from '@app/common/decorators/has-role.decorator';
 import { AccessTokenGuard } from '@app/common/guards';
+import { AuthenticatedRequest } from '@app/common/types';
 import {
   Body,
   Controller,
@@ -9,6 +10,7 @@ import {
   Patch,
   Post,
   Query,
+  Req,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -17,8 +19,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { AwsS3Service } from 'src/s3/aws-s3.service';
 import { DeviceTemplateService } from './device-template.service';
 import { CreateDeviceTemplateDto } from './types/create-device-teamplate.dto';
-import { UpdateDeviceTemplateDto } from './types/update-device-template.dto';
 import { GetDeviceTemplateQuery } from './types/get-device-template.query';
+import { UpdateDeviceTemplateDto } from './types/update-device-template.dto';
 
 @Controller('device-template')
 @UseGuards(AccessTokenGuard)
@@ -82,7 +84,11 @@ export class DeviceTemplateController {
   }
 
   @Get()
-  async getDeviceTemplates(@Query() query: GetDeviceTemplateQuery) {
+  async getDeviceTemplates(
+    @Query() query: GetDeviceTemplateQuery,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const user = req.user;
     return this.deviceTemplateService.getDeviceTemplates({
       where: {
         model: {
@@ -91,7 +97,19 @@ export class DeviceTemplateController {
         deviceType: {
           in: query.deviceType,
         },
+        userIds:
+          user.role === 'ADMIN'
+            ? undefined
+            : {
+                has: user.userId,
+              },
       },
+      include:
+        user.role === 'ADMIN'
+          ? {
+              users: true,
+            }
+          : undefined,
     });
   }
 

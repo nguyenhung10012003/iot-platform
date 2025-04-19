@@ -66,6 +66,9 @@ export class JobService {
       data: {
         ...data,
       },
+      include: {
+        location: true,
+      }
     });
 
     if (data.status) {
@@ -78,6 +81,7 @@ export class JobService {
         const notification = await this.notificationService.createNotification({
           content: `${user?.name || user.username} {{updateStatusJob}}: "${job.title}" {{to}} "${job.status}"`,
           sendToUserId: job.creatorId,
+          link: `/locations/${job.location.id}?tab=jobs`,
         });
 
         Logger.debug(`Notification: ${JSON.stringify(notification)}`);
@@ -95,6 +99,7 @@ export class JobService {
         const notification = await this.notificationService.createNotification({
           content: `${user?.name || user.username} {{updateStatusJob}}: "${job.title}" {{to}} "${job.status}"`,
           sendToUserId: job.asigneeId,
+          link: `/locations/${job.location.id}?tab=jobs`,
         });
 
         this.notificationService.sendNotificationToUser(
@@ -115,6 +120,7 @@ export class JobService {
       const notification = await this.notificationService.createNotification({
         content: `${user?.name || user.username} {{addReportJob}}: "${job.title}"`,
         sendToUserId: job.creatorId,
+        link: `/locations/${job.location.id}?tab=jobs`,
       });
 
       this.notificationService.sendNotificationToUser(
@@ -148,10 +154,12 @@ export class JobService {
         this.notificationService.createNotification({
           content: `${employer.name || employer.username} {{changeJob}} "${job.title}" {{to}} ${newAssignee.name || newAssignee.username}`,
           sendToUserId: oldJob.asigneeId,
+          link: `/locations/${job.location.id}?tab=jobs`,
         }),
         this.notificationService.createNotification({
           content: `${employer.name || employer.username} {{changeJob}} "${job.title}" {{to}} {{you}}`,
           sendToUserId: job.asigneeId,
+          link: `/locations/${job.location.id}?tab=jobs`,
         }),
       ]);
 

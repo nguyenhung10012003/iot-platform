@@ -30,7 +30,6 @@ import {
   DeviceStateConditionType,
 } from '../../types/automation';
 import { SensorDataType } from '../../types/device';
-import { DictionaryProps } from '../../types/dictionary';
 import { parseCron, toCronString } from '../../utils/cron';
 import AddActionDialog from './AddActionDialog';
 import ChooseDevice from './ChooseDevice';
@@ -41,14 +40,13 @@ type AutomationDialogProps = {
   triggerBtn?: React.ReactNode;
   automation?: AutomationModel;
   onSaved?: () => void;
-} & DictionaryProps;
+}
 
 export default function AutomationDialog({
   triggerBtn,
   automation,
   onSaved,
   locationId,
-  dictionary,
 }: AutomationDialogProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [name, setName] = useState(automation?.name);
@@ -219,7 +217,6 @@ export default function AutomationDialog({
                 locationId={locationId}
                 defaultValue={automation?.deviceId}
                 onChange={(value) => setChoosenDevice(value)}
-                dictionary={dictionary}
                 deviceTypes={['LIGHT_BULB', 'DOME', 'VALVE']}
               />
             </div>
@@ -289,7 +286,6 @@ export default function AutomationDialog({
                 description: 'Watering the plant',
               },
             ]}
-            dictionary={dictionary}
           />
         </div>
       );
@@ -312,7 +308,6 @@ export default function AutomationDialog({
               value={choosenDevice}
               locationId={locationId}
               onChange={(value) => setChoosenDevice(value)}
-              dictionary={dictionary}
               deviceTypes={['SENSOR']}
             />
           </div>
@@ -429,7 +424,6 @@ export default function AutomationDialog({
                 description: 'Watering the plant',
               }
             ]}
-            dictionary={dictionary}
           />
         </div>
       );
@@ -488,7 +482,6 @@ export default function AutomationDialog({
                 description: 'Watering the plant',
               }
             ]}
-            dictionary={dictionary}
             allowAI={false}
           />
         </div>

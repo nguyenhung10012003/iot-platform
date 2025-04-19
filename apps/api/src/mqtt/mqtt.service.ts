@@ -81,11 +81,10 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
   }
 
   /**
-   * Creates a new MQTT client and waits for connection confirmation
+   * Creates a new MQTT client
    * @param id - The client ID
    * @param options - MQTT client options
-   * @returns Promise<MqttClient> - The connected MQTT client
-   * @throws Error if connection confirmation is not received within 10 seconds
+   * @returns Promise<MqttClient> - The MQTT client
    */
   async createClient(id: string, options?: IClientOptions) {
     try {
@@ -98,59 +97,69 @@ export class MqttService implements OnModuleInit, OnModuleDestroy {
         resubscribe: true,
       });
 
-      // Create a promise that resolves when we receive the connection confirmation
-      const connectionConfirmed = new Promise<MqttClient>((resolve, reject) => {
-        const timeout = setTimeout(() => {
-          client.end();
-          reject(
-            new Error(
-              `Connection confirmation timeout after 10 seconds, clientId: ${client.options.clientId}`,
-            ),
-          );
-        }, 10000);
-
-        // Subscribe to the connection confirmation topic
-        client.subscribe(
-          `gateway/connected/${client.options.clientId}`,
-          (err) => {
-            if (err) {
-              clearTimeout(timeout);
-              reject(err);
-              return;
-            }
-          },
-        );
-
-        // Handle the connection confirmation message
-        const messageHandler = (topic: string, message: Buffer) => {
-          try {
-            const data = JSON.parse(message.toString());
-            if (
-              data.type === 'gateway/connected' &&
-              data.data?.status === 'connected'
-            ) {
-              clearTimeout(timeout);
-              client.removeListener('message', messageHandler);
-              resolve(client);
-            }
-          } catch (e) {
-            // Ignore parsing errors
-          }
-        };
-
-        client.on('message', messageHandler);
-      });
-
-      // Wait for the connection confirmation
-      await connectionConfirmed;
-
       this.client.set(id, { client, callbacks: [] });
-      Logger.log(`Client id: ${id} Connected and confirmed`, 'MqttService');
+      Logger.log(`Client id: ${id} created`, 'MqttService');
 
       return client;
     } catch (e: any) {
       throw e;
     }
+  }
+
+  /**
+   * Tests the MQTT connection and waits for confirmation
+   * @param id - The client ID
+   * @returns Promise<boolean> - True if connection is confirmed, false otherwise
+   */
+  async testConnection(options: IClientOptions): Promise<boolean> {
+    const id = uuid();
+    const client = await connectAsync({
+      ...options,
+      clientId: id,
+      clean: true,
+      connectTimeout: 5000,
+      reconnectPeriod: 1000,
+    });
+    if (!client) {
+      throw new Error('Client not found');
+    }
+
+    return new Promise<boolean>((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error('Connection confirmation timeout after 10 seconds'));
+      }, 10000);
+
+      // Subscribe to the connection confirmation topic
+      client.subscribe(
+        `gateway/connected/${id}`,
+        (err) => {
+          if (err) {
+            clearTimeout(timeout);
+            reject(err);
+            return;
+          }
+        },
+      );
+
+      // Handle the connection confirmation message
+      const messageHandler = (topic: string, message: Buffer) => {
+        try {
+          const data = JSON.parse(message.toString());
+          if (
+            data.type === 'gateway/connected' &&
+            data.data?.status === 'connected'
+          ) {
+            clearTimeout(timeout);
+            client.removeListener('message', messageHandler);
+            resolve(true);
+          }
+        } catch (e) {
+          // Ignore parsing errors
+        }
+      };
+
+      client.on('message', messageHandler);
+    });
   }
 
   getClient(id: string) {

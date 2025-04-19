@@ -14,14 +14,13 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import React from 'react';
-import { DictionaryProps } from '../../types/dictionary';
 import { User } from '../../types/user';
 import DataTable from '../DataTable';
-
+import { useUser } from '../../hooks/useUser';
 export default function UserTable({
-  dictionary,
   data,
-}: DictionaryProps & { data: User[] }) {
+}: { data: User[] }) {
+  const { user } = useUser();
   const columns: ColumnDef<User>[] = [
     {
       id: 'select',
@@ -54,7 +53,7 @@ export default function UserTable({
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
             className="p-0 hover:bg-transparent"
           >
-            {dictionary.username}
+            Username
             <Icons.sort className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -133,7 +132,7 @@ export default function UserTable({
   );
   const [rowSelection, setRowSelection] = React.useState({});
   const table = useReactTable({
-    data: data || [],
+    data: user?.role === 'ADMIN' ? data.filter(user => user.role === 'USER') : data,
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -153,7 +152,7 @@ export default function UserTable({
     <div className="w-full">
       <div className="flex items-center py-4 justify-between">
         <Input
-          placeholder={dictionary.filterName}
+          placeholder="Filter by username"
           className="max-w-sm"
           value={
             (table.getColumn('username')?.getFilterValue() as string) || ''
@@ -163,7 +162,7 @@ export default function UserTable({
           }}
         />
       </div>
-      <DataTable table={table} columns={columns} dictionary={dictionary} />
+      <DataTable table={table} columns={columns} />
     </div>
   );
 }

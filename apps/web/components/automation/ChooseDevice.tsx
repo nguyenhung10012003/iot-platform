@@ -10,7 +10,6 @@ import useSWR from 'swr';
 import api from '../../config/api';
 import { DeviceModel } from '../../types/device';
 import { DeviceType } from '../../types/device-template';
-import { DictionaryProps } from '../../types/dictionary';
 
 const fetcher = (url: string) =>
   api.get<any, DeviceModel[]>(url).then((res) => res);
@@ -19,7 +18,6 @@ export default function ChooseDevice({
   defaultValue,
   onChange,
   value,
-  dictionary,
   deviceTypes,
 }: {
   locationId: string;
@@ -27,7 +25,7 @@ export default function ChooseDevice({
   value?: string;
   onChange: (value: string) => void;
   deviceTypes?: DeviceType[];
-} & DictionaryProps) {
+}) {
   const { data } = useSWR(`/device?locationId=${locationId}`, fetcher, {
     revalidateOnFocus: false,
     refreshInterval: 0,

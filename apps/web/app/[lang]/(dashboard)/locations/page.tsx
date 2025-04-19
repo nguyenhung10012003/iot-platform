@@ -48,7 +48,7 @@ export default async function LocationsPage({
     return (
       <div className="flex items-center justify-center h-full flex-col">
         <p className="text-lg text-gray-500">{dictionary.noLocationFound}</p>
-        <LocationDialog dictionary={dictionary} />
+        <LocationDialog  />
       </div>
     );
   }
@@ -57,7 +57,7 @@ export default async function LocationsPage({
     <div className="flex flex-col gap-4 p-4 md:p-6">
       <div className="flex justify-between">
         <Searchbox boxClassName="bg-popover border shadow-sm shadow-primary/20 rounded-md" />
-        {role === 'USER' && <LocationDialog dictionary={dictionary} />}
+        {role === 'USER' && <LocationDialog />}
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
         {data?.map((location) => (
@@ -71,11 +71,10 @@ export default async function LocationsPage({
               role === 'USER' ? (
                 <div className="flex flex-col gap-2">
                   <LocationDialog
-                    dictionary={dictionary}
                     location={location}
                     triggerBtn={<Button>{dictionary.details}</Button>}
                   />
-                  <DeleteLocationDialog location={location} dictionary={dictionary}/>
+                  <DeleteLocationDialog location={location} />
                 </div>
               ) : null
             }

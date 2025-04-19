@@ -39,6 +39,7 @@ export default function DeviceTemplateDialog({
     year: z.number({ message: dictionary.fieldIsRequired }),
     deviceType: z.string({ message: dictionary.fieldIsRequired }),
     image: z.instanceof(File).optional(),
+    userIds: z.array(z.string()).optional(),
   });
 
   const form = useForm<DeviceTemplate>({
@@ -59,6 +60,11 @@ export default function DeviceTemplateDialog({
     formData.append('deviceType', data.deviceType);
     if (data.image) {
       formData.append('image', data.image);
+    }
+    if (data.userIds) {
+      data.userIds.forEach((userId) => {
+        formData.append('userIds', userId);
+      });
     }
 
     try {

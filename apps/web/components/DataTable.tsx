@@ -9,7 +9,6 @@ import {
 } from '@repo/ui/components/ui/table';
 import { flexRender } from '@tanstack/react-table';
 import { ColumnDef, Table as TableCore } from '@tanstack/table-core';
-import { DictionaryProps } from '../types/dictionary';
 
 type DataTableProps<T = any> = {
   table: TableCore<T>;
@@ -19,8 +18,7 @@ type DataTableProps<T = any> = {
 export default function DataTable({
   table,
   columns,
-  dictionary,
-}: DataTableProps & DictionaryProps) {
+}: DataTableProps) {
   return (
     <>
       <div className="rounded-md border">
@@ -66,7 +64,7 @@ export default function DataTable({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  {dictionary.noResultsFound}
+                  No results found
                 </TableCell>
               </TableRow>
             )}
@@ -85,7 +83,7 @@ export default function DataTable({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            {dictionary.previous}
+            Previous
           </Button>
           <Button
             variant="outline"
@@ -93,7 +91,7 @@ export default function DataTable({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            {dictionary.next}
+            Next
           </Button>
         </div>
       </div>

@@ -22,7 +22,6 @@ import { UseFormReturn } from 'react-hook-form';
 import useSWR from 'swr';
 import api from '../../config/api';
 import { Device } from '../../types/device';
-import { DictionaryProps } from '../../types/dictionary';
 import { GatewayModel } from '../../types/gateway';
 import { LocationModel } from '../../types/location';
 import NewGatewayDialog from '../gateway/NewGatewayDialog';
@@ -34,10 +33,7 @@ type NewDeviceFormProps = {
 
 const fetcher = (url: string) =>
   api.get<any, GatewayModel[]>(url).then((res) => res);
-export default function NewDeviceForm({
-  form,
-  dictionary,
-}: NewDeviceFormProps & DictionaryProps) {
+export default function NewDeviceForm({ form }: NewDeviceFormProps) {
   const [location, setLocation] = useState<LocationModel | undefined>();
   const { data, isLoading } = useSWR(
     location ? `/gateway?locationId=${location?.id}` : `/gateway`,
@@ -85,7 +81,6 @@ export default function NewDeviceForm({
               onSelect={(location) => {
                 setLocation(location);
               }}
-              dictionary={dictionary}
             />
           </FormItem>
 
@@ -136,7 +131,6 @@ export default function NewDeviceForm({
                     ))}
                     <SelectSeparator />
                     <NewGatewayDialog
-                      dictionary={dictionary}
                       triggerBtn={
                         <Button
                           variant={'secondary'}

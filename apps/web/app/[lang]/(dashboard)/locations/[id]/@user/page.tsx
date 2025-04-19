@@ -1,3 +1,4 @@
+'use client';
 import {
   Tabs,
   TabsContent,
@@ -10,44 +11,51 @@ import DiseaseDetectHistory from '../../../../../../components/disease/DiseaseDe
 import ChartSection from '../../../../../../components/location/ChartSection';
 import IrrigationHistory from '../../../../../../components/location/IrrigationHistory';
 import UserLocationTable from '../../../../../../components/location/UserLocationTable';
-import { getDictionary } from '../../../../../dictionaries';
 import JobKanbanBoard from './JobKanbanBoard';
+import { useRouter } from 'next/navigation';
 
-export default async function UserLocationPage({
+export default function UserLocationPage({
   params,
+  searchParams,
 }: {
   params: {
     lang: string;
     id: string;
   };
+  searchParams: {
+    tab: string;
+  };
 }) {
-  const dictionary = await getDictionary(params.lang);
+  const router = useRouter();
+  const onTabChange = (value: string) => {
+    router.push(`/locations/${params.id}?tab=${value}`);
+  }
   return (
-    <Tabs className="flex flex-col gap-4 p-4 md:p-6" defaultValue="devices">
+    <Tabs className="flex flex-col gap-4 p-4 md:p-6" defaultValue={searchParams.tab || 'devices'} onValueChange={onTabChange}>
       <TabsList className="w-full border-b overflow-x-auto overflow-y-hidden md:h-10 h-12">
         <TabsTrigger
           value="devices"
           className="text-lg max-w-[130px] hover:text-primary/70"
         >
-          {dictionary.devices}
+          Devices
         </TabsTrigger>
         <TabsTrigger
           value="users"
           className="text-lg max-w-[130px] hover:text-primary/70"
         >
-          {dictionary.users}
+          Users
         </TabsTrigger>
         <TabsTrigger
           value="jobs"
           className="text-lg max-w-[130px] hover:text-primary/70"
         >
-          {dictionary.jobs}
+          Jobs
         </TabsTrigger>
         <TabsTrigger
           value="charts"
           className="text-lg max-w-[130px] hover:text-primary/70"
         >
-          {dictionary.charts}
+          Charts
         </TabsTrigger>
         <TabsTrigger
           value="automations"
@@ -78,20 +86,20 @@ export default async function UserLocationPage({
         <DeviceTable dictionary={dictionary}/>
       </TabsContent> */}
       <TabsContent value="devices">
-        <DeviceTable dictionary={dictionary} locationId={params.id} />
+        <DeviceTable locationId={params.id} />
       </TabsContent>
       <TabsContent value="users">
-        <UserLocationTable locationId={params.id} dictionary={dictionary} />
+        <UserLocationTable locationId={params.id} />
       </TabsContent>
       <TabsContent value="jobs">
         {/* <JobTable locationId={params.id} dictionary={dictionary} /> */}
-        <JobKanbanBoard locationId={params.id} dictionary={dictionary} />
+        <JobKanbanBoard locationId={params.id} />
       </TabsContent>
       <TabsContent value="charts">
-        <ChartSection locationId={params.id} dictionary={dictionary} />
+        <ChartSection locationId={params.id} />
       </TabsContent>
       <TabsContent value="automations">
-        <AutomationSection dictionary={dictionary} />
+        <AutomationSection />
       </TabsContent>
       <TabsContent value="irrigation">
         <IrrigationHistory locationId={params.id} />

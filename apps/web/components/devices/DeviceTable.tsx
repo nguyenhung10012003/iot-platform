@@ -38,15 +38,13 @@ import {
 import useSWR from 'swr';
 import api from '../../config/api';
 import { DeviceModel } from '../../types/device';
-import { DictionaryProps } from '../../types/dictionary';
 import NewDeviceDialog from './NewDeviceDialog';
 
 const fetcher = (url: string) =>
   api.get<any, DeviceModel[]>(url).then((res) => res);
 export function DeviceTable({
-  dictionary,
   locationId,
-}: DictionaryProps & { locationId: string }) {
+}: { locationId: string }) {
   const { data, isLoading, error, mutate } = useSWR(
     `/device?locationId=${locationId}`,
     fetcher,
@@ -87,7 +85,7 @@ export function DeviceTable({
             className="px-0 hover:bg-transparent"
             onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
           >
-            {dictionary.deviceName}
+            Device Name
             <ArrowUpDown className="ml-2 h-4 w-4" />
           </Button>
         );
@@ -96,7 +94,7 @@ export function DeviceTable({
     },
     {
       accessorKey: 'deviceType',
-      header: dictionary.deviceType,
+      header: 'Device Type',
       cell: ({ row }) => (
         <div className="capitalize">{row.getValue('deviceType')}</div>
       ),
@@ -125,20 +123,20 @@ export function DeviceTable({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-              <DropdownMenuLabel>{dictionary.actions}</DropdownMenuLabel>
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
               {/* <DropdownMenuItem>{dictionary.edit}</DropdownMenuItem> */}
               <DropdownMenuItem
                 onClick={async () => {
                   try {
                     await api.delete(`/device/${device.id}`);
                     mutate();
-                    toast.success(dictionary.deviceDeletedSuccessfully);
+                    toast.success('Device deleted successfully');
                   } catch (e) {
-                    toast.error(dictionary.failedToDeleteDevice);
+                    toast.error('Failed to delete device');
                   }
                 }}
               >
-                {dictionary.delete}
+                Delete
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -178,7 +176,7 @@ export function DeviceTable({
     <div className="w-full">
       <div className="flex items-center py-4 justify-between">
         <Input
-          placeholder={`${dictionary.filterName}...`}
+          placeholder={`Filter name...`}
           value={(table.getColumn('name')?.getFilterValue() as string) ?? ''}
           onChange={(event) =>
             table.getColumn('name')?.setFilterValue(event.target.value)
@@ -186,8 +184,7 @@ export function DeviceTable({
           className="max-w-sm"
         />
         <NewDeviceDialog
-          triggerBtn={<Button>{dictionary.addDevice}</Button>}
-          dictionary={dictionary}
+          triggerBtn={<Button>Add Device</Button>}
           onCreate={mutate}
         />
       </div>
@@ -253,7 +250,7 @@ export function DeviceTable({
             onClick={() => table.previousPage()}
             disabled={!table.getCanPreviousPage()}
           >
-            {dictionary.previous}
+            Previous
           </Button>
           <Button
             variant="outline"
@@ -261,7 +258,7 @@ export function DeviceTable({
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
           >
-            {dictionary.next}
+            Next
           </Button>
         </div>
       </div>

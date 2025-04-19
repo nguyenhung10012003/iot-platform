@@ -38,7 +38,7 @@ export default function DeviceCard({ deviceTemplate, dictionary }: DeviceCardPro
             isHovered ? 'opacity-100' : 'opacity-0'
           }`}
         >
-          <NewDeviceDialog template={deviceTemplate} dictionary={dictionary}/>
+          <NewDeviceDialog template={deviceTemplate} />
         </div>
       </div>
       <CardHeader>

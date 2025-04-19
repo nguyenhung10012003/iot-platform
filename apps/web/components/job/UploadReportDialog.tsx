@@ -14,6 +14,7 @@ import { Download, Loader2, Trash2 } from 'lucide-react';
 import React from 'react';
 import { mutate } from 'swr';
 import api from '../../config/api';
+import { useUser } from '../../hooks/useUser';
 import { Job } from '../../types/job';
 import UploadFileArea from '../UploadFileArea';
 
@@ -38,6 +39,7 @@ export default function UploadReportDialog({
   const [isLoading, setIsLoading] = React.useState(false);
   const [selectedReports, setSelectedReports] = React.useState<number[]>([]);
   const [isDeleting, setIsDeleting] = React.useState(false);
+  const { user } = useUser();
 
   const handleUpload = (files: File[]) => {
     setFiles([...files]);
@@ -154,16 +156,22 @@ export default function UploadReportDialog({
           </DialogDescription>
 
           <div className="pt-2 flex flex-col gap-4">
-            <UploadFileArea
-              onChange={handleUpload}
-              onDrop={handleUpload}
-              value={files}
-              accept=".pdf,.doc,.docx"
-            />
+            {user?.role === 'EMPLOYEE' && (
+              <UploadFileArea
+                onChange={handleUpload}
+                onDrop={handleUpload}
+                value={files}
+                accept=".pdf,.doc,.docx"
+              />
+            )}
 
             <div className="pb-4">
               <div className="flex items-center justify-between">
-                <h3 className="font-medium h-10 flex items-center">Existing Reports</h3>
+                {user?.role === 'EMPLOYEE' && (
+                  <h3 className="font-medium h-10 flex items-center">
+                    Existing Reports
+                  </h3>
+                )}
                 {selectedReports.length > 0 && (
                   <div className="flex gap-2">
                     <Button
@@ -225,9 +233,28 @@ export default function UploadReportDialog({
                   ))}
 
                 {job.reports && job.reports.length === 0 && (
-                  <p className="text-sm text-gray-500">
-                    No reports found for this job.
-                  </p>
+                  <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
+                    <div className="rounded-full bg-muted p-3 mb-4">
+                      <svg
+                        className="w-8 h-8 text-muted-foreground"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                        />
+                      </svg>
+                    </div>
+                    <h3 className="text-lg font-medium mb-2">No Reports Yet</h3>
+                    <p className="text-sm text-muted-foreground max-w-sm">
+                      There are no reports available for this job.
+                    </p>
+                  </div>
                 )}
               </div>
             </div>

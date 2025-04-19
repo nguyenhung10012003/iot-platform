@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "start": "node index.js",
+    "start": "node dist/app.js",
     "dev": "nodemon src/app.ts"
   },
   "dependencies": {

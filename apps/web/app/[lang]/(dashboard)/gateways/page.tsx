@@ -51,7 +51,7 @@ export default async function GatewaysPage({
           <h1 className="text-md text-gray-500">
             {`${dictionary.noGatewaysFound}.${dictionary.createNewOne}`}
           </h1>
-          <NewGatewayDialog dictionary={dictionary} />
+          <NewGatewayDialog  />
         </div>
       </div>
     );
@@ -61,7 +61,7 @@ export default async function GatewaysPage({
     <div className="flex flex-col gap-4 p-4 md:p-6">
       <div className="flex justify-between">
         <DeviceToolbar filter={false} dictionary={dictionary} />
-        <NewGatewayDialog dictionary={dictionary} />
+        <NewGatewayDialog />
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {data
