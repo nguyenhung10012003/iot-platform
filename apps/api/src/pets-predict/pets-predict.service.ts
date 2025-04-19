@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 
@@ -35,15 +35,20 @@ export class PetsPredictService {
   async predict(image: Blob, fileName: string) {
     const formData = new FormData();
     formData.append('image', image, fileName);
-    const result = await fetch(`${process.env.PREDICT_API_URL}/detect`, {
-      method: 'POST',
-      body: formData,
-      // headers: {
-      //   'Content-Type': 'multipart/form-data',
-      // }
-    });
-    const predict = await result.json();
-    return predict?.prediction?.name || "";
+    try {
+      const result = await fetch(`${process.env.PREDICT_API_URL}/detect`, {
+        method: 'POST',
+        body: formData,
+        // headers: {
+        //   'Content-Type': 'multipart/form-data',
+        // }
+      });
+      const predict = await result.json();
+      return predict?.prediction?.name || '';
+    } catch (error) {
+      Logger.error(error);
+      throw new Error('Failed to predict');
+    }
   }
 
   async deletePetsPredict(id: string) {
