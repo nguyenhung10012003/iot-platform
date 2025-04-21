@@ -16,12 +16,12 @@ import {
 } from '@repo/ui/components/ui/popover';
 import { getCookie } from 'cookies-next';
 import { formatDistance } from 'date-fns';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo } from 'react';
 import useSWR from 'swr';
 import api from '../../config/api';
 import { useSocket } from '../../hooks/useSocket';
 import type { Notification } from '../../types/notification';
-import { useRouter } from 'next/navigation';
 
 const fetcher = (url: string) =>
   api.get<any, Notification[]>(url).then((res) => res);
@@ -72,7 +72,9 @@ export default function Notification() {
 
   const markAllAsRead = () => {
     try {
-      const unreadIds = notifications?.filter((n) => n.status === 'UNREAD')?.map((n) => n.id);
+      const unreadIds = notifications
+        ?.filter((n) => n.status === 'UNREAD')
+        ?.map((n) => n.id);
       if (unreadIds) {
         api.patch('/notifications/mark-as-read', { ids: unreadIds });
         mutate(
@@ -97,7 +99,20 @@ export default function Notification() {
     if (notification.link) {
       router.push(notification.link);
     }
-  }
+  };
+
+  const parseNotificationContent = (content: string) => {
+    const actionMap: Record<string, string> = {
+      addReportJob: 'added a new report job',
+      updateStatusJob: 'updated the status of job to you',
+      to: 'to',
+      assignJob: 'assigned job',
+    };
+
+    return content.replace(/\{\{(\w+)\}\}/g, (match, action) => {
+      return actionMap[action] || match;
+    });
+  };
 
   return (
     <Popover>
@@ -111,10 +126,7 @@ export default function Notification() {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent
-        align="end"
-        className="rounded-xl w-[400px] p-0"
-      >
+      <PopoverContent align="end" className="rounded-xl w-[400px] p-0">
         <Card className="border-0 shadow-none">
           <CardHeader className="border-b px-4 py-3">
             <div className="flex items-center justify-between">
@@ -158,7 +170,7 @@ export default function Notification() {
                       <p
                         className={`text-sm ${notification.status === 'UNREAD' ? 'font-medium' : ''}`}
                       >
-                        {notification.content}
+                        {parseNotificationContent(notification.content)}
                       </p>
                       <p className="text-xs text-muted-foreground">
                         {formatDistance(
