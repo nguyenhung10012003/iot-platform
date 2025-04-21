@@ -70,7 +70,7 @@ export default function SignupForm({ dictionary }: DictionaryProps) {
       const idToken = await signInWithGoogle();
       const data = await authenticateWithGoogle(idToken);
       setTokenCookies(data);
-      router.push('/');
+      router.push('/home');
       router.refresh();
       toast.success(`${dictionary.welcomeBack}!`, {
         description: dictionary.youHaveSuccessfullySignin,

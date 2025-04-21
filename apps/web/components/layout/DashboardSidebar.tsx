@@ -7,6 +7,7 @@ import { usePathname } from 'next/navigation';
 import React, { useMemo, useState } from 'react';
 import { DictionaryProps } from '../../types/dictionary';
 import { Role } from '../../types/role';
+import { Leaf } from 'lucide-react';
 type SidebarItemProps = {
   isCollapsed?: boolean;
   active?: boolean;
@@ -101,13 +102,7 @@ export default function DashboardSidebar({
       className={`fixed z-50 md:relative flex h-screen flex-col shadow-md rounded-xxl transition-all duration-200 ease-linear ${!isCollapsed ? 'w-[300px]' : 'w-[64px]'}`}
     >
       <div className="h-20 border-b transition-all duration-300 ease-linear flex items-center justify-center">
-        <Image
-          src="/image/logo.png"
-          alt="logo"
-          width={100}
-          height={100}
-          className="w-16 h-16 rounded-full"
-        />
+        <Leaf className="h-8 w-8 text-green-600" />
       </div>
       <ScrollArea className="w-full h-full p-2 transition-all duration-300 ease-linear">
         {items

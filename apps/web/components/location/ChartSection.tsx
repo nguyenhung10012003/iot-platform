@@ -106,21 +106,21 @@ export default function ChartSection({ locationId }: { locationId: string }) {
               <h2 className="text-lg font-semibold">Temperature</h2>
               <Icons.temperature className="w-6 h-6" />
             </div>
-            <span className="font-semibold">{temperature || 0}</span>
+            <span className="font-semibold">{`${temperature || 0}°C`}</span>
           </Card>
           <Card className="p-4 h-full">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">Wind</h2>
               <Icons.wind className="w-6 h-6" />
             </div>
-            <span className="font-semibold">{wind || 0}</span>
+            <span className="font-semibold">{`${wind || 0} km/h`}</span>
           </Card>
           <Card className="p-4 h-full">
             <div className="flex justify-between items-center">
               <h2 className="text-lg font-semibold">Rainfall</h2>
               <Icons.rain className="w-6 h-6" />
             </div>
-            <span className="font-semibold">{rainfall || 0}</span>
+            <span className="font-semibold">{`${rainfall || 0} mm`}</span>
           </Card>
         </DragDropContainer>
       </div>

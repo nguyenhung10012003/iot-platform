@@ -51,7 +51,7 @@ export default function SigninForm({ dictionary }: DictionaryProps) {
     try {
       const data = await api.post<any, Token>('/auth/signin', values);
       setTokenCookies(data);
-      router.push('/');
+      router.push('/home');
       router.refresh();
       toast.success(`${dictionary.welcomeBack}!`, {
         description: dictionary.youHaveSuccessfullySignin,
