@@ -132,6 +132,7 @@ export default function DeviceTemplateDialog({
           form={form}
           onSubmit={onSubmit}
           dictionary={dictionary}
+          usersInTemplate={template?.users || []}
         />
       </DialogContent>
     </Dialog>
