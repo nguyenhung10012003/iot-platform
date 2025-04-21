@@ -49,6 +49,19 @@ export class UserService {
   async findById(id: string) {
     return this.prisma.user.findUniqueOrThrow({
       where: { id },
+      include: {
+        locations: {
+          include: {
+            areas: {
+              include: {
+                gateways: true,
+                devices: true,
+              },
+            },
+          },
+        },
+        employess: true,
+      }
     });
   }
 

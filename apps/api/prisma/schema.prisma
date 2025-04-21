@@ -112,7 +112,7 @@ model DeviceTemplate {
 model Gateway {
   id               String       @id @default(auto()) @map("_id") @db.ObjectId
   name             String
-  host             String       @unique
+  host             String       
   port             Int
   description      String?
   connectionStatus Boolean?

@@ -13,12 +13,10 @@ import { ColumnDef, Table as TableCore } from '@tanstack/table-core';
 type DataTableProps<T = any> = {
   table: TableCore<T>;
   columns: ColumnDef<T>[];
+  onRowClick?: (row: T) => void;
 };
 
-export default function DataTable({
-  table,
-  columns,
-}: DataTableProps) {
+export default function DataTable({ table, columns, onRowClick }: DataTableProps) {
   return (
     <>
       <div className="rounded-md border">
@@ -47,6 +45,8 @@ export default function DataTable({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
+                  onClick={() => onRowClick?.(row.original)}
+                  className={onRowClick ? 'cursor-pointer' : ''}
                 >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>

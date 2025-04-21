@@ -86,7 +86,7 @@ export default function NewGatewayDialog({
         name,
         description,
         areaId,
-        ...gatewayInfo,
+        ...(method === 'qr' ? gatewayInfo : { host, port }),
       });
       revalidate('gateways');
       setOpen(false);

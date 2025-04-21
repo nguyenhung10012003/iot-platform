@@ -17,6 +17,7 @@ import React from 'react';
 import { User } from '../../types/user';
 import DataTable from '../DataTable';
 import { useUser } from '../../hooks/useUser';
+import { useRouter } from 'next/navigation';
 export default function UserTable({
   data,
 }: { data: User[] }) {
@@ -148,6 +149,12 @@ export default function UserTable({
     },
   });
 
+  const router = useRouter();
+
+  const handleRowClick = (row: User) => {
+    router.push(`/users/${row.id}`);
+  };
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4 justify-between">
@@ -162,7 +169,7 @@ export default function UserTable({
           }}
         />
       </div>
-      <DataTable table={table} columns={columns} />
+      <DataTable table={table} columns={columns} onRowClick={user?.role === 'ADMIN' ? handleRowClick : undefined} />
     </div>
   );
 }
