@@ -21,7 +21,7 @@ export class GatewayService {
       port: data.port,
       username: data.username,
       password: data.password,
-      protocol: data.port === 1883 ? 'mqtt' : 'mqtts',
+      protocol: data.port == 1883 ? 'mqtt' : 'mqtts',
     });
     return { status: connectionSuccess ? 'success' : 'error' };
   }
